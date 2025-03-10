@@ -1,9 +1,5 @@
 /* REMINDER! All of your elements must use your unique namespace '.genled' at the start to avoid leaking */
 
-:root {
-  --input-field-background: #F7F9FB;
-}
-
 .chartAccounts {
   display: flex;
   width: 100%;
@@ -20,7 +16,6 @@
 }
 
 /* Component Styles */
-
 .component-container {
   display: flex;
   justify-content: space-around; 
@@ -35,44 +30,12 @@
   padding: 5px 20px;
 }
 
-/* Input Fields */
-.input-field-container {
-  margin: 0;
-  padding: 0;
-}
-
-.input-field-container .input-field {
-  padding: 10px;
-  text-align: center;
-  border-radius: 0.5rem;
-  background-color: var(--input-field-background);
-}
-
 /* Button Styles */
 .buttons-container {
   display: flex;
   justify-content: center;
   gap: 15px; 
 }
-
-.buttons-container .Button1 {
-  font-size: 14px;
-  border: 1.5px solid #00A8A8;
-  border-radius: 10px;
-  padding: 5px 20px;
-}
-
-.buttons-container .Button2 {
-  font-size: 14px;
-  background-color: #00A8A8;
-  color: white;
-  border-radius: 10px;
-  padding: 5px 20px;
-}
-
-
-
-
 
 
 .accounts-table {

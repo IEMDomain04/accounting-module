@@ -1,8 +1,13 @@
 import React from "react";
 import "../styles/ChartOfAccounts.css";
 import SearchBar from "../../../shared/components/SearchBar";
+import Button from "../../../shared/components/Button";
 
 const BodyContent = () => {
+    const accountList = [
+        "Cash on Hand", 
+    ]
+
     return (
         <div className="chartAccounts">
             <div className="body-content-container">
@@ -22,9 +27,9 @@ const BodyContent = () => {
                     </div>
 
                     <div className="buttons-container">
-                        <button className="Button1"> Add account </button>
-                        <button className="Button2"> Submit </button>
-                        <button className="Button1"> Archive </button>
+                        <Button name={"Add account"} variant={"standard1"}/>
+                        <Button name={"Submit"} variant={"standard2"}/>
+                        <Button name={"Archive"} variant={"standard1"}/>
                     </div>
                 </div>
 
