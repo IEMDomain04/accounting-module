@@ -10,6 +10,8 @@
 /* Standard Button 1 Styles */
 .btn-standard1 {
     border: 1.5px solid #00A8A8;
+    background-color: white;
+    color: black;
 }
 
 .btn-standard1:hover {
