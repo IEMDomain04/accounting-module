@@ -11,7 +11,7 @@
   height: 100%;
   border-radius: 0.5rem;
   background-color: white;
-  padding: 3rem;
+  padding: 2rem 3rem;
   box-shadow: 0rem 0.2rem 0.1rem rgba(162, 162, 162, 0.1);
 }
 
@@ -23,13 +23,6 @@
   margin-bottom: 3rem;
 }
 
-/* Dropdown Styles */
-.select-account-dropdown .accounts-dropdown {
-  border: 2px solid #E8E8E8;
-  border-radius: 10px;
-  padding: 5px 20px;
-}
-
 /* Button Styles */
 .buttons-container {
   display: flex;
@@ -38,6 +31,7 @@
 }
 
 
+/* Table */
 .accounts-table {
   width: 100%;
   border-collapse: collapse;
@@ -46,7 +40,7 @@
 
 .accounts-table th, .accounts-table td {
   border-bottom: 1px solid #ddd;
-  padding: 10px;
+  padding: 20px;
   text-align: left;
 }
 
