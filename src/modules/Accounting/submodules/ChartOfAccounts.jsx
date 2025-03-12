@@ -1,7 +1,7 @@
 import React from "react";
 import "../styles/ChartOfAccounts.css";
 import accounts from "./ListOfAccounts";
-import tableData from "./data";
+import { chartOfAccountsHeader } from "./headers";
 import SearchBar from "../../../shared/components/SearchBar";
 import Button from "../../../shared/components/Button";
 import Dropdown from "../../../shared/components/Dropdown";
@@ -31,7 +31,7 @@ const BodyContent = () => {
                 </div>
 
                 {/* Table */}
-                <Table data={tableData}/>
+                <Table headerData={chartOfAccountsHeader} data={chartOfAccountsHeader}/>
             </div>
         </div>
 

@@ -6,15 +6,10 @@
     cursor: pointer;
 }
 
-.dropdown:hover {
-    background-color: #dddddd;
-}
-
-
 
 /* Variant 1 of dropdown */
 .dropdown-selection {
-    padding: 5px 20px;
+    padding: 10px 20px;
 }
 
 

@@ -1,35 +1,35 @@
 import React from "react";
-import "./Table.css";
+import "./Table.css"; // Make sure to create this CSS file
 
-const Table = ({ data }) => {
+const Table = ({ headerData, data }) => {
     return (
-        <>
+        <div className="table-container">
+
+            
             <table>
                 <thead>
                     <tr>
-                        <th>Account Type</th>
-                        <th>Account Name</th>
-                        <th>Date Created</th>
+                        {headerData.map((item, index) => (
+                            <th key={index}>{item}</th>
+                        ))}
                     </tr>
                 </thead>
+
+
+                <tbody>
+                    {data.map((item, index) => (
+                        <tr key={index}>
+                            <td>{item}</td>
+                            <td>{item}</td>
+                            <td>
+                                {item} <br />
+                                {item}
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
             </table>
-            <div className="table-container">
-                <table>
-                    <tbody>
-                        {data.map((item, index) => (
-                            <tr key={index}>
-                                <td>{item.accountType}</td>
-                                <td>{item.accountName}</td>
-                                <td>
-                                    {item.date} <br />
-                                    {item.time}
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-        </>
+        </div>
     );
 };
 

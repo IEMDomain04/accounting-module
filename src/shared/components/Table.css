@@ -1,57 +1,36 @@
-thead {
-    width: 100%;
-}
-
 .table-container {
     width: 100%;
-    overflow-x: auto;
+    max-height: 33rem; /* Adjust height as needed */
     overflow-y: auto;
-    max-height: 30rem;
+    overflow-x: auto;
+    position: relative;
 }
 
-/* Scrollbar Styling */
-.table-container::-webkit-scrollbar {
-    width: 10px;
-    /* Width of vertical scrollbar */
-    height: 10px;
-    /* Height of horizontal scrollbar */
-}
-
-.table-container::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    /* Light gray background */
-    border-radius: 5px;
-}
-
-.table-container::-webkit-scrollbar-thumb {
-    background: #5a9ecf;
-    /* Match the table header */
-    border-radius: 5px;
-}
-
-.table-container::-webkit-scrollbar-thumb:hover {
-    background: #4a8bb3;
-    /* Darker shade on hover */
-}
-
-/* For Firefox */
-.table-container {
-    scrollbar-width: thin;
-    /* Makes the scrollbar thinner */
-    scrollbar-color: #5a9ecf #f1f1f1;
-    /* Thumb color | Track color */
-}
-
+/* Ensure the table structure stays aligned */
 table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 16px;
+    table-layout: fixed; /* Ensures columns remain aligned */
 }
 
+/* Fix the table header */
+thead {
+    position: sticky;
+    top: 0;
+    background-color: #5a9ecf;
+    z-index: 2;
+}
+
+/* Ensure header cells align with body */
 th,
 td {
-    padding: 12px;
-    border-bottom: 1px solid #ddd;
+    padding: 1rem;
+    text-align: center;
+    border-bottom: 1px solid #E8E8E8;
+}
+
+tr:hover {
+    background-color: #E8E8E8;
 }
 
 th {
@@ -59,11 +38,35 @@ th {
     color: white;
 }
 
-td input[type="checkbox"] {
-    background-color: white;
-    transform: scale(1.2);
+/* Prevent content overflow */
+th, td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-tbody tr:hover {
-    background-color: #f5f5f5;
+/* Scrollbar Styling */
+.table-container::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+.table-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 5px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+    background: #5a9ecf;
+    border-radius: 5px;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+    background: #4a8bb3;
+}
+
+/* For Firefox */
+.table-container {
+    scrollbar-width: thin;
+    scrollbar-color: #5a9ecf #f1f1f1;
 }
