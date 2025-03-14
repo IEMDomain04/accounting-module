@@ -18,8 +18,8 @@ const BodyContent = () => {
                     </div>
 
                     <div className="form-components">
-                        <Forms type={"Number"} formName={"Uniqe ID"} placeholder={"Enter unique id"} value={Number}/>
-                        <Forms type={"Text"} formName={"Description"} placeholder={"Enter description"} value={onchange}/>
+                        <Forms type={"number"} formName={"Uniqe ID"} placeholder={"Enter unique id"}/>
+                        <Forms type={"Text"} formName={"Description"} placeholder={"Enter description"}/>
                     </div>
 
                     <div className="button-components">
