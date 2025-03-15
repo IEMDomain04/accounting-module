@@ -14,7 +14,7 @@ const BodyContent = () => {
                 <div className="component-container">
                     <div className="sorting-components">
                         <Dropdown options={accounts.sortByDate} style={"sorting"} defaultOption={"Sort by date"}/>
-
+                        <Dropdown options={accounts.sortByDate} style={"sorting"} defaultOption={"Sort by date"}/>
                     </div>
 
                     <div className="form-components">
