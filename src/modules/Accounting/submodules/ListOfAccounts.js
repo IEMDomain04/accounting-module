@@ -11,7 +11,21 @@ const accounts = {
     "Selling and Distribution Expenses",
     "Other Income",
     "Other Expenses"
-  ]
+  ],
+
+  sortByDate: [
+    "Today",
+    "Last 7 days",
+    "Last 30 days", 
+    "This week", 
+    "Last week",
+    "This month",
+    "Last month"
+  ],
+
+  
+
+  
   // assets: [
   //   "Cash on Hand",
   //   "Cash in Bank",

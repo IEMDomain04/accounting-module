@@ -36,6 +36,11 @@ tr:hover {
 th {
     background-color: #5a9ecf;
     color: white;
+    font-size: 16px;
+}
+
+td {
+    font-size: 14px; 
 }
 
 /* Prevent content overflow */

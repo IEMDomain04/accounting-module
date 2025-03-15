@@ -5,7 +5,7 @@ const Forms = ({ type, formName, placeholder, value }) => {
     return (
         <div class="input-container">
             <label for={formName}>{formName}</label>
-            <input type={type} id={formName} placeholder={placeholder} value={value} />
+            <input className='input-component' type={type} id={formName} placeholder={placeholder} value={value} />
         </div>
 
     )
