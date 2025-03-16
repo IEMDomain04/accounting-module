@@ -24,9 +24,9 @@ const BodyContent = () => {
                     </div>
 
                     <div className="buttons-container">
-                        <Button name={"Add account"} variant={"standard1"} />
-                        <Button name={"Submit"} variant={"standard2"} />
-                        <Button name={"Archive"} variant={"standard1"} />
+                        <Button name={"Add account"} variant={"standard2"} />
+                        <Button name={"Submit"} variant={"standard1"} />
+                        <Button name={"Archive"} variant={"standard2"} />
                     </div>
                 </div>
 
