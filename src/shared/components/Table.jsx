@@ -1,13 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Table.css"; // Make sure to create this CSS file
 
-const Table = ({ columns, data }) => {
+const Table = ({ columns, data, enableCheckbox }) => {
+    const [selectedRows, setSelectedRows] = useState([]);
+
+    const handleCheckboxChange = (index) => {
+        setSelectedRows(prevSelectedRows => {
+            if (prevSelectedRows.includes(index)) {
+                return prevSelectedRows.filter(row => row !== index);
+            } else {
+                return [...prevSelectedRows, index];
+            }
+        });
+    };
+
     return (
-        <div className="table-container">
+        <div className={`table-container ${enableCheckbox ? 'checkbox-enabled' : ''}`}>
             <table>
                 <thead>
                     <tr>
-                        {/* Render the column headers dynamically */}
+                        {enableCheckbox && <th></th>}
                         {columns.map((column, index) => (
                             <th key={index}>{column}</th>
                         ))}
@@ -15,10 +27,17 @@ const Table = ({ columns, data }) => {
                 </thead>
 
                 <tbody>
-                    {/* Render the table rows dynamically based on the data */}
                     {data.map((row, rowIndex) => (
                         <tr key={rowIndex}>
-                            {/* Render the table data dynamically based on the number of columns */}
+                            {enableCheckbox && (
+                                <td>
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedRows.includes(rowIndex)}
+                                        onChange={() => handleCheckboxChange(rowIndex)}
+                                    />
+                                </td>
+                            )}
                             {row.map((cell, cellIndex) => (
                                 <td key={cellIndex}>{cell}</td>
                             ))}
