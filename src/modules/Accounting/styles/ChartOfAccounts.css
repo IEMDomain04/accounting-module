@@ -25,7 +25,7 @@
 }
 
 /* Button Styles */
-.buttons-container {
+.chartAccounts .buttons-container {
   display: flex;
   justify-content: center;
   gap: 30px; 
