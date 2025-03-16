@@ -5,10 +5,15 @@ const Table = ({ columns, data, enableCheckbox }) => {
     const [selectedRows, setSelectedRows] = useState([]);
 
     const handleCheckboxChange = (index) => {
+
         setSelectedRows(prevSelectedRows => {
-            if (prevSelectedRows.includes(index)) {
+
+            if (prevSelectedRows.includes(index)) 
+            {
                 return prevSelectedRows.filter(row => row !== index);
-            } else {
+            } 
+            else 
+            {
                 return [...prevSelectedRows, index];
             }
         });

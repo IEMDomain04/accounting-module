@@ -80,15 +80,23 @@ th, td {
     scrollbar-color: #5a9ecf #f1f1f1;
 }
 
-/* Style for checkbox to reduce width */
-td input[type="checkbox"] {
-    width: auto;
-    margin-right: 10rem; /* Adjust margin to control spacing */
-}
-
 /* Style for checkbox to reduce width when checkbox is enabled */
 .table-container.checkbox-enabled th:first-child,
 .table-container.checkbox-enabled td:first-child {
     width: 40px; /* Adjust this value to make the checkbox column narrower */
     text-align: center;
 }
+input[type="checkbox"] {
+    appearance: none; /* Remove default styling */
+    width: 16px;
+    height: 16px;
+    border: 1.5px solid #A4A4A4;
+    background-color: white; /* White background */
+    border-radius: 3px; /* Optional: Rounded corners */
+    cursor: pointer;
+  }
+  
+  input[type="checkbox"]:checked {
+    background-color: #A4A4A4; /* Change background when checked */
+  }
+  
