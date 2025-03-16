@@ -9,6 +9,16 @@ import Table from "../../../shared/components/Table";
 
 const BodyContent = () => {
 
+    // Define columns (header data)
+    const columns = ["Name", "Age", "Address"];
+
+    // Define data (rows of table)
+    const data = [
+        ["John Doe", 30, "123 Main St"],
+        ["Jane Smith", 25, "456 Maple Ave"],
+        ["Sam Johnson", 40, "789 Oak Rd"],
+    ];
+
     return (
         <div className="chartAccounts">
             <div className="body-content-container">
@@ -31,7 +41,7 @@ const BodyContent = () => {
                 </div>
 
                 {/* Table */}
-                <Table headerData={chartOfAccountsHeader} data={chartOfAccountsHeader}/>
+                <Table data={data} columns={columns}/>
             </div>
         </div>
 
