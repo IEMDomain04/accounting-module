@@ -10,10 +10,19 @@ import Table from "../../../shared/components/Table";
 const BodyContent = () => {
 
     // Define columns (header data)
-    const columns = ["Name", "Age", "Address"];
+    const columns = ["Account type", "Account name", "Date and Time"];
 
     // Define data (rows of table)
     const data = [
+        ["John Doe", 30, "123 Main St"],
+        ["Jane Smith", 25, "456 Maple Ave"],
+        ["Sam Johnson", 40, "789 Oak Rd"],
+        ["John Doe", 30, "123 Main St"],
+        ["Jane Smith", 25, "456 Maple Ave"],
+        ["Sam Johnson", 40, "789 Oak Rd"],
+        ["John Doe", 30, "123 Main St"],
+        ["Jane Smith", 25, "456 Maple Ave"],
+        ["Sam Johnson", 40, "789 Oak Rd"],
         ["John Doe", 30, "123 Main St"],
         ["Jane Smith", 25, "456 Maple Ave"],
         ["Sam Johnson", 40, "789 Oak Rd"],

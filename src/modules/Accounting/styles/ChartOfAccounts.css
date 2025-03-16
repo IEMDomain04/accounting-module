@@ -18,7 +18,7 @@
 /* Component Styles */
 .chartAccounts .component-container {
   display: flex;
-  justify-content: space-around; 
+  justify-content: space-between; 
   align-items: end;
   gap: 20px; 
   margin-bottom: 2rem;
@@ -28,7 +28,7 @@
 .buttons-container {
   display: flex;
   justify-content: center;
-  gap: 15px; 
+  gap: 30px; 
 }
 
 

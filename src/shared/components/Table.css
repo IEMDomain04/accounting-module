@@ -4,6 +4,8 @@
         overflow-y: auto;
         overflow-x: auto;
         position: relative;
+        border-radius: 10px;
+        box-shadow: 0px 4px 7.5px 1px rgba(0, 0, 0, 0.15);
     }
 
     /* Ensure the table structure stays aligned */
@@ -36,12 +38,12 @@
     th {
         background-color: #5a9ecf;
         color: white;
-        font-size: 20px;
+        font-size: 16px;
         font-weight: bold;
     }
 
     td {
-        font-size: 16px;
+        font-size: 14px;
         font-weight: 300; 
     }
 
