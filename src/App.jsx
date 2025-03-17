@@ -78,6 +78,7 @@ function App() {
     "Accounting": {
       "Chart of Accounts": "ChartOfAccounts",
       "General Ledger": "GeneralLedger",
+      "Journal Entry": "JournalEntry",
       "Payroll": "Payroll",
       "Supplier Payables": "SupplierPayables",
       "Tax Tracking": "TaxTracking",
