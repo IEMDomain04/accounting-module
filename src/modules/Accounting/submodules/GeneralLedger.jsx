@@ -49,11 +49,6 @@ const BodyContent = () => {
                         <Forms type={"number"} formName={"Uniqe ID"} placeholder={"Enter unique id"}/>
                         <Forms type={"Text"} formName={"Description"} placeholder={"Enter description"}/>
                     </div>
-
-                    <div className="button-components">
-                        <Button name={"Add account"} variant={"standard1"}/>
-                        <Button name={"Submit"} variant={"standard2"}/>
-                    </div>
                 </div>
 
                 {/* Dito yung Table lalagay */}

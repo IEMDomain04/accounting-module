@@ -17,9 +17,8 @@
 
 .generalLedger .component-container {
   display: flex;
-  justify-content: space-around;
   align-items: end;
-  gap: 20px;
+  gap: 30px;
   margin-bottom: 1rem;
 }
 
@@ -31,9 +30,4 @@
 .generalLedger .form-components {
   display: flex;
   gap: 50px;
-}
-
-.generalLedger .button-components {
-  display: flex;
-  gap: 30px;
 }
