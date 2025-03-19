@@ -61,7 +61,7 @@ const BodyContent = () => {
                 </div>
 
                 {/* Table */}
-                <Table data={data} columns={columns} enableCheckbox={true} />
+                <Table data={data} columns={columns} enableCheckbox={false} />
             </div>
         </div>
     );
