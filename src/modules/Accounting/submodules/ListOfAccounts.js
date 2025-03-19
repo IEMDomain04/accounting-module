@@ -1,5 +1,5 @@
-const accounts = {
-  listOfAccounts: [
+// Array of Accounts
+const accounts = [
     "Assets",
     "Non-Current Assets",
     "Current Liabilities",
@@ -11,18 +11,10 @@ const accounts = {
     "Selling and Distribution Expenses",
     "Other Income",
     "Other Expenses"
-  ],
+  ]
 
-  sortByDate: [
-    "Today",
-    "Last 7 days",
-    "Last 30 days", 
-    "This week", 
-    "Last week",
-    "This month",
-    "Last month"
-  ],
-  
+// Objects for subAccounts
+const subAccounts = {
   assets: [
     "Cash on Hand",
     "Cash in Bank",
@@ -96,6 +88,16 @@ const accounts = {
     "Loss on Sale of Assets",
     "Investment Losses"
   ]
-};
+}
 
-export default accounts;
+const sortByDate = [
+  "Today",
+  "Last 7 days",
+  "Last 30 days", 
+  "This week", 
+  "Last week",
+  "This month",
+  "Last month"
+]
+
+export { accounts, subAccounts, sortByDate };

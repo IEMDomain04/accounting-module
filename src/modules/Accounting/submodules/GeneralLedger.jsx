@@ -1,10 +1,9 @@
 import React from "react";
 import "../styles/GeneralLedger.css";
-import accounts from "./ListOfAccounts";
+import { sortByDate } from "./ListOfAccounts";
 import Dropdown from "../../../shared/components/Dropdown";
 import Forms from "../../../shared/components/Forms";
 import Table from "../../../shared/components/Table";
-import Button from "../../../shared/components/Button";
 
 const BodyContent = () => {
     // Define columns (header data)
@@ -41,8 +40,8 @@ const BodyContent = () => {
 
                 <div className="component-container">
                     <div className="sorting-components">
-                        <Dropdown options={accounts.sortByDate} style={"sorting"} defaultOption={"Sort by date"}/>
-                        <Dropdown options={accounts.sortByDate} style={"sorting"} defaultOption={"Sort by date"}/>
+                        <Dropdown options={sortByDate} style="sorting" defaultOption="Sort by date"/>
+                        <Dropdown options={sortByDate} style="sorting" defaultOption="Sort by date"/>
                     </div>
 
                     <div className="form-components">

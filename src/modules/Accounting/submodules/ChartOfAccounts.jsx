@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "../styles/ChartOfAccounts.css";
-import accounts from "./ListOfAccounts";
+import { accounts } from "./ListOfAccounts";
 import SearchBar from "../../../shared/components/SearchBar";
 import Button from "../../../shared/components/Button";
 import Dropdown from "../../../shared/components/Dropdown";
@@ -32,7 +32,7 @@ const BodyContent = () => {
     // Event handler for adding a new row
     const handleAddAccount = () => {
         const newRow = [
-            <Dropdown options={accounts.listOfAccounts} style="selection" defaultOption="Select account type" />,
+            <Dropdown options={accounts} style="selection" defaultOption="Select account type" />,
             <Forms type="text" placeholder="Enter account name" />,
             new Date().toLocaleString()
         ];
@@ -46,7 +46,7 @@ const BodyContent = () => {
                 {/* Input Fields, Buttons, and Sorting */}
                 <div className="component-container">
                     <div className="select-account-dropdown">
-                        <Dropdown options={accounts.listOfAccounts} style={"selection"} defaultOption="Sort account" />
+                        <Dropdown options={accounts} style="selection" defaultOption="Sort account" />
                     </div>
 
                     <div className="input-field-container">
@@ -54,9 +54,9 @@ const BodyContent = () => {
                     </div>
 
                     <div className="buttons-container">
-                        <Button name={"Add account"} variant={"standard2"} onclick={handleAddAccount} />
-                        <Button name={"Submit"} variant={"standard1"} />
-                        <Button name={"Archive"} variant={"standard2"} />
+                        <Button name="Add account" variant="standard2" onclick={handleAddAccount} />
+                        <Button name="Submit" variant="standard1" />
+                        <Button name="Archive" variant="standard2" />
                     </div>
                 </div>
 
