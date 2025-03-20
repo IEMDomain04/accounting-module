@@ -4,7 +4,6 @@
     overflow-y: auto;
     overflow-x: auto;
     position: relative;
-    border-radius: 10px;
     box-shadow: 0px 4px 7.5px 1px rgba(0, 0, 0, 0.15);
 }
 
@@ -40,19 +39,28 @@ th {
     color: white;
     font-size: 16px;
     font-weight: bold;
+    border-bottom: 2px solid black;
 }
 
 td {
     font-size: 14px;
     font-weight: 300; 
+    text-wrap: wrap;
 }
 
-/* Prevent content overflow */
 th, td {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    cursor: pointer; /* Indicate clickable behavior */
 }
+
+/* Wrapped text when toggled */
+td.wrapped {
+    white-space: normal;
+    word-wrap: break-word;
+}
+
 
 /* Scrollbar Styling */
 .table-container::-webkit-scrollbar {

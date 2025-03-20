@@ -1,22 +1,23 @@
 import React, { useState } from "react";
-import "./Table.css"; // Make sure to create this CSS file
+import "./Table.css"; // Ensure this file is updated
 
 const Table = ({ columns, data, enableCheckbox }) => {
     const [selectedRows, setSelectedRows] = useState([]);
+    const [wrappedColumns, setWrappedColumns] = useState({}); // Track wrapped columns
 
     const handleCheckboxChange = (index) => {
+        setSelectedRows((prevSelectedRows) =>
+            prevSelectedRows.includes(index)
+                ? prevSelectedRows.filter((row) => row !== index)
+                : [...prevSelectedRows, index]
+        );
+    };
 
-        setSelectedRows(prevSelectedRows => {
-
-            if (prevSelectedRows.includes(index)) 
-            {
-                return prevSelectedRows.filter(row => row !== index);
-            } 
-            else 
-            {
-                return [...prevSelectedRows, index];
-            }
-        });
+    const toggleWrap = (index) => {
+        setWrappedColumns((prev) => ({
+            ...prev,
+            [index]: !prev[index] // Toggle wrap state
+        }));
     };
 
     return (
@@ -26,7 +27,9 @@ const Table = ({ columns, data, enableCheckbox }) => {
                     <tr>
                         {enableCheckbox && <th></th>}
                         {columns.map((column, index) => (
-                            <th key={index}>{column}</th>
+                            <th key={index} onClick={() => toggleWrap(index)}>
+                                {column}
+                            </th>
                         ))}
                     </tr>
                 </thead>
@@ -44,7 +47,13 @@ const Table = ({ columns, data, enableCheckbox }) => {
                                 </td>
                             )}
                             {row.map((cell, cellIndex) => (
-                                <td key={cellIndex}>{cell}</td>
+                                <td
+                                    key={cellIndex}
+                                    className={wrappedColumns[cellIndex] ? "wrapped" : ""}
+                                    onClick={() => toggleWrap(cellIndex)}
+                                >
+                                    {cell}
+                                </td>
                             ))}
                         </tr>
                     ))}

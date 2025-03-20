@@ -1,37 +1,36 @@
-import React from "react";
+import React, { useState } from "react";
 import "../styles/GeneralLedger.css";
-import { sortByDate } from "./ListOfAccounts";
-import Dropdown from "../../../shared/components/Dropdown";
 import Forms from "../../../shared/components/Forms";
 import Table from "../../../shared/components/Table";
+import Button from "../../../shared/components/Button";
 
 const BodyContent = () => {
     // Define columns (header data)
-    const columns = ["Entry Line ID", "GL Account ID", "Journal ID", "Debit", "Credit", "Description"];      
+    const columns = ["Entry Line ID", "GL Account ID", "Journal ID", "Debit", "Credit", "Description"];
+
+    // Define data (rows of table)
+    const data = [
+        [110011, "John Doe01", 1001, 10000, "", "Ordered Product"], 
+        [110012, "Sales Revenue", 1001, "", 10000, "Ordered Product"], 
+    ];
 
     return (
         <div className="generalLedger">
-
             <div className="body-content-container">
+
 
                 <div className="component-container">
                     <div className="sorting-components">
-                        <Dropdown options={sortByDate} style="sorting" defaultOption="Sort by date"/>
-                        <Dropdown options={sortByDate} style="sorting" defaultOption="Sort by date"/>
+                        <Button name="Submit" variant="standard2"/>
                     </div>
 
-                    <div className="form-components">
-                        <Forms type={"number"} formName={"Uniqe ID"} placeholder={"Enter unique id"}/>
-                        <Forms type={"Text"} formName={"Description"} placeholder={"Enter description"}/>
-                    </div>
+
                 </div>
 
-                {/* Dito yung Table lalagay */}
-                <Table data={data} columns={columns}/>
+                {/* Table Section */}
+                <Table data={data} columns={columns} />
             </div>
-
         </div>
-
     );
 };
 

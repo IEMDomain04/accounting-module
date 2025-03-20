@@ -12,3 +12,17 @@
     padding: 2rem 3rem;
     box-shadow: 0rem 0.2rem 0.1rem rgba(162, 162, 162, 0.1);
   }
+
+  .journalEntry .component-container {
+    display: flex;
+    align-items: end;
+    gap: 30px;
+    margin-bottom: 1rem;
+  }
+
+  /* Button Styles */
+.journalEntry .buttons-container {
+  display: flex;
+  justify-content: center;
+  gap: 30px; 
+}
