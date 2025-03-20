@@ -20,10 +20,8 @@ const BodyContent = () => {
 
 
                 <div className="component-container">
-                    <div className="sorting-components">
                         <Button name="Submit" variant="standard2"/>
-                    </div>
-
+                        <Forms type="text" placeholder="Search account" />
 
                 </div>
 

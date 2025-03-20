@@ -21,13 +21,3 @@
   gap: 30px;
   margin-bottom: 1rem;
 }
-
-.generalLedger .sorting-components {
-  display: flex;
-  gap: 30px;
-}
-
-.generalLedger .form-components {
-  display: flex;
-  gap: 50px;
-}
