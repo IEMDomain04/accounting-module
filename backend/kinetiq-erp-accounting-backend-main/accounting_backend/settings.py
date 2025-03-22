@@ -66,7 +66,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 REST_FRAMEWORK = {
     'DEFAULT-PERMISSION-CLASSES': (
-        'rest_framework.permission.AllowAny'
+        'rest_framework.permission.AllowAny',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'django_cognito_jwt.JSONWebTokenAuthentication',
@@ -100,8 +100,15 @@ WSGI_APPLICATION = 'accounting_backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'dummyaccounting',
+        'USER': 'postgres',
+        'PASSWORD': 'zxcxcz.',
+        'HOST': 'localhost',
+        'PORT': '5432',
+        'OPTIONS': {
+            'options': '-c search_path=accounting'
+        }
     }
 }
 
