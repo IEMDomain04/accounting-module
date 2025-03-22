@@ -3,10 +3,10 @@ import axios from "axios";
 import "../styles/ChartOfAccounts.css";
 import { accounts } from "./ListOfAccounts";
 import SearchBar from "../../../shared/components/SearchBar";
-import Button from "../../../shared/components/Button";
-import Dropdown from "../../../shared/components/Dropdown";
-import Table from "../../../shared/components/Table";
-import Forms from "../../../shared/components/Forms";
+import Button from "../components/Button";
+import Dropdown from "../components/Dropdown";
+import Table from "../components/Table";
+import Forms from "../components/Forms";
 
 const BodyContent = () => {
     const columns = ["Account code", "Account name", "Account type"];

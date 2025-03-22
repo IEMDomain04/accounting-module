@@ -1,7 +1,7 @@
 import React from 'react'
 import '../styles/JournalEntry.css'
-import Button from '../../../shared/components/Button'
-import Table from '../../../shared/components/Table'
+import Button from '../components/Button'
+import Table from '../components/Table'
 
 const JournalEntry = () => {
 

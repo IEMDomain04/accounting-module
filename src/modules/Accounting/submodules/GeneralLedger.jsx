@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import "../styles/GeneralLedger.css";
-import Forms from "../../../shared/components/Forms";
-import Table from "../../../shared/components/Table";
-import Button from "../../../shared/components/Button";
+import Forms from "../components/Forms";
+import Table from "../components/Table";
+import Button from "../components/Button";
 
 const BodyContent = () => {
     // Define columns (header data)
