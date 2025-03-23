@@ -14,11 +14,17 @@ const JournalEntry = () => {
 
     // Form state
     const [journalForm, setJournalForm] = useState({
+        entryLineId: '',
+        glAccountId: '',
         journalId: '',
-        journalDate: '',
-        description: '',
-        currencyId: ''
+        debit: '',
+        credit: '',
+        description: ''
     });
+
+    // Checkboxes state
+    const [addAnotherDebit, setAddAnotherDebit] = useState(false);
+    const [addAnotherCredit, setAddAnotherCredit] = useState(false);
 
     // Define columns (header data)
     const columns = ["Entry Line Id", "GL Account ID", "Journal ID", "Debit", "Credit", "Description"];
@@ -35,6 +41,17 @@ const JournalEntry = () => {
     // Handle input change
     const handleInputChange = (field, value) => {
         setJournalForm(prevState => ({ ...prevState, [field]: value }));
+    };
+
+    // Handle checkbox change
+    const handleCheckboxChange = (type) => {
+        if (type === "debit") {
+            setAddAnotherDebit(!addAnotherDebit);
+            setAddAnotherCredit(false); // Uncheck credit if debit is checked
+        } else {
+            setAddAnotherCredit(!addAnotherCredit);
+            setAddAnotherDebit(false); // Uncheck debit if credit is checked
+        }
     };
 
     return (
@@ -69,15 +86,28 @@ const JournalEntry = () => {
                             <button className="remove-btn" onClick={closeModal}>❌</button>
                         </div>
                         <div className="modal-body">
-                            <Forms type="number" formName="Entry Line ID*" placeholder="Enter Entry Line ID" value={journalForm.journalId} onChange={(e) => handleInputChange("journalId", e.target.value)} />
-                            <Forms type="number" formName="General Ledger Account ID*" placeholder="GL Account ID" value={journalForm.journalDate} onChange={(e) => handleInputChange("journalDate", e.target.value)} />
-                            <Forms type="number" formName="Journal ID*" placeholder="Enter journal ID" value={journalForm.journalDate} onChange={(e) => handleInputChange("journalDate", e.target.value)} />
+                            <Forms type="number" formName="Entry Line ID*" placeholder="Enter Entry Line ID" value={journalForm.entryLineId} onChange={(e) => handleInputChange("entryLineId", e.target.value)} />
+                            <Forms type="number" formName="General Ledger Account ID*" placeholder="GL Account ID" value={journalForm.glAccountId} onChange={(e) => handleInputChange("glAccountId", e.target.value)} />
+                            <Forms type="number" formName="Journal ID*" placeholder="Enter journal ID" value={journalForm.journalId} onChange={(e) => handleInputChange("journalId", e.target.value)} />
 
-                            {/* Apply Logic na ma disable yung isa sa debit or credit kapag nag input.. */}
-                            <Forms type="number" formName="Debit*" placeholder="Enter Debit" value={journalForm.journalDate} onChange={(e) => handleInputChange("journalDate", e.target.value)} />
-                            <Forms type="number" formName="Credit*" placeholder="Enter Credit" value={journalForm.journalDate} onChange={(e) => handleInputChange("journalDate", e.target.value)} />
-                            <Forms type="text" formName="Description*" value={journalForm.currencyId} onChange={(e) => handleInputChange("currencyId", e.target.value)} />
+                            {/* Debit and Credit Inputs */}
+                            <Forms type="number" formName="Debit*" placeholder="Enter Debit" value={journalForm.debit} onChange={(e) => handleInputChange("debit", e.target.value)} />
+                            <Forms type="number" formName="Credit*" placeholder="Enter Credit" value={journalForm.credit} onChange={(e) => handleInputChange("credit", e.target.value)} />
+                            <Forms type="text" formName="Description*" value={journalForm.description} onChange={(e) => handleInputChange("description", e.target.value)} />
+
+                            {/* Add Another Debit or Credit Checkboxes */}
+                            <div className="checkbox-group">
+                                <label>
+                                    <input type="checkbox" checked={addAnotherDebit} onChange={() => handleCheckboxChange("debit")} />
+                                    Add Another Debit
+                                </label>
+                                <label>
+                                    <input type="checkbox" checked={addAnotherCredit} onChange={() => handleCheckboxChange("credit")} />
+                                    Add Another Credit
+                                </label>
+                            </div>
                         </div>
+
                         <div className="modal-footer">
                             <Button name="Add" variant="standard1" onclick={closeModal} />
                             <Button name="Cancel" variant="standard2" onclick={closeModal} />

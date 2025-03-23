@@ -20,6 +20,7 @@
   gap: 30px;
 }
 
+/* Overlay to cover the entire screen */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -30,42 +31,98 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 9999; /* Ensure it's in front of everything */
+  z-index: 1000; /* Ensures it's above all other elements */
 }
 
+/* Modal container */
 .modal-container {
   background: white;
   padding: 20px;
   border-radius: 10px;
   width: 400px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  z-index: 10000; /* Even higher to ensure visibility */
-  position: relative; /* Ensure stacking inside overlay */
+  z-index: 1001; /* Ensures modal content stays above overlay */
 }
 
-
+/* Modal header */
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
 }
 
-.close-btn {
+/* Close button */
+.remove-btn {
   background: none;
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
 }
 
+/* Modal body */
 .modal-body {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
   margin-top: 10px;
 }
 
+/* Input fields */
+.input-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-container label {
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.input-container input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+/* Checkboxes Group */
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.checkbox-group label {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* Style for checkboxes */
+.checkbox-group input[type="checkbox"] {
+  margin-right: 8px;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+/* Modal footer */
 .modal-footer {
   display: flex;
   justify-content: space-between;
   margin-top: 20px;
 }
+
+/* Buttons inside the modal */
+.modal-footer .btn {
+  padding: 10px 15px;
+  font-size: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
