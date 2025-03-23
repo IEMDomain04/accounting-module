@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'chart_of_accounts',
     'general_ledger',
     'journal_entry',
+    'journal_entry_lines',
     'payroll_accounting',
     'supplier_payables',
     'tax_tracking',
