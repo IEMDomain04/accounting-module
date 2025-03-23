@@ -1,12 +1,42 @@
-# React + Vite
+# Accounting module
+This is the accounting module for the Kinetiq ERP system. [In progress..]
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Clone repository
+```bash
+git clone https://github.com/IEMDomain04/accounting-module.git
+```
 
-Currently, two official plugins are available:
+## Include node_modules
+```bash
+npm install
+```
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Install backend requirements
+```bash
+cd backend
+```
+```bash
+pip install -r requirements.txt
+```
 
-## Expanding the ESLint configuration
+## Backend with UI
+In a separate terminal..
+```bash
+cd backend
+```
+then..
+```bash
+cd kinetiq-erp-accounting-backend-main
+```
+after that..
+```bash
+python manage.py runserver
+```
+Click on the localhost that will be displayed; it corresponds to the Django server.
+Goods na yan. hahaha
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Run UI
+In another terminal.. 
+```bash
+npm run dev
+```
