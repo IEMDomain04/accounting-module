@@ -1,9 +1,9 @@
 import React from 'react'
-import '../styles/JournalEntry.css'
+import '../styles/Journal.css'
 import Button from '../components/Button'
 import Table from '../components/Table'
 
-const JournalEntry = () => {
+const Journal = () => {
 
     // Define columns (header data)
     const columns = ["Journal Id", "Journal Date", "Description", "Debit", "Credit", "Invoice Id", "Currency Id"];
@@ -15,12 +15,12 @@ const JournalEntry = () => {
 
 
     return (
-        <div className='JournalEntry'>
+        <div className='Journal'>
             <div className='body-content-container'>
 
                 <div className="component-container">
                     <div className='buttons-container'>
-                    <Button name="iNPUT dATA" variant="standard2" />
+                    <Button name="Create ID" variant="standard2" />
                     </div>
                 </div>
 
@@ -30,4 +30,4 @@ const JournalEntry = () => {
     )
 }
 
-export default JournalEntry
+export default Journal

@@ -96,20 +96,31 @@ const BodyContent = () => {
     return (
         <div className="chartAccounts">
             <div className="body-content-container">
-                {/* Buttons & Sorting */}
+                
+
                 <div className="component-container">
+
+
                     <div className="buttons-container">
                         <Button name={isAdding ? "Adding..." : "Add Account"} variant="standard2" onclick={handleAddAccount} disabled={isAdding} />
                         <Button name="Submit" variant="standard1" onclick={handleSubmit} />
                         <Button name="Archive" variant="standard2" />
                     </div>
+
+
                     <div className="select-account-dropdown">
                         <Dropdown options={accounts} style="selection" defaultOption="Sort account" />
                     </div>
+
+
                     <div className="input-field-container">
                         <SearchBar />
                     </div>
+
+
                 </div>
+
+                
                 {/* Table Display */}
                 <Table data={renderTableData()} columns={columns} enableCheckbox={false} />
             </div>

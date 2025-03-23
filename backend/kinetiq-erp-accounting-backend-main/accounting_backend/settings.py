@@ -101,7 +101,7 @@ WSGI_APPLICATION = 'accounting_backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'accounting_module',
+        'NAME': 'chartOfAccounts',
         'USER': 'postgres',
         'PASSWORD': 'admin10',
         'HOST': 'localhost',

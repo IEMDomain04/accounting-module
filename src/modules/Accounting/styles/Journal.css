@@ -1,10 +1,10 @@
-.JournalEntry {
+.Journal {
     display: flex;
     width: 100%;
     height: 100%;
   }
   
-  .JournalEntry .body-content-container {
+  .Journal .body-content-container {
     width: 100%;
     height: 100%;
     border-radius: 0.5rem;
@@ -13,7 +13,7 @@
     box-shadow: 0rem 0.2rem 0.1rem rgba(162, 162, 162, 0.1);
   }
 
-  .JournalEntry .component-container {
+  .Journal .component-container {
     display: flex;
     align-items: end;
     gap: 30px;
@@ -21,7 +21,7 @@
   }
 
   /* Button Styles */
-.JournalEntry .buttons-container {
+.Journal .buttons-container {
   display: flex;
   justify-content: center;
   gap: 30px; 
