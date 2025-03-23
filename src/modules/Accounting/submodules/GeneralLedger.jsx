@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import "../styles/GeneralLedger.css";
+import "../styles/Accounting-Global-Styling.css";
+import { accounts } from "./ListOfAccounts";
 import Forms from "../components/Forms";
+import Dropdown from "../components/Dropdown";
 import Table from "../components/Table";
-import Button from "../components/Button";
 
 const BodyContent = () => {
     // Define columns (header data)
@@ -18,10 +20,14 @@ const BodyContent = () => {
         <div className="generalLedger">
             <div className="body-content-container">
 
+            <div className="title-subtitle-container">
+                    <h1 className="subModule-title">General Ledger</h1>
+                    <h2 className="subModule-subTitle">The whole record of transactions.</h2>
+                </div>
 
                 <div className="component-container">
                         <Forms type="text" placeholder="Search account..." />
-
+                        <Dropdown options={accounts} style="selection" defaultOption="Sort account.." />
                 </div>
 
                 {/* Table Section */}
