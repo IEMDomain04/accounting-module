@@ -53,7 +53,7 @@ const Journal = () => {
                     </div>
 
                     <div className='buttons-container'>
-                        <Button name="Create ID" variant="standard2" onclick={openModal} />
+                        <Button name="Create Journal ID" variant="standard2" onclick={openModal} />
                     </div>
                 </div>
 

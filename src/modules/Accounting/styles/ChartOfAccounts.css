@@ -30,18 +30,3 @@
   justify-content: space-between;
   gap: 10px;
 }
-
-.remove-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 15px;
-  color: red;
-  transition: .3s;
-}
-
-.remove-btn:hover {
-  color: darkred;
-  transform: scale(1.3);
-}
-
