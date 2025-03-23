@@ -1,11 +1,5 @@
 /* REMINDER! All of your elements must use your unique namespace '.genled' at the start to avoid leaking */
 
-.generalLedger {
-  display: flex;
-  width: 100%;
-  height: 100%;
-}
-
 .generalLedger .body-content-container {
   width: 100%;
   height: 100%;

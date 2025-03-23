@@ -1,5 +1,6 @@
 import React from 'react'
 import '../styles/Journal.css'
+import '../styles/Accounting-Global-Styling.css'
 import Button from '../components/Button'
 import Table from '../components/Table'
 
