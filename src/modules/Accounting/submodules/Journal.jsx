@@ -106,10 +106,11 @@ const Journal = () => {
                             <button className="close-btn" onClick={closeModal}>❌</button>
                         </div>
                         <div className="modal-body">
-                            <Forms type="text" formName="Journal ID*" placeholder="Enter Journal ID" value={journalForm.journalId} onChange={(e) => handleInputChange("journalId", e.target.value)} />
+                            <Forms type="number" formName="Journal ID*" placeholder="Enter Journal ID" value={journalForm.journalId} onChange={(e) => handleInputChange("journalId", e.target.value)} />
                             <Forms type="date" formName="Journal Date*" value={journalForm.journalDate} onChange={(e) => handleInputChange("journalDate", e.target.value)} />
                             <Forms type="text" formName="Description*" placeholder="Enter Description" value={journalForm.description} onChange={(e) => handleInputChange("description", e.target.value)} />
-                            <Forms type="text" formName="Currency ID*" value={journalForm.currencyId} onChange={(e) => handleInputChange("currencyId", e.target.value)} />
+                            <Forms type="number" formName="Invoice ID*" placeholder="Enter invoice ID" value={journalForm.invoiceId} onChange={(e) => handleInputChange("invoiceID", e.target.value)} />
+                            <Forms type="text" formName="Currency ID*" placeholder="Enter currency ID" value={journalForm.currencyId} onChange={(e) => handleInputChange("currencyId", e.target.value)} />
                         </div>
                         <div className="modal-footer">
                             <Button name="Add" variant="standard1" onclick={handleSubmit} />
