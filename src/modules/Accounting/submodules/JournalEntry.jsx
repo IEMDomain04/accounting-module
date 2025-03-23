@@ -1,57 +1,41 @@
 import React, { useState } from 'react';
 import '../styles/JournalEntry.css';
 import '../styles/Accounting-Global-Styling.css';
-import { sortingChoices } from './ListOfAccounts';
 import Button from '../components/Button';
-import Dropdown from '../components/Dropdown';
-import Table from '../components/Table';
-import SearchBar from "../../../shared/components/SearchBar";
 import Forms from '../components/Forms';
 
 const JournalEntry = () => {
-    // Modal state
-    const [isModalOpen, setIsModalOpen] = useState(false);
-
-    // Form state
     const [journalForm, setJournalForm] = useState({
         entryLineId: '',
-        glAccountId: '',
-        journalId: '',
-        debit: '',
-        credit: '',
+        debits: [{ glAccountId: '', journalId: '', debit: '' }], // Array for multiple debits
+        credits: [{ glAccountId: '', journalId: '', credit: '' }], // Array for multiple credits
         description: ''
     });
 
-    // Checkboxes state
-    const [addAnotherDebit, setAddAnotherDebit] = useState(false);
-    const [addAnotherCredit, setAddAnotherCredit] = useState(false);
-
-    // Define columns (header data)
-    const columns = ["Entry Line Id", "GL Account ID", "Journal ID", "Debit", "Credit", "Description"];
-
-    // Define data (rows of table)
-    const data = [
-        [1001, 2312, 1001, 10000, 10000, "Bought a Mouse"],
-    ];
-
-    // Handle opening/closing modal
-    const openModal = () => setIsModalOpen(true);
-    const closeModal = () => setIsModalOpen(false);
-
-    // Handle input change
-    const handleInputChange = (field, value) => {
-        setJournalForm(prevState => ({ ...prevState, [field]: value }));
+    // Handle input changes dynamically
+    const handleInputChange = (type, index, field, value) => {
+        setJournalForm(prevState => ({
+            ...prevState,
+            [type]: prevState[type].map((entry, i) => 
+                i === index ? { ...entry, [field]: value } : entry
+            )
+        }));
     };
 
-    // Handle checkbox change
-    const handleCheckboxChange = (type) => {
-        if (type === "debit") {
-            setAddAnotherDebit(!addAnotherDebit);
-            setAddAnotherCredit(false); // Uncheck credit if debit is checked
-        } else {
-            setAddAnotherCredit(!addAnotherCredit);
-            setAddAnotherDebit(false); // Uncheck debit if credit is checked
-        }
+    // Add new debit or credit entry
+    const addEntry = (type) => {
+        setJournalForm(prevState => ({
+            ...prevState,
+            [type]: [...prevState[type], { glAccountId: '', journalId: '', [type === "debits" ? "debit" : "credit"]: '' }]
+        }));
+    };
+
+    // Remove a specific debit or credit entry
+    const removeEntry = (type, index) => {
+        setJournalForm(prevState => ({
+            ...prevState,
+            [type]: prevState[type].filter((_, i) => i !== index)
+        }));
     };
 
     return (
@@ -60,61 +44,60 @@ const JournalEntry = () => {
 
                 <div className="title-subtitle-container">
                     <h1 className="subModule-title">Journal Entry</h1>
-                    <h2 className="subModule-subTitle">The detailed input of debit, credit, and entry line IDs for financial transactions.</h2>
+                    <h2 className="subModule-subTitle">Enter debit and credit details for transactions.</h2>
                 </div>
 
-                <div className="component-container">
-                    <div className="select-search-container">
-                        <Dropdown options={sortingChoices} style="selection" defaultOption="Sort Entry Line ID.." />
-                        <SearchBar />
-                    </div>
-
-                    <div className='buttons-container'>
-                        <Button name="Enter Entry Lines" variant="standard2" onclick={openModal} />
-                    </div>
-                </div>
-
-                <Table data={data} columns={columns} />
-            </div>
-
-            {/* Pop-up Modal */}
-            {isModalOpen && (
-                <div className="modal-overlay">
-                    <div className="modal-container">
-                        <div className="modal-header">
-                            <h2>Entry Line</h2>
-                            <button className="remove-btn" onClick={closeModal}>❌</button>
-                        </div>
-                        <div className="modal-body">
-                            <Forms type="number" formName="Entry Line ID*" placeholder="Enter Entry Line ID" value={journalForm.entryLineId} onChange={(e) => handleInputChange("entryLineId", e.target.value)} />
-                            <Forms type="number" formName="General Ledger Account ID*" placeholder="GL Account ID" value={journalForm.glAccountId} onChange={(e) => handleInputChange("glAccountId", e.target.value)} />
-                            <Forms type="number" formName="Journal ID*" placeholder="Enter journal ID" value={journalForm.journalId} onChange={(e) => handleInputChange("journalId", e.target.value)} />
-
-                            {/* Debit and Credit Inputs */}
-                            <Forms type="number" formName="Debit*" placeholder="Enter Debit" value={journalForm.debit} onChange={(e) => handleInputChange("debit", e.target.value)} />
-                            <Forms type="number" formName="Credit*" placeholder="Enter Credit" value={journalForm.credit} onChange={(e) => handleInputChange("credit", e.target.value)} />
-                            <Forms type="text" formName="Description*" value={journalForm.description} onChange={(e) => handleInputChange("description", e.target.value)} />
-
-                            {/* Add Another Debit or Credit Checkboxes */}
-                            <div className="checkbox-group">
-                                <label>
-                                    <input type="checkbox" checked={addAnotherDebit} onChange={() => handleCheckboxChange("debit")} />
-                                    Add Another Debit
-                                </label>
-                                <label>
-                                    <input type="checkbox" checked={addAnotherCredit} onChange={() => handleCheckboxChange("credit")} />
-                                    Add Another Credit
-                                </label>
+                <div className="form-container">
+                    <Forms 
+                        type="number" 
+                        formName="Entry Line ID*" 
+                        placeholder="Enter Entry Line ID" 
+                        value={journalForm.entryLineId} 
+                        onChange={(e) => setJournalForm({ ...journalForm, entryLineId: e.target.value })} 
+                    />
+                    
+                    {/* Debit Section */}
+                    <div className='account-section'>
+                        <h3>Debits</h3>
+                        {journalForm.debits.map((entry, index) => (
+                            <div key={index} className="debit-entry">
+                                <Forms type="number" formName="GL Account ID*" placeholder="Enter GL Account ID" value={entry.glAccountId} onChange={(e) => handleInputChange("debits", index, "glAccountId", e.target.value)} />
+                                <Forms type="number" formName="Journal ID*" placeholder="Enter Journal ID" value={entry.journalId} onChange={(e) => handleInputChange("debits", index, "journalId", e.target.value)} />
+                                <Forms type="number" formName="Debit*" placeholder="Enter Debit" value={entry.debit} onChange={(e) => handleInputChange("debits", index, "debit", e.target.value)} />
+                                <button className="remove-btn" onClick={() => removeEntry("debits", index)}>Remove</button>
                             </div>
-                        </div>
-
-                        <div className="modal-footer">
-                            <Button name="Add" variant="standard1" onclick={closeModal} />
-                            <Button name="Cancel" variant="standard2" onclick={closeModal} />
-                        </div>
+                        ))}
+                        <button className="add-btn" onClick={() => addEntry("debits")}>+ Add Debit</button>
                     </div>
+                    
+                    {/* Credit Section */}
+                    <div className='account-section'>
+                        <h3>Credits</h3>
+                        {journalForm.credits.map((entry, index) => (
+                            <div key={index} className="credit-entry">
+                                <Forms type="number" formName="GL Account ID*" placeholder="Enter GL Account ID" value={entry.glAccountId} onChange={(e) => handleInputChange("credits", index, "glAccountId", e.target.value)} />
+                                <Forms type="number" formName="Journal ID*" placeholder="Enter Journal ID" value={entry.journalId} onChange={(e) => handleInputChange("credits", index, "journalId", e.target.value)} />
+                                <Forms type="number" formName="Credit*" placeholder="Enter Credit" value={entry.credit} onChange={(e) => handleInputChange("credits", index, "credit", e.target.value)} />
+                                <button className="remove-btn" onClick={() => removeEntry("credits", index)}>Remove</button>
+                            </div>
+                        ))}
+                        <button className="add-btn" onClick={() => addEntry("credits")}>+ Add Credit</button>
+                    </div>
+
+                    <Forms 
+                        type="text" 
+                        formName="Description*" 
+                        placeholder="Enter Description" 
+                        value={journalForm.description} 
+                        onChange={(e) => setJournalForm({ ...journalForm, description: e.target.value })} 
+                    />
                 </div>
-            )}
+
+                <div className='buttons-container'>
+                    <Button name="Save" variant="standard1" onclick={() => console.log("Saving Entry", journalForm)} />
+                    <Button name="Cancel" variant="standard2" onclick={() => console.log("Cancel Entry")}/>
+                </div>
+            </div>
         </div>
     );
 };

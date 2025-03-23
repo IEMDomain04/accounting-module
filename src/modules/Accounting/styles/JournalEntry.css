@@ -1,128 +1,57 @@
-.JournalEntry .component-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: end;
-  gap: 30px;
-  margin-bottom: 1rem;
-}
-
-/* Button Styles */
-.JournalEntry .buttons-container {
-  display: flex;
-  justify-content: center;
-  gap: 30px;
-}
-
-/* Search and Drop down */
-.JournalEntry .select-search-container {
-  display: flex;
-  justify-content: center;
-  gap: 30px;
-}
-
-/* Overlay to cover the entire screen */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000; /* Ensures it's above all other elements */
-}
-
-/* Modal container */
-.modal-container {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 400px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  z-index: 1001; /* Ensures modal content stays above overlay */
-}
-
-/* Modal header */
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 10px;
-}
-
-/* Close button */
-.remove-btn {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-}
-
-/* Modal body */
-.modal-body {
+/* Form Container */
+.form-container {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-top: 10px;
+  gap: 15px;
+  max-width: 900px;
+  margin: auto;
 }
 
-/* Input fields */
-.input-container {
-  display: flex;
-  flex-direction: column;
-}
-
-.input-container label {
-  font-weight: 600;
-  margin-bottom: 5px;
-}
-
-.input-container input {
-  padding: 8px;
+/* Account Sections */
+.account-section {
+  padding: 15px;
+  border-radius: 6px;
+  background: #f8f9fa;
   border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 14px;
+  margin-bottom: 15px;
 }
 
-/* Checkboxes Group */
-.checkbox-group {
+.account-section h3 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+/* Debit & Credit Entries */
+.debit-entry, .credit-entry {
   display: flex;
-  flex-direction: column;
-  gap: 5px;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.debit-entry .remove-btn, .credit-entry .remove-btn {
+  background: red;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.add-btn {
+  background: green;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 5px;
   margin-top: 10px;
 }
 
-.checkbox-group label {
+/* Buttons */
+.buttons-container {
   display: flex;
-  align-items: center;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-/* Style for checkboxes */
-.checkbox-group input[type="checkbox"] {
-  margin-right: 8px;
-  width: 16px;
-  height: 16px;
-  cursor: pointer;
-}
-
-/* Modal footer */
-.modal-footer {
-  display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
+  gap: 10px;
   margin-top: 20px;
 }
-
-/* Buttons inside the modal */
-.modal-footer .btn {
-  padding: 10px 15px;
-  font-size: 14px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
