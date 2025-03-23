@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "../styles/ChartOfAccounts.css";
+import "../styles/Accounting-Global-Styling.css";
 import { accounts } from "./ListOfAccounts";
 import SearchBar from "../../../shared/components/SearchBar";
 import Button from "../components/Button";
@@ -39,14 +40,19 @@ const BodyContent = () => {
         setIsAdding(true);
     };
 
+    const handleRemoveNewRow = () => {
+        setIsAdding(false);
+        setNewAccount({ account_code: "", account_name: "", account_type: "" });
+    };
+
     // Handle Submit
     const handleSubmit = async () => {
         if (!newAccount.account_code || !newAccount.account_name || !newAccount.account_type) {
             return;
         }
-        
+
         // Check if the account_code already exists in the current data
-        const accountCodeExists = data.some(row => 
+        const accountCodeExists = data.some(row =>
             row[0] === Number(newAccount.account_code) // Compare as numbers since account_code is an integer
         );
 
@@ -54,7 +60,7 @@ const BodyContent = () => {
             alert("Account code already exists."); // Alert user if duplicate found
             return;
         }
-        
+
         // Submit new account data to the API when the Submit button is clicked
         try {
             console.log("Submitting data:", newAccount); // Debugging
@@ -77,52 +83,51 @@ const BodyContent = () => {
         }
     };
 
-    // Render table data including the form row if adding
     const renderTableData = () => {
-        if (isAdding) {
-            return [
-                [
-                    <Forms type="number" placeholder="Enter account code" value={newAccount.account_code} onChange={(e) => handleInputChange("account_code", e.target.value)} />,
-                    <Forms type="text" placeholder="Enter account name" value={newAccount.account_name} onChange={(e) => handleInputChange("account_name", e.target.value)} />,
+    if (isAdding) {
+        return [
+            [
+                <Forms type="number" placeholder="Enter account code" value={newAccount.account_code} onChange={(e) => handleInputChange("account_code", e.target.value)} />,
+                <Forms type="text" placeholder="Enter account name" value={newAccount.account_name} onChange={(e) => handleInputChange("account_name", e.target.value)} />,
+                <div className="account-type-container">
                     <Dropdown options={accounts} style="selection" defaultOption="Select account type" value={newAccount.account_type} onChange={(value) => handleInputChange("account_type", value)} />
-                ],
-                ...data
-            ];
-        } else {
-            return data;
-        }
-    };
+                    <button className="remove-btn" onClick={handleRemoveNewRow}>❌</button> 
+                </div>
+            ],
+            ...data
+        ];
+    } else {
+        return data;
+    }
+};
+
 
     return (
         <div className="chartAccounts">
             <div className="body-content-container">
-                
+
+                <div className="title-subtitle-container">
+                    <h1 className="subModule-title">Chart of Accounts</h1>
+                    <h2 className="subModule-subTitle">A structured list of all accounts used to record financial transactions in the system.</h2>
+                </div>
 
                 <div className="component-container">
 
-
-                    <div className="buttons-container">
-                        <Button name={isAdding ? "Adding..." : "Add Account"} variant="standard2" onclick={handleAddAccount} disabled={isAdding} />
-                        <Button name="Submit" variant="standard1" onclick={handleSubmit} />
-                        <Button name="Archive" variant="standard2" />
-                    </div>
-
-
-                    <div className="select-account-dropdown">
-                        <Dropdown options={accounts} style="selection" defaultOption="Sort account" />
-                    </div>
-
-
-                    <div className="input-field-container">
+                    <div className="select-search-container">
+                        <Dropdown options={accounts} style="selection" defaultOption="Sort account.." />
                         <SearchBar />
                     </div>
 
+                    <div className="buttons-container">
+                        <Button name={isAdding ? "Creating..." : "Create Account"} variant="standard2" onclick={handleAddAccount} disabled={isAdding} />
+                        <Button name="Submit" variant="standard1" onclick={handleSubmit} />
+                    </div>
 
                 </div>
 
-                
+
                 {/* Table Display */}
-                <Table data={renderTableData()} columns={columns} enableCheckbox={false} />
+                <Table data={renderTableData()} columns={columns} enableCheckbox={true} enableActions={true} />
             </div>
         </div>
     );

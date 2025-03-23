@@ -1,0 +1,18 @@
+.title-subtitle-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 2rem;
+}
+
+.title-subtitle-container .subModule-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: black;
+}
+
+.title-subtitle-container .subModule-subTitle {
+    font-size: 14px;
+    font-weight: normal;
+    color: #9FA1A6;
+}

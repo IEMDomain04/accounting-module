@@ -1,9 +1,10 @@
 .table-container {
     width: 100%;
-    max-height: 34rem; /* Adjust height as needed */
+    max-height: 30rem; /* Adjust height as needed */
     overflow-y: auto;
     overflow-x: auto;
     position: relative;
+    border-radius: 10px;
     box-shadow: 0px 4px 7.5px 1px rgba(0, 0, 0, 0.15);
 }
 
