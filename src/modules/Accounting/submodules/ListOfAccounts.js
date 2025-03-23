@@ -13,6 +13,11 @@ const accounts = [
     "Other Expenses"
   ]
 
+const sortingChoices = [
+  "Ascending",
+  "Descending",
+]
+
 // Objects for subAccounts
 const subAccounts = {
   assets: [
@@ -100,4 +105,4 @@ const sortByDate = [
   "Last month"
 ]
 
-export { accounts, subAccounts, sortByDate };
+export { accounts, subAccounts, sortByDate, sortingChoices };
