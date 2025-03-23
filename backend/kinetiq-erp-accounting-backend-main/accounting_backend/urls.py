@@ -22,5 +22,7 @@ urlpatterns = [
     path("", RedirectView.as_view(url="/api/chart-of-accounts/", permanent=False)),  # Redirect root to API
     path("admin/", admin.site.urls),
     path("api/", include("chart_of_accounts.urls")),  # Include your app's URLs
+    path("api/", include("journal_entry.urls")),  # Add this line
+    path("api/", include("general_ledger.urls")),  # Add this line
 ]
 

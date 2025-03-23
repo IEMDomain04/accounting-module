@@ -1,3 +1,7 @@
-from django.shortcuts import render
+from rest_framework import viewsets
+from .models import GeneralLedgerAccount
+from .serializers import GeneralLedgerAccountSerializer
 
-# Create your views here.
+class GeneralLedgerAccountViewSet(viewsets.ModelViewSet):
+    queryset = GeneralLedgerAccount.objects.all()
+    serializer_class = GeneralLedgerAccountSerializer
