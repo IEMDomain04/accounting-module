@@ -15,7 +15,7 @@ const BodyContent = () => {
         currencyId: '',
         invoiceId: ''
     });
-    const columns = ["Journal Id", "Journal Date", "Description", "Debit", "Credit", "Invoice Id", "Currency Id"];
+    const columns = ["Entry Line ID", "GL Account ID", "Journal ID", "Debit", "Credit", "Description"];
     const [data, setData] = useState([]);
 
     // Reusable function to format API data
