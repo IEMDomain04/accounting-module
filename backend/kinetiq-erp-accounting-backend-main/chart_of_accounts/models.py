@@ -1,7 +1,7 @@
 from django.db import models
 
 class ChartOfAccounts(models.Model):
-    account_code = models.IntegerField(primary_key=True)  # account_code is primary key
+    account_code = models.CharField(max_length=255, primary_key=True)  # Updated to CharField
     account_name = models.CharField(max_length=255)
     account_type = models.CharField(max_length=50, null=True, blank=True)  # nullable in DB
 
