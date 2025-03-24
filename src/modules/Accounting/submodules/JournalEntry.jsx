@@ -8,18 +8,17 @@ const JournalEntry = ({ journalId, journalDescription, onEntryCreated }) => {
     const [journalForm, setJournalForm] = useState({
         entryLineId: '',
         transactions: [{ type: 'debit', glAccountId: '', amount: '' }],
-        description: journalDescription || '' // Pre-fill description
+        description: journalDescription || '',
     });
     const [totalDebit, setTotalDebit] = useState(0);
     const [totalCredit, setTotalCredit] = useState(0);
 
     useEffect(() => {
-        // Update description if journalDescription changes
-        setJournalForm(prev => ({ ...prev, description: journalDescription || '' }));
+        setJournalForm((prev) => ({ ...prev, description: journalDescription || '' }));
     }, [journalDescription]);
 
     const handleInputChange = (index, field, value) => {
-        setJournalForm(prevState => {
+        setJournalForm((prevState) => {
             const updatedTransactions = prevState.transactions.map((entry, i) =>
                 i === index ? { ...entry, [field]: value } : entry
             );
@@ -29,15 +28,18 @@ const JournalEntry = ({ journalId, journalDescription, onEntryCreated }) => {
     };
 
     const addEntry = (type) => {
-        setJournalForm(prevState => {
-            const updatedTransactions = [...prevState.transactions, { type, glAccountId: '', amount: '' }];
+        setJournalForm((prevState) => {
+            const updatedTransactions = [
+                ...prevState.transactions,
+                { type, glAccountId: '', amount: '' },
+            ];
             updateTotals(updatedTransactions);
             return { ...prevState, transactions: updatedTransactions };
         });
     };
 
     const removeEntry = (index) => {
-        setJournalForm(prevState => {
+        setJournalForm((prevState) => {
             const updatedTransactions = prevState.transactions.filter((_, i) => i !== index);
             updateTotals(updatedTransactions);
             return { ...prevState, transactions: updatedTransactions };
@@ -46,10 +48,10 @@ const JournalEntry = ({ journalId, journalDescription, onEntryCreated }) => {
 
     const updateTotals = (transactions) => {
         const debitSum = transactions
-            .filter(t => t.type === 'debit')
+            .filter((t) => t.type === 'debit')
             .reduce((sum, t) => sum + (parseFloat(t.amount) || 0), 0);
         const creditSum = transactions
-            .filter(t => t.type === 'credit')
+            .filter((t) => t.type === 'credit')
             .reduce((sum, t) => sum + (parseFloat(t.amount) || 0), 0);
         setTotalDebit(debitSum);
         setTotalCredit(creditSum);
@@ -57,66 +59,64 @@ const JournalEntry = ({ journalId, journalDescription, onEntryCreated }) => {
 
     const handleSubmit = async () => {
         if (!journalForm.entryLineId || !journalForm.description) {
-            alert("Please fill in all required fields (Entry Line ID and Description).");
+            alert('Please fill in all required fields: Entry Line ID and Description.');
             return;
         }
         if (journalForm.transactions.length < 2) {
-            alert("At least one debit and one credit entry are required.");
+            alert('A journal entry requires at least one debit and one credit transaction.');
             return;
         }
         if (totalDebit !== totalCredit || totalDebit === 0) {
-            alert("Total Debit must equal Total Credit and cannot be zero.");
+            alert('Total Debit must equal Total Credit and cannot be zero.');
             return;
         }
 
         const requests = journalForm.transactions.map((transaction, index) => {
             const payload = {
+                entry_line_id: `${journalForm.entryLineId}-${index}-${Date.now()}`,
                 journal_entry: journalId || 10001,
                 gl_account: parseInt(transaction.glAccountId),
-                debit_amount: transaction.type === 'debit' ? parseFloat(transaction.amount).toFixed(2) : "0.00",
-                credit_amount: transaction.type === 'credit' ? parseFloat(transaction.amount).toFixed(2) : "0.00",
-                description: journalForm.description
+                debit_amount: transaction.type === 'debit' ? parseFloat(transaction.amount).toFixed(2) : '0.00',
+                credit_amount: transaction.type === 'credit' ? parseFloat(transaction.amount).toFixed(2) : '0.00',
+                description: journalForm.description,
             };
 
             return fetch('http://127.0.0.1:8000/api/journal-entry-lines/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(data => {
-                            throw new Error(JSON.stringify(data) || `HTTP Error ${response.status}`);
-                        });
-                    }
-                    return response.json();
-                });
+                body: JSON.stringify(payload),
+            }).then((response) => {
+                if (!response.ok) {
+                    return response.json().then((data) => {
+                        throw new Error(JSON.stringify(data) || `HTTP Error ${response.status}`);
+                    });
+                }
+                return response.json();
+            });
         });
 
         try {
             await Promise.all(requests);
 
-            // Update the parent JournalEntry with total_debit and total_credit
             const updatePayload = {
                 total_debit: totalDebit.toFixed(2),
-                total_credit: totalCredit.toFixed(2)
+                total_credit: totalCredit.toFixed(2),
             };
             await fetch(`http://127.0.0.1:8000/api/journal-entries/${journalId || 10001}/`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(updatePayload)
+                body: JSON.stringify(updatePayload),
             });
 
-            alert("Journal entry lines created successfully!");
+            alert('Journal entry lines created successfully!');
             setJournalForm({
                 entryLineId: '',
                 transactions: [{ type: 'debit', glAccountId: '', amount: '' }],
-                description: journalDescription || ''
+                description: journalDescription || '',
             });
             setTotalDebit(0);
             setTotalCredit(0);
 
-            // Notify parent (Journal) to refresh data
             if (onEntryCreated) {
                 onEntryCreated();
             }
@@ -127,20 +127,18 @@ const JournalEntry = ({ journalId, journalDescription, onEntryCreated }) => {
     };
 
     return (
-        <div className='JournalEntry'>
-            <div className='body-content-container'>
-
+        <div className="JournalEntry">
+            <div className="body-content-container">
                 <div className="title-subtitle-container">
                     <h1 className="subModule-title">Journal Entry</h1>
                     <h2 className="subModule-subTitle">Enter debit and credit details for transactions.</h2>
                 </div>
 
-                <div className='forms-buttons-container'>
-
-                    <div className='form-addrow-container'>
+                <div className="forms-buttons-container">
+                    <div className="form-addrow-container">
                         <div className="form-container">
                             <Forms
-                                type="number"
+                                type="text"
                                 formName="Entry Line ID*"
                                 placeholder="Enter Entry Line ID"
                                 value={journalForm.entryLineId}
@@ -155,27 +153,29 @@ const JournalEntry = ({ journalId, journalDescription, onEntryCreated }) => {
                             />
                         </div>
 
-                        <div className='add-debit-credit-container'>
-                            <Button name="+ Add debit" variant="standard2" onclick={() => addEntry("debit")} />
-                            <Button name="+ Add credit" variant="standard2" onclick={() => addEntry("credit")} />
+                        <div className="add-debit-credit-container">
+                            <Button name="+ Add debit" variant="standard2" onclick={() => addEntry('debit')} />
+                            <Button name="+ Add credit" variant="standard2" onclick={() => addEntry('credit')} />
                         </div>
-
                     </div>
 
-                    <div className='buttons-container'>
+                    <div className="buttons-container">
                         <Button name="Save" variant="standard1" onclick={handleSubmit} />
-                        <Button name="Cancel" variant="standard2" onclick={() => setJournalForm({
-                            entryLineId: '',
-                            transactions: [{ type: 'debit', glAccountId: '', amount: '' }],
-                            description: journalDescription || ''
-                        })} />
+                        <Button
+                            name="Cancel"
+                            variant="standard2"
+                            onclick={() =>
+                                setJournalForm({
+                                    entryLineId: '',
+                                    transactions: [{ type: 'debit', glAccountId: '', amount: '' }],
+                                    description: journalDescription || '',
+                                })
+                            }
+                        />
                     </div>
-
                 </div>
 
-
                 <div className="journal-table">
-
                     <div className="table-header">
                         <div className="column account-column">Accounts Affected</div>
                         <div className="column debit-column">Debit</div>
@@ -183,39 +183,45 @@ const JournalEntry = ({ journalId, journalDescription, onEntryCreated }) => {
                     </div>
 
                     {journalForm.transactions.map((entry, index) => (
-
-                        <div key={index} className={`table-row ${entry.type === "credit" ? "credit-row" : ""}`}>
-                            <div className={`column account-column ${entry.type === "credit" ? "indent" : ""}`}>
+                        <div
+                            key={index}
+                            className={`table-row ${entry.type === 'credit' ? 'credit-row' : ''}`}
+                        >
+                            <div
+                                className={`column account-column ${entry.type === 'credit' ? 'indent' : ''}`}
+                            >
                                 <Forms
-                                    type="number"
-                                    placeholder={entry.type === "credit" ? "To Account ID" : "Account ID"}
+                                    type="text"
+                                    placeholder={entry.type === 'credit' ? 'To Account ID' : 'Account ID'}
                                     value={entry.glAccountId}
-                                    onChange={(e) => handleInputChange(index, "glAccountId", e.target.value)}
+                                    onChange={(e) => handleInputChange(index, 'glAccountId', e.target.value)}
                                 />
                             </div>
 
                             <div className="column debit-column">
-                                {entry.type === "debit" && (
+                                {entry.type === 'debit' && (
                                     <Forms
                                         type="number"
                                         placeholder="Enter Debit"
                                         value={entry.amount}
-                                        onChange={(e) => handleInputChange(index, "amount", e.target.value)}
+                                        onChange={(e) => handleInputChange(index, 'amount', e.target.value)}
                                     />
                                 )}
                             </div>
 
                             <div className="column credit-column">
-                                {entry.type === "credit" && (
+                                {entry.type === 'credit' && (
                                     <Forms
                                         type="number"
                                         placeholder="Enter Credit"
                                         value={entry.amount}
-                                        onChange={(e) => handleInputChange(index, "amount", e.target.value)}
+                                        onChange={(e) => handleInputChange(index, 'amount', e.target.value)}
                                     />
                                 )}
                             </div>
-                            <button className="remove-btn" onClick={() => removeEntry(index)}>Remove</button>
+                            <button className="remove-btn" onClick={() => removeEntry(index)}>
+                                Remove
+                            </button>
                         </div>
                     ))}
 
@@ -225,7 +231,6 @@ const JournalEntry = ({ journalId, journalDescription, onEntryCreated }) => {
                         <div className="column credit-column">{totalCredit.toFixed(2)}</div>
                     </div>
                 </div>
-
             </div>
         </div>
     );
