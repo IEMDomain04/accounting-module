@@ -7,7 +7,7 @@ class JournalEntry(models.Model):
     total_debit = models.DecimalField(max_digits=15, decimal_places=2)
     total_credit = models.DecimalField(max_digits=15, decimal_places=2)
     invoice_id = models.IntegerField(blank=True, null=True)
-    currency_id = models.IntegerField()
+    currency_id = models.IntegerField(default=1)
 
     class Meta:
         db_table = "journal_entries"  
