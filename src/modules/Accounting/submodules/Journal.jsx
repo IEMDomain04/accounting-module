@@ -25,8 +25,8 @@ const Journal = () => {
         entry.journal_id || entry.id || '-',
         entry.journal_date || entry.date || '-',
         entry.description || '-',
-        entry.total_debit == 0 ? '-' : entry.total_debit, // Display '-' if 0.00
-        entry.total_credit == 0 ? '-' : entry.total_credit, // Display '-' if 0.00
+        entry.total_debit === 0 ? '-' : entry.total_debit, // Display '-' if 0.00
+        entry.total_credit === 0 ? '-' : entry.total_credit, // Display '-' if 0.00
         entry.invoice_id || '-',
         entry.currency_id || '-'
     ]);
@@ -62,13 +62,13 @@ const Journal = () => {
 
         // Prepare the new entry for optimistic update
         const newEntry = {
-            journal_id: 'temp-' + Date.now(), // Temporary ID for optimistic update
+            journal_id: journalForm.journalId, // Use the user-entered Journal ID
             journal_date: journalForm.journalDate,
             description: journalForm.description,
             total_debit: '0.00', // Still send 0.00 to API
             total_credit: '0.00', // Still send 0.00 to API
-            invoice_id: journalForm.invoiceId ? parseInt(journalForm.invoiceId) : null,
-            currency_id: parseInt(journalForm.currencyId)
+            invoice_id: journalForm.invoiceId || null, // Keep it a string or null
+            currency_id: journalForm.currencyId // Keep it a string
         };
 
         // Optimistically update the table (display '-' instead of 0.00)
@@ -76,20 +76,21 @@ const Journal = () => {
             newEntry.journal_id || '-',
             newEntry.journal_date || '-',
             newEntry.description || '-',
-            newEntry.total_debit == 0 ? '-' : newEntry.total_debit, // Display '-' if 0.00
-            newEntry.total_credit == 0 ? '-' : newEntry.total_credit, // Display '-' if 0.00
+            newEntry.total_debit === 0 ? '-' : newEntry.total_debit, // Display '-' if 0.00
+            newEntry.total_credit === 0 ? '-' : newEntry.total_credit, // Display '-' if 0.00
             newEntry.invoice_id || '-',
             newEntry.currency_id || '-'
         ]]);
 
         // Log the payload for debugging
         const payload = {
+                journal_id: journalForm.journalId, // Include the user-entered Journal ID
             journal_date: journalForm.journalDate,
             description: journalForm.description,
             total_debit: "0.00", // Required field, must send 0.00 to API
             total_credit: "0.00", // Required field, must send 0.00 to API
-            invoice_id: journalForm.invoiceId ? parseInt(journalForm.invoiceId) : null,
-            currency_id: parseInt(journalForm.currencyId)
+            invoice_id: journalForm.invoiceId || null, // Keep it a string or null
+            currency_id: journalForm.currencyId // Keep it a string
         };
         console.log('Submitting payload:', payload);
 
@@ -156,6 +157,13 @@ const Journal = () => {
                             <div className="form-group">
                                 <label>Journal Date*</label>
                                 <input
+                                    type="text"
+                                    placeholder="Enter Journal ID"
+                                    value={journalForm.journalId}
+                                    onChange={(e) => handleInputChange("journalId", e.target.value)}
+                                    className="text-input"
+                                />  
+                                <input
                                     type="date"
                                     value={journalForm.journalDate}
                                     onChange={(e) => handleInputChange("journalDate", e.target.value)}
@@ -170,14 +178,14 @@ const Journal = () => {
                                 onChange={(e) => handleInputChange("description", e.target.value)}
                             />
                             <Forms
-                                type="number"
+                                type="text" // Changed to handle alphanumeric values
                                 formName="Invoice ID"
                                 placeholder="Enter invoice ID (optional)"
                                 value={journalForm.invoiceId}
                                 onChange={(e) => handleInputChange("invoiceId", e.target.value)}
                             />
                             <Forms
-                                type="number"
+                                type="text" // Changed to handle alphanumeric values
                                 formName="Currency ID*"
                                 placeholder="Enter currency ID"
                                 value={journalForm.currencyId}
