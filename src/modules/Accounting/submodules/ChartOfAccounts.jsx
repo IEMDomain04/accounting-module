@@ -23,7 +23,7 @@ const BodyContent = () => {
 
     // Fetch data from API when the component mounts (Runs only once)
     useEffect(() => {
-        axios.get("http://127.0.0.1:8000/api/chart-of-accounts/") // Corrected endpoint
+        axios.get("http://127.0.0.1:8000/api/chart-of-accounts/")
             .then(response => {
                 setData(response.data.map(acc => [acc.account_code, acc.account_name, acc.account_type]));
             })
@@ -53,7 +53,7 @@ const BodyContent = () => {
 
         // Check if the account_code already exists in the current data
         const accountCodeExists = data.some(row =>
-            row[0] === Number(newAccount.account_code) // Compare as numbers since account_code is an integer
+            row[0] === newAccount.account_code // Compare as strings
         );
 
         if (accountCodeExists) {
@@ -65,7 +65,7 @@ const BodyContent = () => {
         try {
             console.log("Submitting data:", newAccount); // Debugging
 
-            const response = await axios.post("http://127.0.0.1:8000/api/chart-of-accounts/", newAccount); // Corrected endpoint
+            const response = await axios.post("http://127.0.0.1:8000/api/chart-of-accounts/", newAccount);
 
             console.log("Response:", response); // Check response
 
@@ -84,23 +84,22 @@ const BodyContent = () => {
     };
 
     const renderTableData = () => {
-    if (isAdding) {
-        return [
-            [
-                <Forms type="number" placeholder="Enter account code" value={newAccount.account_code} onChange={(e) => handleInputChange("account_code", e.target.value)} />,
-                <Forms type="text" placeholder="Enter account name" value={newAccount.account_name} onChange={(e) => handleInputChange("account_name", e.target.value)} />,
-                <div className="account-type-container">
-                    <Dropdown options={accounts} style="selection" defaultOption="Select account type" value={newAccount.account_type} onChange={(value) => handleInputChange("account_type", value)} />
-                    <button className="remove-btn" onClick={handleRemoveNewRow}>❌</button> 
-                </div>
-            ],
-            ...data
-        ];
-    } else {
-        return data;
-    }
-};
-
+        if (isAdding) {
+            return [
+                [
+                    <Forms type="text" placeholder="Enter account code" value={newAccount.account_code} onChange={(e) => handleInputChange("account_code", e.target.value)} />,
+                    <Forms type="text" placeholder="Enter account name" value={newAccount.account_name} onChange={(e) => handleInputChange("account_name", e.target.value)} />,
+                    <div className="account-type-container">
+                        <Dropdown options={accounts} style="selection" defaultOption="Select account type" value={newAccount.account_type} onChange={(value) => handleInputChange("account_type", value)} />
+                        <button className="remove-btn" onClick={handleRemoveNewRow}>❌</button> 
+                    </div>
+                ],
+                ...data
+            ];
+        } else {
+            return data;
+        }
+    };
 
     return (
         <div className="chartAccounts">
@@ -124,7 +123,6 @@ const BodyContent = () => {
                     </div>
 
                 </div>
-
 
                 {/* Table Display */}
                 <Table data={renderTableData()} columns={columns} enableCheckbox={true} enableActions={true} />
