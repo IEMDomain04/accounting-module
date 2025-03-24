@@ -1,107 +1,82 @@
-/* Journal Entry Container */
-.JournalEntry {
-  max-width: 900px;
-  margin: 20px auto;
-  background: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+/* Forms and Add Debit Credit  */
+.JournalEntry .forms-buttons-container {
+  display: flex;
+  justify-content: space-between;
 }
 
-/* Title and Subtitle */
-.title-subtitle-container {
-  text-align: center;
-  margin-bottom: 20px;
+.JournalEntry .form-addrow-container {
+  display: flex;
+  align-items: end;
+  gap: 2rem;
 }
 
-.subModule-title {
-  font-size: 24px;
-  font-weight: bold;
-  color: #333;
-}
-
-.subModule-subTitle {
-  font-size: 16px;
-  color: #666;
-}
-
-/* Form Inputs */
-.form-container {
+.JournalEntry .form-container {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 20px;
+  width: 20rem;
+  gap: 1rem;
+}
+
+.JournalEntry .add-debit-credit-container {
+  display: flex;
+  gap: 1rem;
+}
+
+.JournalEntry .buttons-container {
+  display: flex;
+  align-items: end;
+  gap: 1rem;
 }
 
 /* Journal Table Styling */
-.journal-table {
+.JournalEntry .journal-table {
   width: 100%;
+  max-height: 24rem;
   border-collapse: collapse;
   margin-top: 20px;
+  overflow-y: auto; /* Enables vertical scrolling */
+  display: block; /* Makes overflow work properly */
 }
 
-.table-header {
+/* Scrollbar Styling */
+.JournalEntry .journal-table::-webkit-scrollbar {
+  width: 4px;
+  height: 10px;
+}
+
+.JournalEntry .journal-table::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 2px;
+}
+
+.JournalEntry .journal-table::-webkit-scrollbar-thumb {
+  background: #5a9ecf;
+  border-radius: 2px;
+}
+
+.JournalEntry .journal-table::-webkit-scrollbar-thumb:hover {
+  background: #4a8bb3;
+}
+
+.JournalEntry .table-header {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 0.5fr;
-  background-color: #4CAF50;
+  grid-template-columns: 1fr .5fr .5fr 0.2fr;
+  background-color: #5a9ecf;
   color: white;
   font-weight: bold;
-  padding: 10px;
+  padding: 1rem;
   border-radius: 4px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
-.table-row {
+/* Ensure rows stay inside scrollable container */
+.JournalEntry .table-row, .totals-row, .totals-row2 {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 0.5fr;
-  padding: 10px;
+  grid-template-columns: 1fr .5fr .5fr 0.2fr;
+  gap: 10px;
+  padding: 1rem;
   border-bottom: 1px solid #ccc;
   align-items: center;
-}
-
-/* Input Fields */
-.column input {
-  width: 100%;
-  padding: 5px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 14px;
-}
-
-/* Indentation for Credit Entries */
-.credit-row .account-column {
-  padding-left: 20px; /* Indent credits under debits */
-  font-style: italic;
-  font-weight: bold;
-}
-
-/* Buttons */
-.add-btn, .remove-btn {
-  margin: 10px;
-  padding: 6px 12px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  cursor: pointer;
-  border-radius: 5px;
-  transition: background 0.3s ease-in-out;
-}
-
-.add-btn:hover, .remove-btn:hover {
-  background-color: #0056b3;
-}
-
-.remove-btn {
-  background-color: #dc3545;
-}
-
-.remove-btn:hover {
-  background-color: #b21f2d;
-}
-
-/* Buttons Container */
-.buttons-container {
-  display: flex;
-  gap: 10px;
-  margin-top: 20px;
-  justify-content: center;
 }

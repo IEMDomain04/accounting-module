@@ -83,14 +83,14 @@ const JournalEntry = ({ journalId, journalDescription, onEntryCreated }) => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(data => {
-                        throw new Error(JSON.stringify(data) || `HTTP Error ${response.status}`);
-                    });
-                }
-                return response.json();
-            });
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(data => {
+                            throw new Error(JSON.stringify(data) || `HTTP Error ${response.status}`);
+                        });
+                    }
+                    return response.json();
+                });
         });
 
         try {
@@ -129,36 +129,61 @@ const JournalEntry = ({ journalId, journalDescription, onEntryCreated }) => {
     return (
         <div className='JournalEntry'>
             <div className='body-content-container'>
+
                 <div className="title-subtitle-container">
                     <h1 className="subModule-title">Journal Entry</h1>
                     <h2 className="subModule-subTitle">Enter debit and credit details for transactions.</h2>
                 </div>
 
-                <div className="form-container">
-                    <Forms
-                        type="number"
-                        formName="Entry Line ID*"
-                        placeholder="Enter Entry Line ID"
-                        value={journalForm.entryLineId}
-                        onChange={(e) => setJournalForm({ ...journalForm, entryLineId: e.target.value })}
-                    />
-                    <Forms
-                        type="text"
-                        formName="Description*"
-                        placeholder="Enter Description"
-                        value={journalForm.description}
-                        onChange={(e) => setJournalForm({ ...journalForm, description: e.target.value })}
-                    />
+                <div className='forms-buttons-container'>
+
+                    <div className='form-addrow-container'>
+                        <div className="form-container">
+                            <Forms
+                                type="number"
+                                formName="Entry Line ID*"
+                                placeholder="Enter Entry Line ID"
+                                value={journalForm.entryLineId}
+                                onChange={(e) => setJournalForm({ ...journalForm, entryLineId: e.target.value })}
+                            />
+                            <Forms
+                                type="text"
+                                formName="Description*"
+                                placeholder="Enter Description"
+                                value={journalForm.description}
+                                onChange={(e) => setJournalForm({ ...journalForm, description: e.target.value })}
+                            />
+                        </div>
+
+                        <div className='add-debit-credit-container'>
+                            <Button name="+ Add debit" variant="standard2" onclick={() => addEntry("debit")} />
+                            <Button name="+ Add credit" variant="standard2" onclick={() => addEntry("credit")} />
+                        </div>
+
+                    </div>
+
+                    <div className='buttons-container'>
+                        <Button name="Save" variant="standard1" onclick={handleSubmit} />
+                        <Button name="Cancel" variant="standard2" onclick={() => setJournalForm({
+                            entryLineId: '',
+                            transactions: [{ type: 'debit', glAccountId: '', amount: '' }],
+                            description: journalDescription || ''
+                        })} />
+                    </div>
+
                 </div>
 
+
                 <div className="journal-table">
+
                     <div className="table-header">
-                        <div className="column account-column">Particulars</div>
+                        <div className="column account-column">Accounts Affected</div>
                         <div className="column debit-column">Debit</div>
                         <div className="column credit-column">Credit</div>
                     </div>
 
                     {journalForm.transactions.map((entry, index) => (
+
                         <div key={index} className={`table-row ${entry.type === "credit" ? "credit-row" : ""}`}>
                             <div className={`column account-column ${entry.type === "credit" ? "indent" : ""}`}>
                                 <Forms
@@ -168,6 +193,7 @@ const JournalEntry = ({ journalId, journalDescription, onEntryCreated }) => {
                                     onChange={(e) => handleInputChange(index, "glAccountId", e.target.value)}
                                 />
                             </div>
+
                             <div className="column debit-column">
                                 {entry.type === "debit" && (
                                     <Forms
@@ -178,6 +204,7 @@ const JournalEntry = ({ journalId, journalDescription, onEntryCreated }) => {
                                     />
                                 )}
                             </div>
+
                             <div className="column credit-column">
                                 {entry.type === "credit" && (
                                     <Forms
@@ -195,21 +222,15 @@ const JournalEntry = ({ journalId, journalDescription, onEntryCreated }) => {
                     <div className="totals-row">
                         <div className="column account-column">Totals</div>
                         <div className="column debit-column">{totalDebit.toFixed(2)}</div>
-                        <div className="column credit-column">{totalCredit.toFixed(2)}</div>
                     </div>
 
-                    <button className="add-btn" onClick={() => addEntry("debit")}>+ Add Debit</button>
-                    <button className="add-btn" onClick={() => addEntry("credit")}>+ Add Credit</button>
+                    <div className="totals-row2">
+                        <p></p>
+                        <p></p>
+                        <div className="column credit-column">{totalCredit.toFixed(2)}</div>
+                    </div>
                 </div>
 
-                <div className='buttons-container'>
-                    <Button name="Save" variant="standard1" onclick={handleSubmit} />
-                    <Button name="Cancel" variant="standard2" onclick={() => setJournalForm({
-                        entryLineId: '',
-                        transactions: [{ type: 'debit', glAccountId: '', amount: '' }],
-                        description: journalDescription || ''
-                    })} />
-                </div>
             </div>
         </div>
     );
