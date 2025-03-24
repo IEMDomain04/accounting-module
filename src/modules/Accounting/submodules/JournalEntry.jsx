@@ -75,12 +75,12 @@ const JournalEntry = ({ journalId, journalDescription, onEntryCreated }) => {
             const payload = {
                 entry_line_id: `${journalForm.entryLineId}-${index}-${Date.now()}`,
                 journal_entry: journalId || 10001,
-                gl_account: parseInt(transaction.glAccountId),
+                gl_account_id: parseInt(transaction.glAccountId), // Fixed to match model
                 debit_amount: transaction.type === 'debit' ? parseFloat(transaction.amount).toFixed(2) : '0.00',
                 credit_amount: transaction.type === 'credit' ? parseFloat(transaction.amount).toFixed(2) : '0.00',
                 description: journalForm.description,
             };
-
+            console.log('Submitting payload:', payload); // Debug
             return fetch('http://127.0.0.1:8000/api/journal-entry-lines/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -91,22 +91,28 @@ const JournalEntry = ({ journalId, journalDescription, onEntryCreated }) => {
                         throw new Error(JSON.stringify(data) || `HTTP Error ${response.status}`);
                     });
                 }
-                return response.json();
+                return response.json().then(data => {
+                    console.log('POST response:', data); // Debug
+                    return data;
+                });
             });
         });
 
         try {
             await Promise.all(requests);
-
             const updatePayload = {
                 total_debit: totalDebit.toFixed(2),
                 total_credit: totalCredit.toFixed(2),
             };
-            await fetch(`http://127.0.0.1:8000/api/journal-entries/${journalId || 10001}/`, {
+            const updateResponse = await fetch(`http://127.0.0.1:8000/api/journal-entries/${journalId || 10001}/`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updatePayload),
             });
+
+            if (!updateResponse.ok) {
+                throw new Error(`Failed to update journal totals: ${updateResponse.status}`);
+            }
 
             alert('Journal entry lines created successfully!');
             setJournalForm({

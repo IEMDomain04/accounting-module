@@ -20,38 +20,47 @@ const BodyContent = () => {
     const columns = ["Entry Line ID", "GL Account ID", "Account name", "Journal ID", "Debit", "Credit", "Description"];
     const [data, setData] = useState([]);
 
-    // Format account keys to match subAccounts object keys
     const formatAccountKey = (account) => {
         return account
-            .replace(/\s(.)/g, (match) => match.toUpperCase()) // Capitalize letter after space
-            .replace(/\s+|-|&/g, '') // Remove spaces, hyphens, ampersands
-            .replace(/\(.*?\)/g, '') // Remove parentheses and contents inside
-            .replace(/^[A-Z]/, (match) => match.toLowerCase()); // Lowercase first letter
+            .replace(/\s(.)/g, (match) => match.toUpperCase())
+            .replace(/\s+|-|&/g, '')
+            .replace(/\(.*?\)/g, '')
+            .replace(/^[A-Z]/, (match) => match.toLowerCase());
     };
 
     useEffect(() => {
         if (selectedAccount) {
             const key = formatAccountKey(selectedAccount);
             setFilteredSubAccounts(subAccounts[key] || []);
-            setSelectedSubAccount(""); // Reset subaccount when a new account is selected
+            setSelectedSubAccount("");
         }
     }, [selectedAccount]);
 
-    // Fetch data
     const fetchData = () => {
-        fetch('http://127.0.0.1:8000/api/journal-entries/')
+        fetch('http://127.0.0.1:8000/api/journal-entry-lines/')
             .then(response => response.json())
             .then(result => {
                 console.log('API Response (fetchData):', result);
-                setData(result.map(entry => ([
-                    entry.journal_id || entry.id || '-',
-                    entry.journal_date || entry.date || '-',
-                    entry.description || '-',
-                    entry.total_debit == 0 ? '-' : entry.total_debit,
-                    entry.total_credit == 0 ? '-' : entry.total_credit,
-                    entry.invoice_id || '-',
-                    entry.currency_id || '-'
-                ])));
+                if (result.length > 0) {
+                    console.log('Keys in first entry:', Object.keys(result[0]));
+                    console.log('First entry full object:', result[0]);
+                    console.log('GL Account ID value:', result[0].gl_account_id);
+                } else {
+                    console.log('No data returned from API - Did JournalEntry save?');
+                }
+                setData(result.map(entry => {
+                    const row = [
+                        entry.entry_line_id || entry.id || '-',           // "Entry Line ID"
+                        entry.gl_account_id || '-',                        // "GL Account ID"
+                        entry.account_name || '-',                         // "Account name"
+                        entry.journal_id || entry.journal_entry || '-',    // "Journal ID"
+                        entry.debit_amount || '0.00',                      // "Debit"
+                        entry.credit_amount || '0.00',                     // "Credit"
+                        entry.description || '-'                           // "Description"
+                    ];
+                    console.log('Mapped row:', row);
+                    return row;
+                }));
             })
             .catch(error => console.error('Error fetching data:', error));
     };
@@ -74,21 +83,27 @@ const BodyContent = () => {
             invoice_id: journalForm.invoiceId ? parseInt(journalForm.invoiceId) : null,
             currency_id: parseInt(journalForm.currencyId)
         };
-        console.log('Submitting payload:', payload);
 
-        fetch('http://127.0.0.1:8000/api/journal-entries/', {
+        fetch('http://127.0.0.1:8000/api/journal-entry-lines/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then((data) => {
+                        throw new Error(JSON.stringify(data) || `HTTP Error ${response.status}`);
+                    });
+                }
+                return response.json();
+            })
             .then(data => {
                 alert("Journal entry created successfully!");
-                fetchData();
                 setJournalForm({ journalId: '', journalDate: '', description: '', currencyId: '', invoiceId: '' });
+                fetchData(); // Refresh table data
             })
             .catch(error => {
-                console.error('Error submitting data:', error.message);
+                console.error('Error submitting data:', error);
                 alert(`Error: ${error.message}`);
             });
     };
@@ -103,14 +118,12 @@ const BodyContent = () => {
 
                 <div className="component-container flex gap-4">
                     <Forms type="text" placeholder="Search account ID..." />
-                    
                     <Dropdown 
                         options={accounts} 
                         style="selection" 
                         defaultOption="Select account..." 
                         onChange={setSelectedAccount}
                     />
-                    
                     <Dropdown 
                         options={filteredSubAccounts.length > 0 ? filteredSubAccounts : ["No subaccounts available"]} 
                         style="selection" 
