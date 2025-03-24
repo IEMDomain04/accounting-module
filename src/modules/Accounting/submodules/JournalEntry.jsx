@@ -222,11 +222,6 @@ const JournalEntry = ({ journalId, journalDescription, onEntryCreated }) => {
                     <div className="totals-row">
                         <div className="column account-column">Totals</div>
                         <div className="column debit-column">{totalDebit.toFixed(2)}</div>
-                    </div>
-
-                    <div className="totals-row2">
-                        <p></p>
-                        <p></p>
                         <div className="column credit-column">{totalCredit.toFixed(2)}</div>
                     </div>
                 </div>
