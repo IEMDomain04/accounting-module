@@ -1,57 +1,107 @@
-/* Form Container */
+/* Journal Entry Container */
+.JournalEntry {
+  max-width: 900px;
+  margin: 20px auto;
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Title and Subtitle */
+.title-subtitle-container {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.subModule-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+}
+
+.subModule-subTitle {
+  font-size: 16px;
+  color: #666;
+}
+
+/* Form Inputs */
 .form-container {
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  max-width: 900px;
-  margin: auto;
+  gap: 12px;
+  margin-bottom: 20px;
 }
 
-/* Account Sections */
-.account-section {
-  padding: 15px;
-  border-radius: 6px;
-  background: #f8f9fa;
-  border: 1px solid #ccc;
-  margin-bottom: 15px;
+/* Journal Table Styling */
+.journal-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
 }
 
-.account-section h3 {
-  font-size: 1.2rem;
-  margin-bottom: 10px;
+.table-header {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 0.5fr;
+  background-color: #4CAF50;
+  color: white;
+  font-weight: bold;
+  padding: 10px;
+  border-radius: 4px;
 }
 
-/* Debit & Credit Entries */
-.debit-entry, .credit-entry {
-  display: flex;
+.table-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 0.5fr;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
 }
 
-.debit-entry .remove-btn, .credit-entry .remove-btn {
-  background: red;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  cursor: pointer;
-  border-radius: 5px;
+/* Input Fields */
+.column input {
+  width: 100%;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
 }
 
-.add-btn {
-  background: green;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  cursor: pointer;
-  border-radius: 5px;
-  margin-top: 10px;
+/* Indentation for Credit Entries */
+.credit-row .account-column {
+  padding-left: 20px; /* Indent credits under debits */
+  font-style: italic;
+  font-weight: bold;
 }
 
 /* Buttons */
+.add-btn, .remove-btn {
+  margin: 10px;
+  padding: 6px 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background 0.3s ease-in-out;
+}
+
+.add-btn:hover, .remove-btn:hover {
+  background-color: #0056b3;
+}
+
+.remove-btn {
+  background-color: #dc3545;
+}
+
+.remove-btn:hover {
+  background-color: #b21f2d;
+}
+
+/* Buttons Container */
 .buttons-container {
   display: flex;
-  justify-content: flex-end;
   gap: 10px;
   margin-top: 20px;
+  justify-content: center;
 }
