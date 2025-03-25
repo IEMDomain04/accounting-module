@@ -1,4 +1,5 @@
 import React from 'react';
+import '../styles/Accounting-Global-Styling.css';
 import '../styles/GeneralLedger.css';
 import Forms from '../components/Forms';
 import Table from '../components/Table';
