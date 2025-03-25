@@ -20,13 +20,13 @@ const BodyContent = () => {
     const columns = ["Entry Line ID", "GL Account ID", "Account name", "Journal ID", "Debit", "Credit", "Description"];
     const [data, setData] = useState([]);
 
-    // Format account keys to match the subAccounts keys
+    // Format account keys to match subAccounts object keys
     const formatAccountKey = (account) => {
         return account
-            .replace(/\s+|&/g, '') // Remove spaces and ampersands
+            .replace(/\s(.)/g, (match) => match.toUpperCase()) // Capitalize letter after space
+            .replace(/\s+|-|&/g, '') // Remove spaces, hyphens, ampersands
             .replace(/\(.*?\)/g, '') // Remove parentheses and contents inside
-            .replace(/-/g, '') // Remove hyphens
-            .toLowerCase();
+            .replace(/^[A-Z]/, (match) => match.toLowerCase()); // Lowercase first letter
     };
 
     useEffect(() => {
@@ -86,7 +86,6 @@ const BodyContent = () => {
                 alert("Journal entry created successfully!");
                 fetchData();
                 setJournalForm({ journalId: '', journalDate: '', description: '', currencyId: '', invoiceId: '' });
-                setIsModalOpen(false);
             })
             .catch(error => {
                 console.error('Error submitting data:', error.message);
@@ -103,6 +102,8 @@ const BodyContent = () => {
                 </div>
 
                 <div className="component-container flex gap-4">
+                    <Forms type="text" placeholder="Search account ID..." />
+                    
                     <Dropdown 
                         options={accounts} 
                         style="selection" 
