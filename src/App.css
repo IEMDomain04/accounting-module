@@ -309,7 +309,7 @@ img {
 }
 
 .sidebar-submodule-empty-container.opened {
-  max-height: 10rem; 
+  max-height: 30rem; 
   opacity: 1;
 }
 
