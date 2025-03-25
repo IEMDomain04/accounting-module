@@ -79,7 +79,7 @@ function App() {
       "Chart of Accounts": "ChartOfAccounts",
       "Journal": "Journal",
       "Journal Entry": "JournalEntry",
-      "Journal Entry Lines": "JournalEntryLines",
+      "General Ledger": "GeneralLedger",
       "General Ledger Accounts": "GeneralLedgerAccounts",
       "Currency": "Currency",
       "Official Receipts": "OfficialReceipts",
