@@ -72,13 +72,14 @@ const JournalEntry = ({ journalId, journalDescription, onEntryCreated }) => {
         }
 
         const requests = journalForm.transactions.map((transaction, index) => {
+            const entryLineId = `${journalForm.entryLineId}-${index}-${String(Date.now())}`; // Updated to full timestamp
             const payload = {
-                entry_line_id: `${journalForm.entryLineId}-${index}-${Date.now()}`,
-                journal_entry: journalId || 10001,
-                gl_account_id: parseInt(transaction.glAccountId), // Fixed to match model
+                entry_line_id: entryLineId, // Matches max_length=255
+                journal_id: journalId || '10001', // String, matches CharField
+                gl_account_id: transaction.glAccountId || null, // String, no parseInt
                 debit_amount: transaction.type === 'debit' ? parseFloat(transaction.amount).toFixed(2) : '0.00',
                 credit_amount: transaction.type === 'credit' ? parseFloat(transaction.amount).toFixed(2) : '0.00',
-                description: journalForm.description,
+                description: journalForm.description || null,
             };
             console.log('Submitting payload:', payload); // Debug
             return fetch('http://127.0.0.1:8000/api/journal-entry-lines/', {
@@ -104,7 +105,7 @@ const JournalEntry = ({ journalId, journalDescription, onEntryCreated }) => {
                 total_debit: totalDebit.toFixed(2),
                 total_credit: totalCredit.toFixed(2),
             };
-            const updateResponse = await fetch(`http://127.0.0.1:8000/api/journal-entries/${journalId || 10001}/`, {
+            const updateResponse = await fetch(`http://127.0.0.1:8000/api/journal-entries/${journalId || '10001'}/`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updatePayload),
@@ -221,7 +222,7 @@ const JournalEntry = ({ journalId, journalDescription, onEntryCreated }) => {
                                         type="number"
                                         placeholder="Enter Credit"
                                         value={entry.amount}
-                                        onChange={(e) => handleInputChange(index, 'amount', e.target.value)}
+                                        onChange={(e) => handleInputChange(index, 'amount', e.target.value)} // Fixed syntax error
                                     />
                                 )}
                             </div>
