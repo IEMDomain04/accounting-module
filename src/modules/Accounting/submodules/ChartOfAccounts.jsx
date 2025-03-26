@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "../styles/ChartOfAccounts.css";
 import "../styles/Accounting-Global-Styling.css";
 import { accounts } from "./ListOfAccounts";
 import SearchBar from "../../../shared/components/SearchBar";
@@ -89,7 +88,7 @@ const BodyContent = () => {
                 [
                     <Forms type="text" placeholder="Enter account code" value={newAccount.account_code} onChange={(e) => handleInputChange("account_code", e.target.value)} />,
                     <Forms type="text" placeholder="Enter account name" value={newAccount.account_name} onChange={(e) => handleInputChange("account_name", e.target.value)} />,
-                    <div className="account-type-container">
+                    <div className="flex gap-2">
                         <Dropdown options={accounts} style="selection" defaultOption="Select account type" value={newAccount.account_type} onChange={(value) => handleInputChange("account_type", value)} />
                         <button className="remove-btn" onClick={handleRemoveNewRow}>❌</button> 
                     </div>
@@ -110,14 +109,14 @@ const BodyContent = () => {
                     <h2 className="subModule-subTitle">A structured list of all accounts used to record financial transactions in the system.</h2>
                 </div>
 
-                <div className="component-container">
+                <div className="flex justify-between !mb-4">
 
-                    <div className="select-search-container">
+                    <div className="flex gap-10">
                         <Dropdown options={accounts} style="selection" defaultOption="Sort account.." />
                         <SearchBar />
                     </div>
 
-                    <div className="buttons-container">
+                    <div className="flex gap-10">
                         <Button name={isAdding ? "Creating..." : "Create Account"} variant="standard2" onclick={handleAddAccount} disabled={isAdding} />
                         <Button name="Submit" variant="standard1" onclick={handleSubmit} />
                     </div>

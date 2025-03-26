@@ -104,7 +104,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'accounting_module',
         'USER': 'postgres',
-        'PASSWORD': 'zxcxcz.',
+        'PASSWORD': 'admin10',
         'HOST': 'localhost',
         'PORT': '5432',
         'OPTIONS': {
