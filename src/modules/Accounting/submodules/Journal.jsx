@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/Accounting-Global-Styling.css';
-import '../styles/Journal.css';
 import { sortingChoices } from './ListOfAccounts';
 import Button from '../components/Button';
 import Dropdown from '../components/Dropdown';
 import Table from '../components/Table';
 import SearchBar from "../../../shared/components/SearchBar";
 import Forms from '../components/Forms';
+import JournalModalInput from '../components/JournalModalInput';
 
 const Journal = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -84,7 +84,7 @@ const Journal = () => {
 
         // Log the payload for debugging
         const payload = {
-                journal_id: journalForm.journalId, // Include the user-entered Journal ID
+            journal_id: journalForm.journalId, // Include the user-entered Journal ID
             journal_date: journalForm.journalDate,
             description: journalForm.description,
             total_debit: "0.00", // Required field, must send 0.00 to API
@@ -147,63 +147,14 @@ const Journal = () => {
                 <Table data={data} columns={columns} />
             </div>
 
-            {/* Pop-up Modal */}
-            {isModalOpen && (
-                <div className="modal-overlay">
-                    <div className="modal-container">
-                        <div className="modal-header">
-                            <h2>Create Journal ID</h2>
-                            <button className="close-btn" onClick={closeModal}>❌</button>
-                        </div>
-                        <div className="modal-body">
-                            <div className="form-group">
-                                <label>Journal Date*</label>
-                                <input
-                                    type="date"
-                                    value={journalForm.journalDate}
-                                    onChange={(e) => handleInputChange("journalDate", e.target.value)}
-                                    className="date-input"
-                                />
-                            </div>
+            <JournalModalInput
+                isModalOpen={isModalOpen}
+                closeModal={closeModal}
+                journalForm={journalForm}
+                handleInputChange={handleInputChange}
+                handleSubmit={handleSubmit}
+            />
 
-                            <Forms
-                                type="text"
-                                formName="Journal ID*"
-                                placeholder="Enter Journal ID"
-                                value={journalForm.journalId}
-                                onChange={(e) => handleInputChange("journalId", e.target.value)}
-                                className="text-input"
-                            />
-
-                            <Forms
-                                type="text"
-                                formName="Description*"
-                                placeholder="Enter Description"
-                                value={journalForm.description}
-                                onChange={(e) => handleInputChange("description", e.target.value)}
-                            />
-                            <Forms
-                                type="text" // Changed to handle alphanumeric values
-                                formName="Invoice ID"
-                                placeholder="Enter invoice ID (optional)"
-                                value={journalForm.invoiceId}
-                                onChange={(e) => handleInputChange("invoiceId", e.target.value)}
-                            />
-                            <Forms
-                                type="text" // Changed to handle alphanumeric values
-                                formName="Currency ID*"
-                                placeholder="Enter currency ID"
-                                value={journalForm.currencyId}
-                                onChange={(e) => handleInputChange("currencyId", e.target.value)}
-                            />
-                        </div>
-                        <div className="modal-footer">
-                            <Button name="Add" variant="standard1" onclick={handleSubmit} />
-                            <Button name="Cancel" variant="standard2" onclick={closeModal} />
-                        </div>
-                    </div>
-                </div>
-            )}
         </div>
     );
 };

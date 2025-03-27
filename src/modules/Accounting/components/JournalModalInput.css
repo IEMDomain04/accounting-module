@@ -21,11 +21,17 @@
   position: relative; /* Ensure stacking inside overlay */
 }
 
-
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 1rem;
+}
+
+.form-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .close-btn {
@@ -46,4 +52,14 @@
   display: flex;
   justify-content: space-between;
   margin-top: 20px;
+}
+
+input[type="date"] {
+  text-align: center;
+  padding: 0 1rem;
+  color: rgb(69, 69, 69);
+  border: 1.5px solid #A4A4A4;
+  background-color: white; /* White background */
+  border-radius: 3px; /* Optional: Rounded corners */
+  cursor: pointer;
 }
