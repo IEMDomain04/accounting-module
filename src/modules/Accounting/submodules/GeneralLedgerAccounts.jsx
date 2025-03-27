@@ -1,6 +1,5 @@
 import React from 'react';
 import '../styles/Accounting-Global-Styling.css';
-import '../styles/GeneralLedger.css';
 import Forms from '../components/Forms';
 import Table from '../components/Table';
 
@@ -24,7 +23,7 @@ const GeneralLedgerAccounts = () => {
           <h2 className="subModule-subTitle">The whole record of accounts.</h2>
         </div>
 
-        <div className="component-container">
+        <div className="parent-component-container">
           <Forms type="text" placeholder="Search account..." />
         </div>
 

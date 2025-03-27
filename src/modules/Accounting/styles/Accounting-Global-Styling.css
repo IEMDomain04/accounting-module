@@ -37,6 +37,21 @@
   color: #9FA1A6;
 }
 
+/* Components Spacing */
+.parent-component-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  margin-bottom: 1rem;
+}
+
+.component-container {
+  display: flex;
+  justify-content: center;
+  align-items: end;
+  gap: 30px; 
+}
+
 /* Remove Buttons */
 .remove-btn {
   background: none;

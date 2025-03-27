@@ -141,9 +141,12 @@ const JournalEntry = ({ journalId, journalDescription, onEntryCreated }) => {
                     <h2 className="subModule-subTitle">Enter debit and credit details for transactions.</h2>
                 </div>
 
-                <div className="forms-buttons-container">
-                    <div className="form-addrow-container">
-                        <div className="form-container">
+
+                <div className="parent-component-container">
+
+                    <div className="component-container">
+
+                        <div className="flex flex-col w-80">
                             <Forms
                                 type="text"
                                 formName="Entry Line ID*"
@@ -160,13 +163,13 @@ const JournalEntry = ({ journalId, journalDescription, onEntryCreated }) => {
                             />
                         </div>
 
-                        <div className="add-debit-credit-container">
+                        <div className="component-container">
                             <Button name="+ Add debit" variant="standard2" onclick={() => addEntry('debit')} />
                             <Button name="+ Add credit" variant="standard2" onclick={() => addEntry('credit')} />
                         </div>
                     </div>
 
-                    <div className="buttons-container">
+                    <div className="component-container">
                         <Button name="Save" variant="standard1" onclick={handleSubmit} />
                         <Button
                             name="Cancel"
@@ -182,6 +185,8 @@ const JournalEntry = ({ journalId, journalDescription, onEntryCreated }) => {
                     </div>
                 </div>
 
+
+                {/* Table Part */}
                 <div className="journal-table">
                     <div className="table-header">
                         <div className="column account-column">Accounts Affected</div>

@@ -1,25 +1,3 @@
-.Journal .component-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: end;
-  gap: 30px;
-  margin-bottom: 1rem;
-}
-
-/* Button Styles */
-.Journal .buttons-container {
-  display: flex;
-  justify-content: center;
-  gap: 30px;
-}
-
-/* Search and Drop down */
-.Journal .select-search-container {
-  display: flex;
-  justify-content: center;
-  gap: 30px;
-}
-
 .modal-overlay {
   position: fixed;
   top: 0;

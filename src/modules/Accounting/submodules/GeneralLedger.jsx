@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import "../styles/GeneralLedger.css";
 import "../styles/Accounting-Global-Styling.css";
 import { accounts, subAccounts } from "./ListOfAccounts";
 import Forms from "../components/Forms";
@@ -111,25 +110,34 @@ const BodyContent = () => {
     return (
         <div className="generalLedger">
             <div className="body-content-container">
+
+
                 <div className="title-subtitle-container">
                     <h1 className="subModule-title">General Ledger</h1>
                     <h2 className="subModule-subTitle">The whole record of transactions.</h2>
                 </div>
+                
 
-                <div className="component-container flex gap-4">
-                    <Forms type="text" placeholder="Search account ID..." />
-                    <Dropdown 
-                        options={accounts} 
-                        style="selection" 
-                        defaultOption="Select account..." 
-                        onChange={setSelectedAccount}
-                    />
-                    <Dropdown 
-                        options={filteredSubAccounts.length > 0 ? filteredSubAccounts : ["No subaccounts available"]} 
-                        style="selection" 
-                        defaultOption="Select subaccount..." 
-                        onChange={setSelectedSubAccount}
-                    />
+                <div className="parent-component-container">
+
+                    <div className="component-container">
+                        <Forms type="text" placeholder="Search account ID..." />
+                    </div>
+
+                    <div className="component-container">
+                        <Dropdown
+                            options={accounts}
+                            style="selection"
+                            defaultOption="Select account..."
+                            onChange={setSelectedAccount}
+                        />
+                        <Dropdown
+                            options={filteredSubAccounts.length > 0 ? filteredSubAccounts : ["No subaccounts available"]}
+                            style="selection"
+                            defaultOption="Select subaccount..."
+                            onChange={setSelectedSubAccount}
+                        />
+                    </div>
                 </div>
 
                 <Table data={data} columns={columns} />

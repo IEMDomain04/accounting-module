@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import '../styles/Journal.css';
 import '../styles/Accounting-Global-Styling.css';
+import '../styles/Journal.css';
 import { sortingChoices } from './ListOfAccounts';
 import Button from '../components/Button';
 import Dropdown from '../components/Dropdown';
@@ -131,15 +131,17 @@ const Journal = () => {
                     <h2 className="subModule-subTitle">A record that groups transactions under a unique journal ID for accounting purposes.</h2>
                 </div>
 
-                <div className="component-container">
-                    <div className="select-search-container">
+                <div className="parent-component-container">
+
+                    <div className="component-container">
                         <Dropdown options={sortingChoices} style="selection" defaultOption="Sort ID.." />
                         <SearchBar />
                     </div>
 
-                    <div className='buttons-container'>
+                    <div className='component-container'>
                         <Button name="Create Journal ID" variant="standard2" onclick={openModal} />
                     </div>
+
                 </div>
 
                 <Table data={data} columns={columns} />
@@ -157,19 +159,22 @@ const Journal = () => {
                             <div className="form-group">
                                 <label>Journal Date*</label>
                                 <input
-                                    type="text"
-                                    placeholder="Enter Journal ID"
-                                    value={journalForm.journalId}
-                                    onChange={(e) => handleInputChange("journalId", e.target.value)}
-                                    className="text-input"
-                                />  
-                                <input
                                     type="date"
                                     value={journalForm.journalDate}
                                     onChange={(e) => handleInputChange("journalDate", e.target.value)}
                                     className="date-input"
                                 />
                             </div>
+
+                            <Forms
+                                type="text"
+                                formName="Journal ID*"
+                                placeholder="Enter Journal ID"
+                                value={journalForm.journalId}
+                                onChange={(e) => handleInputChange("journalId", e.target.value)}
+                                className="text-input"
+                            />
+
                             <Forms
                                 type="text"
                                 formName="Description*"

@@ -109,14 +109,14 @@ const BodyContent = () => {
                     <h2 className="subModule-subTitle">A structured list of all accounts used to record financial transactions in the system.</h2>
                 </div>
 
-                <div className="flex justify-between !mb-4">
+                <div className="parent-component-container">
 
-                    <div className="flex gap-10">
+                    <div className="component-container">
                         <Dropdown options={accounts} style="selection" defaultOption="Sort account.." />
                         <SearchBar />
                     </div>
 
-                    <div className="flex gap-10">
+                    <div className="component-container">
                         <Button name={isAdding ? "Creating..." : "Create Account"} variant="standard2" onclick={handleAddAccount} disabled={isAdding} />
                         <Button name="Submit" variant="standard1" onclick={handleSubmit} />
                     </div>
