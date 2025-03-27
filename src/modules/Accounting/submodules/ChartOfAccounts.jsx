@@ -88,9 +88,9 @@ const BodyContent = () => {
                 [
                     <Forms type="text" placeholder="Enter account code" value={newAccount.account_code} onChange={(e) => handleInputChange("account_code", e.target.value)} />,
                     <Forms type="text" placeholder="Enter account name" value={newAccount.account_name} onChange={(e) => handleInputChange("account_name", e.target.value)} />,
-                    <div className="flex gap-2">
+                    <div className="flex gap-4">
                         <Dropdown options={accounts} style="selection" defaultOption="Select account type" value={newAccount.account_type} onChange={(value) => handleInputChange("account_type", value)} />
-                        <button className="remove-btn" onClick={handleRemoveNewRow}>❌</button> 
+                        <img className="cursor-pointer hover:scale-110" onClick={ handleRemoveNewRow } src="./accounting/Close.svg" alt="close button" /> 
                     </div>
                 ],
                 ...data
@@ -124,7 +124,7 @@ const BodyContent = () => {
                 </div>
 
                 {/* Table Display */}
-                <Table data={renderTableData()} columns={columns} enableCheckbox={true} enableActions={true} />
+                <Table data={renderTableData()} columns={columns} enableCheckbox={false}/>
             </div>
         </div>
     );
