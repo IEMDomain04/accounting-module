@@ -5,7 +5,6 @@ import Button from '../components/Button';
 import Dropdown from '../components/Dropdown';
 import Table from '../components/Table';
 import SearchBar from "../../../shared/components/SearchBar";
-import Forms from '../components/Forms';
 import JournalModalInput from '../components/JournalModalInput';
 
 const Journal = () => {
