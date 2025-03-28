@@ -1,6 +1,6 @@
 import React from 'react';
+import './ModalInput.css';
 import Forms from './Forms';
-import './JournalModalInput.css';
 import Button from '../components/Button';
 
 const JournalModalInput = ({ isModalOpen, closeModal, journalForm, handleInputChange, handleSubmit }) => {
@@ -19,6 +19,7 @@ const JournalModalInput = ({ isModalOpen, closeModal, journalForm, handleInputCh
                         </div>
 
                         <div className="modal-body">
+
                             <div className="form-group">
                                 <label>Journal Date*</label>
                                 <input
@@ -58,10 +59,10 @@ const JournalModalInput = ({ isModalOpen, closeModal, journalForm, handleInputCh
                                 onChange={(e) => handleInputChange("currencyId", e.target.value)}
                             />
                         </div>
-                        
+
                         <div className="modal-footer">
-                            <Button name="Add" variant="standard1" onclick={handleSubmit} />
-                            <Button name="Cancel" variant="standard2" onclick={closeModal} />
+                            <Button name="Cancel" variant="standard1" onclick={closeModal} />
+                            <Button name="Add" variant="standard2" onclick={handleSubmit} />
                         </div>
                     </div>
                 </div>
