@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'chart_of_accounts',
+    'currency',
     'general_ledger',
     'journal_entry',
     'journal_entry_lines',
@@ -104,7 +105,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'accounting_module',
         'USER': 'postgres',
-        'PASSWORD': 'admin10',
+        'PASSWORD': 'zxcxcz.',
         'HOST': 'localhost',
         'PORT': '5432',
         'OPTIONS': {
