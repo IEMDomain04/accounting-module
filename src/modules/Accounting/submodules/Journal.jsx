@@ -72,18 +72,66 @@ const Journal = () => {
             return;
         }
 
-        if ()
+        if (!journalForm.journalDate) {
+            setValidation({
+                isOpen: true,
+                type: "warning",
+                title: "Journal Date Required",
+                message: "Please provide a journal date.",
+            });
+            return;
+        }
 
-            // Prepare the new entry for optimistic update
-            const newEntry = {
-                journal_id: journalForm.journalId, // Use the user-entered Journal ID
-                journal_date: journalForm.journalDate,
-                description: journalForm.description,
-                total_debit: '0.00', // Still send 0.00 to API
-                total_credit: '0.00', // Still send 0.00 to API
-                invoice_id: journalForm.invoiceId || null, // Keep it a string or null
-                currency_id: journalForm.currencyId // Keep it a string
-            };
+        if (!journalForm.journalId) {
+            setValidation({
+                isOpen: true,
+                type: "warning",
+                title: "Journal ID Required",
+                message: "Please provide a journal ID.",
+            });
+            return;
+        }
+
+        if (!journalForm.description) {
+            setValidation({
+                isOpen: true,
+                type: "warning",
+                title: "Description Required",
+                message: "Please provide a description.",
+            });
+            return;
+        }
+
+        if (!journalForm.invoiceId) {
+            setValidation({
+                isOpen: true,
+                type: "warning",
+                title: "Invoice ID Required",
+                message: "Please provide an invoice ID.",
+            });
+            return;
+        }
+
+        if (!journalForm.currencyId) {
+            setValidation({
+                isOpen: true,
+                type: "warning",
+                title: "Currency ID Required",
+                message: "Please provide a currency ID.",
+            });
+            return;
+        }
+
+        // Prepare the new entry for optimistic update
+        const newEntry = {
+            journal_id: journalForm.journalId, // Use the user-entered Journal ID
+            journal_date: journalForm.journalDate,
+            description: journalForm.description,
+            total_debit: '0.00', // Still send 0.00 to API
+            total_credit: '0.00', // Still send 0.00 to API
+            invoice_id: journalForm.invoiceId || null, // Keep it a string or null
+            currency_id: journalForm.currencyId // Keep it a string
+        };
 
         // Optimistically update the table (display '-' instead of 0.00)
         setData(prevData => [...prevData, [
