@@ -10,7 +10,6 @@ const BodyContent = () => {
     const [filteredSubAccounts, setFilteredSubAccounts] = useState([]);
     const [selectedSubAccount, setSelectedSubAccount] = useState("");
 
-        
     const columns = ["Entry Line ID", "GL Account ID", "Account name", "Journal ID", "Debit", "Credit", "Description"];
     const [data, setData] = useState([]);
 
