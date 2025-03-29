@@ -149,10 +149,10 @@ const JournalEntry = ({ journalId, journalDescription, onEntryCreated }) => {
                         <div className="flex flex-col w-80">
                             <Forms
                                 type="text"
-                                formName="Entry Line ID*"
-                                placeholder="Enter Entry Line ID"
-                                value={journalForm.entryLineId}
-                                onChange={(e) => setJournalForm({ ...journalForm, entryLineId: e.target.value })}
+                                formName="Journal ID*"
+                                placeholder="Enter Journal ID"
+                                value={journalForm.journalID}
+                                onChange={(e) => setJournalForm({ ...journalForm, journalID: e.target.value })}
                             />
                             <Forms
                                 type="text"
