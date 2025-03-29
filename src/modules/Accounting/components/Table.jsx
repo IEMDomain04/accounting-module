@@ -43,14 +43,14 @@ const Table = ({ columns, data, enableCheckbox }) => {
                                 const isStatusColumn = columns[cellIndex] === "Status";
 
                                 return (
-                                    <td
-                                        key={cellIndex}
-                                        className={isStatusColumn ? (cell === "Active" ? "status-active" : "status-inactive") : ""}
-                                    >
-                                        {cell}
+                                    <td key={cellIndex} className={isStatusColumn ? "status-cell" : ""}>
+                                        <div className={isStatusColumn ? (cell === "Active" ? "status-active" : "status-inactive") : ""}>
+                                            {cell}
+                                        </div>
                                     </td>
                                 );
                             })}
+
                         </tr>
                     ))}
                 </tbody>
