@@ -5,8 +5,8 @@ import Button from '../components/Button';
 import Dropdown from '../components/Dropdown';
 import Table from '../components/Table';
 import SearchBar from "../../../shared/components/SearchBar";
-import Forms from '../components/Forms';
 import JournalModalInput from '../components/JournalModalInput';
+import NotifModal from '../components/modalNotif/NotifModal';
 
 const Journal = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -49,14 +49,76 @@ const Journal = () => {
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
 
+    const [validation, setValidation] = useState({
+        isOpen: false,
+        type: "warning",
+        title: "",
+        message: "",
+    });
+
     const handleInputChange = (field, value) => {
         setJournalForm(prevState => ({ ...prevState, [field]: value }));
     };
 
     const handleSubmit = () => {
         // Validation: Ensure all required fields are filled
-        if (!journalForm.journalDate || !journalForm.description || !journalForm.currencyId) {
-            alert("Please fill in all required fields.");
+        if (!journalForm.journalDate && !journalForm.journalId && !journalForm.description && !journalForm.invoiceId && !journalForm.currencyId) {
+            setValidation({
+                isOpen: true,
+                type: "warning",
+                title: "All Fields Required",
+                message: "Please fill in all the fields.",
+            });
+            return;
+        }
+
+        if (!journalForm.journalDate) {
+            setValidation({
+                isOpen: true,
+                type: "warning",
+                title: "Journal Date Required",
+                message: "Please provide a journal date.",
+            });
+            return;
+        }
+
+        if (!journalForm.journalId) {
+            setValidation({
+                isOpen: true,
+                type: "warning",
+                title: "Journal ID Required",
+                message: "Please provide a journal ID.",
+            });
+            return;
+        }
+
+        if (!journalForm.description) {
+            setValidation({
+                isOpen: true,
+                type: "warning",
+                title: "Description Required",
+                message: "Please provide a description.",
+            });
+            return;
+        }
+
+        if (!journalForm.invoiceId) {
+            setValidation({
+                isOpen: true,
+                type: "warning",
+                title: "Invoice ID Required",
+                message: "Please provide an invoice ID.",
+            });
+            return;
+        }
+
+        if (!journalForm.currencyId) {
+            setValidation({
+                isOpen: true,
+                type: "warning",
+                title: "Currency ID Required",
+                message: "Please provide a currency ID.",
+            });
             return;
         }
 
@@ -106,18 +168,31 @@ const Journal = () => {
             })
             .then(({ ok, status, data }) => {
                 if (ok) {
-                    alert("Journal entry created successfully!");
                     fetchData(); // Sync with server
                     setJournalForm({ journalId: '', journalDate: '', description: '', currencyId: '', invoiceId: '' });
                     closeModal();
+                    setValidation({
+                        isOpen: true,
+                        type: "success",
+                        title: "Journal ID Created",
+                        message: "The journal entry has been successfully created.",
+                    });
                 } else {
-                    console.error('Server error response:', data);
-                    throw new Error(data.detail || JSON.stringify(data) || `Failed to create journal entry (Status: ${status})`);
+                    setValidation({
+                        isOpen: true,
+                        type: "error",
+                        title: "Adding Journal ID Failed",
+                        message: data.message || "An error occurred while creating the journal ID.",
+                    });
                 }
             })
             .catch(error => {
-                console.error('Error submitting data:', error.message);
-                alert(`Error: ${error.message}`);
+                setValidation({
+                    isOpen: true,
+                    type: "error",
+                    title: "Adding Journal ID Failed",
+                    message: error.message || "An error occurred while creating the journal ID.",
+                });
                 // Rollback optimistic update on error
                 setData(prevData => prevData.filter(row => row[0] !== newEntry.journal_id));
             });
@@ -154,6 +229,16 @@ const Journal = () => {
                 handleInputChange={handleInputChange}
                 handleSubmit={handleSubmit}
             />
+
+            {validation.isOpen && (
+                <NotifModal
+                    isOpen={validation.isOpen}
+                    type={validation.type}
+                    title={validation.title}
+                    message={validation.message}
+                    closeModal={() => setValidation({ ...validation, isOpen: false })}
+                />
+            )}
 
         </div>
     );

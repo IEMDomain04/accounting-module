@@ -9,13 +9,7 @@ const BodyContent = () => {
     const [selectedAccount, setSelectedAccount] = useState("");
     const [filteredSubAccounts, setFilteredSubAccounts] = useState([]);
     const [selectedSubAccount, setSelectedSubAccount] = useState("");
-    const [journalForm, setJournalForm] = useState({
-        journalId: '',
-        journalDate: '',
-        description: '',
-        currencyId: '',
-        invoiceId: ''
-    });
+
     const columns = ["Entry Line ID", "GL Account ID", "Account name", "Journal ID", "Debit", "Credit", "Description"];
     const [data, setData] = useState([]);
 
@@ -67,45 +61,6 @@ const BodyContent = () => {
     useEffect(() => {
         fetchData();
     }, []);
-
-    const handleSubmit = () => {
-        if (!journalForm.journalDate || !journalForm.description || !journalForm.currencyId) {
-            alert("Please fill in all required fields.");
-            return;
-        }
-
-        const payload = {
-            journal_date: journalForm.journalDate,
-            description: journalForm.description,
-            total_debit: "0.00",
-            total_credit: "0.00",
-            invoice_id: journalForm.invoiceId ? parseInt(journalForm.invoiceId) : null,
-            currency_id: parseInt(journalForm.currencyId)
-        };
-
-        fetch('http://127.0.0.1:8000/api/journal-entry-lines/', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then((data) => {
-                        throw new Error(JSON.stringify(data) || `HTTP Error ${response.status}`);
-                    });
-                }
-                return response.json();
-            })
-            .then(data => {
-                alert("Journal entry created successfully!");
-                setJournalForm({ journalId: '', journalDate: '', description: '', currencyId: '', invoiceId: '' });
-                fetchData(); // Refresh table data
-            })
-            .catch(error => {
-                console.error('Error submitting data:', error);
-                alert(`Error: ${error.message}`);
-            });
-    };
 
     return (
         <div className="generalLedger">
