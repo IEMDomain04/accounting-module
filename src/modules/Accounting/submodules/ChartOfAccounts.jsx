@@ -37,7 +37,7 @@ const BodyContent = () => {
         setNewAccount(prev => ({ ...prev, [field]: value }));
     };
 
-    const [notif, setNotif] = useState({
+    const [validation, setValidation] = useState({
         isOpen: false,
         type: "warning",
         title: "",

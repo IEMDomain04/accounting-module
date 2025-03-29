@@ -6,6 +6,7 @@ import Dropdown from '../components/Dropdown';
 import Table from '../components/Table';
 import SearchBar from "../../../shared/components/SearchBar";
 import JournalModalInput from '../components/JournalModalInput';
+import NotifModal from '../../../shared/components/NotifModal';
 
 const Journal = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -48,27 +49,41 @@ const Journal = () => {
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
 
+    const [validation, setValidation] = useState({
+        isOpen: false,
+        type: "warning",
+        title: "",
+        message: "",
+    });
+
     const handleInputChange = (field, value) => {
         setJournalForm(prevState => ({ ...prevState, [field]: value }));
     };
 
     const handleSubmit = () => {
         // Validation: Ensure all required fields are filled
-        if (!journalForm.journalDate || !journalForm.description || !journalForm.currencyId) {
-            alert("Please fill in all required fields.");
+        if (!journalForm.journalDate || !journalForm.journalId || !journalForm.description || !journalForm.invoiceId || !journalForm.currencyId) {
+            setValidation({
+                isOpen: true,
+                type: "warning",
+                title: "All Fields Required",
+                message: "Please fill in all the fields.",
+            });
             return;
         }
 
-        // Prepare the new entry for optimistic update
-        const newEntry = {
-            journal_id: journalForm.journalId, // Use the user-entered Journal ID
-            journal_date: journalForm.journalDate,
-            description: journalForm.description,
-            total_debit: '0.00', // Still send 0.00 to API
-            total_credit: '0.00', // Still send 0.00 to API
-            invoice_id: journalForm.invoiceId || null, // Keep it a string or null
-            currency_id: journalForm.currencyId // Keep it a string
-        };
+        if ()
+
+            // Prepare the new entry for optimistic update
+            const newEntry = {
+                journal_id: journalForm.journalId, // Use the user-entered Journal ID
+                journal_date: journalForm.journalDate,
+                description: journalForm.description,
+                total_debit: '0.00', // Still send 0.00 to API
+                total_credit: '0.00', // Still send 0.00 to API
+                invoice_id: journalForm.invoiceId || null, // Keep it a string or null
+                currency_id: journalForm.currencyId // Keep it a string
+            };
 
         // Optimistically update the table (display '-' instead of 0.00)
         setData(prevData => [...prevData, [
