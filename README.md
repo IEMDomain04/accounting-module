@@ -20,6 +20,8 @@ pip install -r requirements.txt
 ```
 
 ## Backend with UI
+**Note:** Please check the **settings.py** under kinetiq-erp-accounting-backend-main and ensure that the _**database name**_ and _**password**_ match your PostgreSQL setup before proceeding.
+
 In a separate terminal..
 ```bash
 cd backend
