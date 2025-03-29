@@ -23,14 +23,14 @@ const BodyContent = () => {
         account_type: ""
     });
 
-     // Fetch data from API when the component mounts
-     useEffect(() => {
-         axios.get("http://127.0.0.1:8000/api/chart-of-accounts/")
-             .then(response => {
-                 setData(response.data.map(acc => [acc.account_code, acc.account_name, acc.account_type]));
-             })
-             .catch(error => console.error("Error fetching data:", error));
-     }, []);
+    // Fetch data from API when the component mounts
+    useEffect(() => {
+        axios.get("http://127.0.0.1:8000/api/chart-of-accounts/")
+            .then(response => {
+                setData(response.data.map(acc => [acc.account_code, acc.account_name, acc.account_type]));
+            })
+            .catch(error => console.error("Error fetching data:", error));
+    }, []);
 
     // Handle Input Change
     const handleInputChange = (field, value) => {
@@ -45,12 +45,42 @@ const BodyContent = () => {
     });
 
     const handleSubmit = async () => {
-        if (!newAccount.account_code || !newAccount.account_name || !newAccount.account_type) {
+        if (!newAccount.account_code && !newAccount.account_name && !newAccount.account_type) {
             setNotif({
                 isOpen: true,
                 type: "warning",
-                title: "All Fields are Required.",
-                message: "Fill up all the forms.",
+                title: "All Fields Required",
+                message: "Please fill in all the fields.",
+            });
+            return;
+        }
+
+        if (!newAccount.account_code) {
+            setNotif({
+                isOpen: true,
+                type: "warning",
+                title: "Account Code Required",
+                message: "Please provide an account code.",
+            });
+            return;
+        }
+
+        if (!newAccount.account_name) {
+            setNotif({
+                isOpen: true,
+                type: "warning",
+                title: "Account Name Required",
+                message: "Please provide an account name.",
+            });
+            return;
+        }
+
+        if (!newAccount.account_type) {
+            setNotif({
+                isOpen: true,
+                type: "warning",
+                title: "Account Type Required",
+                message: "Please select an account type.",
             });
             return;
         }
