@@ -7,6 +7,7 @@ import Button from "../components/Button";
 import Dropdown from "../components/Dropdown";
 import Table from "../components/Table";
 import CoaModalInput from "../components/CoaModalInput";
+import NotifModal from "../components/modalNotif/NotifModal";
 
 const BodyContent = () => {
     const columns = ["Account code", "Account name", "Account type"];
@@ -22,30 +23,47 @@ const BodyContent = () => {
         account_type: ""
     });
 
-    // Fetch data from API when the component mounts
-    useEffect(() => {
-        axios.get("http://127.0.0.1:8000/api/chart-of-accounts/")
-            .then(response => {
-                setData(response.data.map(acc => [acc.account_code, acc.account_name, acc.account_type]));
-            })
-            .catch(error => console.error("Error fetching data:", error));
-    }, []);
+     // Fetch data from API when the component mounts
+     useEffect(() => {
+         axios.get("http://127.0.0.1:8000/api/chart-of-accounts/")
+             .then(response => {
+                 setData(response.data.map(acc => [acc.account_code, acc.account_name, acc.account_type]));
+             })
+             .catch(error => console.error("Error fetching data:", error));
+     }, []);
 
     // Handle Input Change
     const handleInputChange = (field, value) => {
         setNewAccount(prev => ({ ...prev, [field]: value }));
     };
 
+    const [notif, setNotif] = useState({
+        isOpen: false,
+        type: "warning",
+        title: "",
+        message: "",
+    });
+
     const handleSubmit = async () => {
         if (!newAccount.account_code || !newAccount.account_name || !newAccount.account_type) {
-            alert("All fields are required.");
+            setNotif({
+                isOpen: true,
+                type: "warning",
+                title: "All Fields are Required.",
+                message: "Fill up all the forms.",
+            });
             return;
         }
 
         // Check if the account_code already exists
         const accountCodeExists = data.some(row => row[0] === newAccount.account_code);
         if (accountCodeExists) {
-            alert("Account code already exists.");
+            setNotif({
+                isOpen: true,
+                type: "warning",
+                title: "Account Already Exist",
+                message: "The account you're creating is already created.",
+            });
             return;
         }
 
@@ -59,12 +77,28 @@ const BodyContent = () => {
                 setData(prevData => [...prevData, [addedAccount.account_code, addedAccount.account_name, addedAccount.account_type]]);
                 setNewAccount({ account_code: "", account_name: "", account_type: "" });
                 closeModal(); // ✅ Close modal after adding account
+                setNotif({
+                    isOpen: true,
+                    type: "success",
+                    title: "Account Added",
+                    message: "Successfully created account",
+                });
             } else {
-                alert("Failed to save data. Please try again.");
+                setNotif({
+                    isOpen: true,
+                    type: "error",
+                    title: "Adding Account failed",
+                    message: "Creating account failed",
+                });
             }
         } catch (error) {
             console.error("Error submitting data:", error.response ? error.response.data : error);
-            alert("An error occurred. Please check your connection.");
+            setNotif({
+                isOpen: true,
+                type: "warning",
+                title: "Check Connection!",
+                message: "Kindly Check your connection",
+            });
         }
     };
 
@@ -99,6 +133,16 @@ const BodyContent = () => {
                 handleInputChange={handleInputChange}
                 handleSubmit={handleSubmit}
             />
+
+            {notif.isOpen && (
+                <NotifModal
+                    isOpen={notif.isOpen}
+                    onClose={() => setNotif({ ...notif, isOpen: false })}
+                    type={notif.type}
+                    title={notif.title}
+                    message={notif.message}
+                />
+            )}
         </div>
     );
 };
