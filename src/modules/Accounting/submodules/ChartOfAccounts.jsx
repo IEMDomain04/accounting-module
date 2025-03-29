@@ -46,7 +46,7 @@ const BodyContent = () => {
 
     const handleSubmit = async () => {
         if (!newAccount.account_code && !newAccount.account_name && !newAccount.account_type) {
-            setNotif({
+            setValidation({
                 isOpen: true,
                 type: "warning",
                 title: "All Fields Required",
@@ -56,7 +56,7 @@ const BodyContent = () => {
         }
 
         if (!newAccount.account_code) {
-            setNotif({
+            setValidation({
                 isOpen: true,
                 type: "warning",
                 title: "Account Code Required",
@@ -66,7 +66,7 @@ const BodyContent = () => {
         }
 
         if (!newAccount.account_name) {
-            setNotif({
+            setValidation({
                 isOpen: true,
                 type: "warning",
                 title: "Account Name Required",
@@ -76,7 +76,7 @@ const BodyContent = () => {
         }
 
         if (!newAccount.account_type) {
-            setNotif({
+            setValidation({
                 isOpen: true,
                 type: "warning",
                 title: "Account Type Required",
@@ -88,7 +88,7 @@ const BodyContent = () => {
         // Check if the account_code already exists
         const accountCodeExists = data.some(row => row[0] === newAccount.account_code);
         if (accountCodeExists) {
-            setNotif({
+            setValidation({
                 isOpen: true,
                 type: "warning",
                 title: "Account Already Exist",
@@ -107,14 +107,14 @@ const BodyContent = () => {
                 setData(prevData => [...prevData, [addedAccount.account_code, addedAccount.account_name, addedAccount.account_type]]);
                 setNewAccount({ account_code: "", account_name: "", account_type: "" });
                 closeModal(); // ✅ Close modal after adding account
-                setNotif({
+                setValidation({
                     isOpen: true,
                     type: "success",
                     title: "Account Added",
                     message: "Successfully created account",
                 });
             } else {
-                setNotif({
+                setValidation({
                     isOpen: true,
                     type: "error",
                     title: "Adding Account failed",
@@ -123,7 +123,7 @@ const BodyContent = () => {
             }
         } catch (error) {
             console.error("Error submitting data:", error.response ? error.response.data : error);
-            setNotif({
+            setValidation({
                 isOpen: true,
                 type: "warning",
                 title: "Check Connection!",
@@ -164,13 +164,13 @@ const BodyContent = () => {
                 handleSubmit={handleSubmit}
             />
 
-            {notif.isOpen && (
+            {validation.isOpen && (
                 <NotifModal
-                    isOpen={notif.isOpen}
-                    onClose={() => setNotif({ ...notif, isOpen: false })}
-                    type={notif.type}
-                    title={notif.title}
-                    message={notif.message}
+                    isOpen={validation.isOpen}
+                    onClose={() => setValidation({ ...validation, isOpen: false })}
+                    type={validation.type}
+                    title={validation.title}
+                    message={validation.message}
                 />
             )}
         </div>
