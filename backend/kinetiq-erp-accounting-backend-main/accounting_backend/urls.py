@@ -25,5 +25,6 @@ urlpatterns = [
     path("api/", include("journal_entry.urls")),  # Add this line
     path("api/", include("general_ledger.urls")),  # Add this line
     path("api/", include("journal_entry_lines.urls")),  # Add this line
+    path("api/", include("official_receipts.urls")),  # Add this line
 ]
 
