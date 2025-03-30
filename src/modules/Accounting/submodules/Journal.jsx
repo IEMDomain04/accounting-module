@@ -124,29 +124,6 @@ const Journal = () => {
             return;
         }
 
-
-        // Prepare the new entry for optimistic update
-        const newEntry = {
-            journal_id: journalForm.journalId, // Use the user-entered Journal ID
-            journal_date: journalForm.journalDate,
-            description: journalForm.description,
-            total_debit: '0.00', // Still send 0.00 to API
-            total_credit: '0.00', // Still send 0.00 to API
-            invoice_id: journalForm.invoiceId || null, // Keep it a string or null
-            currency_id: journalForm.currencyId // Keep it a string
-        };
-
-        // Optimistically update the table (display '-' instead of 0.00)
-        setData(prevData => [...prevData, [
-            newEntry.journal_id || '-',
-            newEntry.journal_date || '-',
-            newEntry.description || '-',
-            newEntry.total_debit === 0 ? '-' : newEntry.total_debit, // Display '-' if 0.00
-            newEntry.total_credit === 0 ? '-' : newEntry.total_credit, // Display '-' if 0.00
-            newEntry.invoice_id || '-',
-            newEntry.currency_id || '-'
-        ]]);
-
         // Log the payload for debugging
         const payload = {
             journal_id: journalForm.journalId, // Include the user-entered Journal ID
@@ -181,8 +158,12 @@ const Journal = () => {
                         message: "Journal ID added successfully!",
                     });
                 } else {
-                    console.error('Server error response:', data);
-                    throw new Error(data.detail || JSON.stringify(data) || `Failed to create journal entry (Status: ${status})`);
+                    setValidation({
+                        isOpen: true,
+                        type: "error",
+                        title: "Server Error: Adding Account failed",
+                        message: "Creating account failed",
+                    });
                 }
             })
             .catch(error => {
@@ -190,8 +171,8 @@ const Journal = () => {
                 setValidation({
                     isOpen: true,
                     type: "error",
-                    title: "Submission Failed",
-                    message: error.message || "An unexpected error occurred.",
+                    title: "Check Connection!",
+                    message: "Kindly Check your connection",
                 });
             });
     };
