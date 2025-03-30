@@ -6,6 +6,7 @@ class OfficialReceipt(models.Model):
     invoice_id = models.CharField(max_length=255)
     customer_id = models.CharField(max_length=255)
     or_date = models.DateField()
+    settled_amount = models.DecimalField(max_digits=10, decimal_places=2)  # Added missing field
     remaining_amount = models.DecimalField(max_digits=15, decimal_places=2)
     payment_method = models.CharField(max_length=50)
     reference_number = models.CharField(max_length=100, blank=True, null=True)
