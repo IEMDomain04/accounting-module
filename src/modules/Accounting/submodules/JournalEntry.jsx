@@ -144,7 +144,7 @@ const JournalEntry = ({ journalId, journalDescription, onEntryCreated }) => {
 
                 <div className="parent-component-container">
 
-                    <div className="component-container">
+                    <div className="parent-component-container">
 
                         <div className="flex flex-col w-80">
                             <Forms
