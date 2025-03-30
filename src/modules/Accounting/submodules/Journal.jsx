@@ -53,8 +53,8 @@ const Journal = () => {
         setJournalForm(prevState => ({ ...prevState, [field]: value }));
     };
 
-    // Emman Paki tuloy ito, para may validation na si journal.
-    const [validation, setValidation] = useState ({
+
+    const [validation, setValidation] = useState({
         isOpen: false,
         type: "warning",
         title: "",
@@ -63,7 +63,7 @@ const Journal = () => {
 
     const handleSubmit = () => {
         // Validation: Ensure all required fields are filled
-        if (!journalForm.journalDate || !journalForm.journalId || !journalForm.description || !journalForm.invoiceId || !journalForm.currencyId) {
+        if (!journalForm.journalDate && !journalForm.journalId && !journalForm.description && !journalForm.invoiceId && !journalForm.currencyId) {
             setValidation({
                 isOpen: true,
                 type: "warning",
@@ -73,15 +73,57 @@ const Journal = () => {
             return;
         }
 
-        if(!journalForm.journalDate)
-        {
+
+        if (!journalForm.journalDate) {
             setValidation({
                 isOpen: true,
                 type: "warning",
-                title: "Input the Date",
-                message: "Input the date you created the program.",
+                title: "Missing Journal Date",
+                message: "Please enter the journal date.",
             });
+            return;
         }
+
+        if (!journalForm.journalId) {
+            setValidation({
+                isOpen: true,
+                type: "warning",
+                title: "Missing Journal ID",
+                message: "Please provide a valid journal ID.",
+            });
+            return;
+        }
+
+        if (!journalForm.description) {
+            setValidation({
+                isOpen: true,
+                type: "warning",
+                title: "Missing Description",
+                message: "Please enter a description for the journal entry.",
+            });
+            return;
+        }
+
+        if (!journalForm.invoiceId) {
+            setValidation({
+                isOpen: true,
+                type: "warning",
+                title: "Missing Invoice ID",
+                message: "Please link the journal entry to an invoice ID.",
+            });
+            return;
+        }
+
+        if (!journalForm.currencyId) {
+            setValidation({
+                isOpen: true,
+                type: "warning",
+                title: "Missing Currency",
+                message: "Please select a currency for the journal entry.",
+            });
+            return;
+        }
+
 
         // Prepare the new entry for optimistic update
         const newEntry = {
@@ -145,9 +187,12 @@ const Journal = () => {
             })
             .catch(error => {
                 console.error('Error submitting data:', error.message);
-                alert(`Error: ${error.message}`);
-                // Rollback optimistic update on error
-                setData(prevData => prevData.filter(row => row[0] !== newEntry.journal_id));
+                setValidation({
+                    isOpen: true,
+                    type: "error",
+                    title: "Submission Failed",
+                    message: error.message || "An unexpected error occurred.",
+                });
             });
     };
 
@@ -184,9 +229,9 @@ const Journal = () => {
             />
 
             {validation && (
-                <NotifModal 
+                <NotifModal
                     isOpen={validation.isOpen}
-                    onClose={ () => {setValidation({ ...validation, isOpen: false })}}
+                    onClose={() => { setValidation({ ...validation, isOpen: false }) }}
                     type={validation.type}
                     title={validation.title}
                     message={validation.message}
