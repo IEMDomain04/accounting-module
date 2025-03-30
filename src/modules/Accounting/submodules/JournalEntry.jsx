@@ -3,6 +3,7 @@ import '../styles/JournalEntry.css';
 import '../styles/Accounting-Global-Styling.css';
 import Button from '../components/Button';
 import Forms from '../components/Forms';
+import NotifModal from '../components/modalNotif/NotifModal'; // Import NotifModal
 
 const JournalEntry = () => {
     const [journalForm, setJournalForm] = useState({
@@ -12,6 +13,14 @@ const JournalEntry = () => {
     });
     const [totalDebit, setTotalDebit] = useState(0);
     const [totalCredit, setTotalCredit] = useState(0);
+
+    // New state for modal notification
+    const [validation, setValidation] = useState({
+        isOpen: false,
+        type: "warning",
+        title: "",
+        message: "",
+    });
 
     const handleInputChange = (index, field, value) => {
         setJournalForm((prevState) => {
@@ -55,24 +64,37 @@ const JournalEntry = () => {
 
     const handleSubmit = async () => {
         if (!journalForm.journalId || !journalForm.description) {
-            alert('Please fill in all required fields: Journal ID and Description.');
+            setValidation({
+                isOpen: true,
+                type: "warning",
+                title: "Missing Required Fields",
+                message: "Please fill in all required fields: Journal ID and Description.",
+            });
             return;
         }
         if (journalForm.transactions.length < 2) {
-            alert('A journal entry requires at least one debit and one credit transaction.');
+            setValidation({
+                isOpen: true,
+                type: "warning",
+                title: "Insufficient Transactions",
+                message: "A journal entry requires at least one debit and one credit transaction.",
+            });
             return;
         }
         if (totalDebit !== totalCredit || totalDebit === 0) {
-            alert('Total Debit must equal Total Credit and cannot be zero.');
+            setValidation({
+                isOpen: true,
+                type: "warning",
+                title: "Unbalanced Entry",
+                message: "Total Debit must equal Total Credit and cannot be zero.",
+            });
             return;
         }
 
-        // Prepare payload for PATCH to update JournalEntry totals
         const payload = {
             total_debit: totalDebit.toFixed(2),
             total_credit: totalCredit.toFixed(2),
-            description: journalForm.description, // Update description if changed
-            // Optionally include transactions if backend expects them
+            description: journalForm.description,
             transactions: journalForm.transactions.map((t, index) => ({
                 entry_line_id: `${journalForm.journalId}-${index}-${Date.now()}`,
                 gl_account_id: t.glAccountId || null,
@@ -98,7 +120,12 @@ const JournalEntry = () => {
             const data = await response.json();
             console.log('PATCH response:', data);
 
-            alert('Journal entry updated successfully!');
+            setValidation({
+                isOpen: true,
+                type: "success",
+                title: "Journal Entry Updated",
+                message: "Journal entry updated successfully!",
+            });
             setJournalForm({
                 journalId: '',
                 transactions: [{ type: 'debit', glAccountId: '', amount: '' }],
@@ -108,7 +135,12 @@ const JournalEntry = () => {
             setTotalCredit(0);
         } catch (error) {
             console.error('Error submitting data:', error);
-            alert(`Error: ${error.message}`);
+            setValidation({
+                isOpen: true,
+                type: "error",
+                title: "Error Updating Journal Entry",
+                message: error.message,
+            });
         }
     };
 
@@ -214,6 +246,17 @@ const JournalEntry = () => {
                         <div className="column credit-column">{totalCredit.toFixed(2)}</div>
                     </div>
                 </div>
+
+                {/* Add NotifModal for feedback */}
+                {validation.isOpen && (
+                    <NotifModal
+                        isOpen={validation.isOpen}
+                        onClose={() => setValidation({ ...validation, isOpen: false })}
+                        type={validation.type}
+                        title={validation.title}
+                        message={validation.message}
+                    />
+                )}
             </div>
         </div>
     );
