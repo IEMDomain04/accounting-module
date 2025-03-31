@@ -138,8 +138,8 @@ const JournalEntry = () => {
             setValidation({
                 isOpen: true,
                 type: "error",
-                title: "Error Updating Journal Entry",
-                message: error.message,
+                title: "Journal Entry Error!",
+                message: "The provided journal ID is incorrect, does not exist, or is not recorded."
             });
         }
     };
