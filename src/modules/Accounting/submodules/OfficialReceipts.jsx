@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import "../styles/Accounting-Global-Styling.css";
 import Forms from "../components/Forms";
 import Table from "../components/Table";
@@ -10,7 +10,7 @@ const OfficialReceipts = () => {
   const [data, setData] = useState([]);
 
   const fetchData = () => {
-    fetch('Change this sa API')
+    fetch('http://127.0.0.1:8000/api/official-receipts/')
       .then(response => response.json())
       .then(result => {
         console.log('API Response (fetchData):', result);
