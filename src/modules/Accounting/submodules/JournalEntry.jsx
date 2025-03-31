@@ -63,7 +63,7 @@ const JournalEntry = () => {
     };
 
     const handleSubmit = async () => {
-        if (!journalForm.journalId || !journalForm.description) {
+        if (!journalForm.journalId && !journalForm.description) {
             setValidation({
                 isOpen: true,
                 type: "warning",
@@ -72,6 +72,27 @@ const JournalEntry = () => {
             });
             return;
         }
+
+        if (!journalForm.journalId) {
+            setValidation({
+                isOpen: true,
+                type: "warning",
+                title: "Missing Journal ID",
+                message: "Please fill in Journal ID.",
+            });
+            return;
+        }
+
+        if (!journalForm.description) {
+            setValidation({
+                isOpen: true,
+                type: "warning",
+                title: "Missing Description",
+                message: "Please fill in Description.",
+            });
+            return;
+        }
+
         if (journalForm.transactions.length < 2) {
             setValidation({
                 isOpen: true,
@@ -86,7 +107,7 @@ const JournalEntry = () => {
                 isOpen: true,
                 type: "warning",
                 title: "Unbalanced Entry",
-                message: "Total Debit must equal Total Credit and cannot be zero.",
+                message: "Total Debit must be equal to Total Credit and cannot be zero.",
             });
             return;
         }
