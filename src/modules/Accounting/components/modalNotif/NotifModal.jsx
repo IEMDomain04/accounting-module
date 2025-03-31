@@ -10,7 +10,7 @@ const NotifModal = ({ isOpen, onClose, type = "success", title, message }) => {
             const timer = setTimeout(() => {
                 setShowModal(false);
                 if (onClose) onClose();
-            }, 60000); // 30sec
+            }, 30000); // 30sec
             return () => clearTimeout(timer);
         }
     }, [isOpen, onClose]);
