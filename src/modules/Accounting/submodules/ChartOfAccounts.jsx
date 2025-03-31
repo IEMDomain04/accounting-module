@@ -2,12 +2,12 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "../styles/Accounting-Global-Styling.css";
 import { accounts } from "./ListOfAccounts";
-import SearchBar from "../../../shared/components/SearchBar";
 import Button from "../components/Button";
 import Dropdown from "../components/Dropdown";
 import Table from "../components/Table";
 import CoaModalInput from "../components/CoaModalInput";
 import NotifModal from "../components/modalNotif/NotifModal";
+import Search from "../components/Search";
 
 const BodyContent = () => {
     const columns = ["Account code", "Account name", "Account type"];
@@ -144,7 +144,7 @@ const BodyContent = () => {
                 <div className="parent-component-container">
                     <div className="component-container">
                         <Dropdown options={accounts} style="selection" defaultOption="Sort account.." />
-                        <SearchBar />
+                        <Search />
                     </div>
 
                     <div className="component-container">

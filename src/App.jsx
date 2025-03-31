@@ -81,7 +81,6 @@ function App() {
       "Journal Entry": "JournalEntry",
       "General Ledger": "GeneralLedger",
       "General Ledger Accounts": "GeneralLedgerAccounts",
-      "Currency": "Currency",
       "Official Receipts": "OfficialReceipts",
     },
     "Financials": {

@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/Accounting-Global-Styling.css';
-import { sortingChoices } from './ListOfAccounts';
 import Button from '../components/Button';
 import Dropdown from '../components/Dropdown';
 import Table from '../components/Table';
-import SearchBar from "../../../shared/components/SearchBar";
 import JournalModalInput from '../components/JournalModalInput';
 import NotifModal from '../components/modalNotif/NotifModal';
+import Search from '../components/Search';
 
 const Journal = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -19,13 +18,16 @@ const Journal = () => {
     });
     const columns = ["Journal Id", "Journal Date", "Description", "Debit", "Credit", "Invoice Id", "Currency Id"];
     const [data, setData] = useState([]);
+    const [searching, setSearching] = useState("");
+    const [sortOrder, setSortOrder] = useState("asc");
+
 
     const formatData = (result) => result.map(entry => [
         entry.journal_id || entry.id || '-',
         entry.journal_date || entry.date || '-',
         entry.description || '-',
-        entry.total_debit === 0 ? '-' : entry.total_debit,
-        entry.total_credit === 0 ? '-' : entry.total_credit,
+        entry.total_debit || 0, // Keep as numeric
+        entry.total_credit || 0, // Keep as numeric
         entry.invoice_id || '-',
         entry.currency_id || '-'
     ]);
@@ -112,6 +114,38 @@ const Journal = () => {
             });
     };
 
+    // Function to handle sorting (applies to both debit and credit columns)
+    const handleSort = () => {
+        const newSortOrder = sortOrder === "asc" ? "desc" : "asc";
+        setSortOrder(newSortOrder);
+
+        const sortedData = [...data].sort((a, b) => {
+            const debitA = parseFloat(a[3]) || 0;
+            const debitB = parseFloat(b[3]) || 0;
+            const creditA = parseFloat(a[4]) || 0;
+            const creditB = parseFloat(b[4]) || 0;
+
+            const sortByDebit = debitA - debitB;
+            const sortByCredit = creditA - creditB;
+
+            if (newSortOrder === "asc") {
+                return sortByDebit !== 0 ? sortByDebit : sortByCredit;
+            } else {
+                return sortByDebit !== 0 ? -sortByDebit : -sortByCredit;
+            }
+        });
+
+        setData(sortedData);
+    };
+
+    const filteredData = data.filter(row =>
+        [row[0], row[1], row[2], row[5], row[6]]
+            .filter(Boolean) // Remove null/undefined values
+            .join(" ")
+            .toLowerCase()
+            .includes(searching.toLowerCase())
+    );
+
     return (
         <div className='Journal'>
             <div className='body-content-container'>
@@ -122,8 +156,8 @@ const Journal = () => {
 
                 <div className="parent-component-container">
                     <div className="component-container">
-                        <Dropdown options={sortingChoices} style="selection" defaultOption="Sort ID.." />
-                        <SearchBar />
+                        <Dropdown options={["Ascending", "Descending"]} style="selection" defaultOption="Sort Debit Credit.." onChange={handleSort} />
+                        <Search type="text" placeholder="Search.. " value={searching} onChange={(e) => setSearching(e.target.value)} />
                     </div>
 
                     <div className='component-container'>
@@ -131,7 +165,7 @@ const Journal = () => {
                     </div>
                 </div>
 
-                <Table data={data} columns={columns} />
+                <Table data={filteredData} columns={columns} enableCheckbox={false} />
             </div>
 
             <JournalModalInput
