@@ -8,13 +8,14 @@ import Table from "../components/Table";
 const OfficialReceipts = () => {
   const columns = ["OR ID", "Invoice ID", "Customer ID", "OR Date", "Settled Amount", "Remaining Amount", "Payment Method", "Reference #", "Created By"];
   const [data, setData] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const fetchData = () => {
     fetch('http://127.0.0.1:8000/api/official-receipts/')
       .then(response => response.json())
       .then(result => {
         console.log('API Response (fetchData):', result);
-        
+
         if (result.length > 0) {
           console.log('Keys in first entry:', Object.keys(result[0]));
           console.log('First entry full object:', result[0]);
@@ -39,11 +40,21 @@ const OfficialReceipts = () => {
         }));
       })
       .catch(error => console.error('Error fetching data:', error));
-};
+  };
 
-useEffect(() => {
+  useEffect(() => {
     fetchData();
-}, []);
+  }, []);
+
+  // Filter based on OR ID (first column)
+  const filteredData = data.filter(row =>
+    [row[0], row[1], row[2], row[7]]
+      .filter(Boolean) // Remove null/undefined values
+      .join(" ")
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase())
+  );
+
 
   return (
     <div className="chartAccounts">
@@ -51,14 +62,14 @@ useEffect(() => {
 
         <div className="title-subtitle-container">
           <h1 className="subModule-title">Official Receipts</h1>
-          <h2 className="subModule-subTitle">List of receipts from different modules.</h2>
+          <h2 className="subModule-subTitle">List of receipts.</h2>
         </div>
 
         <div className="parent-component-container">
-          <Forms type="text" placeholder="Search account..." />
+          <Forms formName="Search Record" type="text" placeholder="Search transaction..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
         </div>
 
-        <Table data={data} columns={columns} enableCheckbox={false} />
+        <Table data={filteredData} columns={columns} enableCheckbox={false} />
 
       </div>
     </div>
