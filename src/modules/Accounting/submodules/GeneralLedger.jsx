@@ -1,33 +1,16 @@
 import React, { useState, useEffect } from "react";
 import "../styles/Accounting-Global-Styling.css";
-import { accounts, subAccounts } from "./ListOfAccounts";
 import Forms from "../components/Forms";
 import Dropdown from "../components/Dropdown";
 import Table from "../components/Table";
+import Search from "../components/Search";
 
 const BodyContent = () => {
-    const [selectedAccount, setSelectedAccount] = useState("");
-    const [filteredSubAccounts, setFilteredSubAccounts] = useState([]);
-    const [selectedSubAccount, setSelectedSubAccount] = useState("");
 
     const columns = ["Entry Line ID", "GL Account ID", "Account name", "Journal ID", "Debit", "Credit", "Description"];
     const [data, setData] = useState([]);
-
-    const formatAccountKey = (account) => {
-        return account
-            .replace(/\s(.)/g, (match) => match.toUpperCase())
-            .replace(/\s+|-|&/g, '')
-            .replace(/\(.*?\)/g, '')
-            .replace(/^[A-Z]/, (match) => match.toLowerCase());
-    };
-
-    useEffect(() => {
-        if (selectedAccount) {
-            const key = formatAccountKey(selectedAccount);
-            setFilteredSubAccounts(subAccounts[key] || []);
-            setSelectedSubAccount("");
-        }
-    }, [selectedAccount]);
+    const [searching, setSearching] = useState("");
+    const [sortOrder, setSortOrder] = useState("asc");
 
     const fetchData = () => {
         fetch('http://127.0.0.1:8000/api/journal-entry-lines/')
@@ -62,6 +45,38 @@ const BodyContent = () => {
         fetchData();
     }, []);
 
+    // Function to handle sorting (applies to both debit and credit columns)
+    const handleSort = () => {
+        const newSortOrder = sortOrder === "asc" ? "desc" : "asc";
+        setSortOrder(newSortOrder);
+
+        const sortedData = [...data].sort((a, b) => {
+            const debitA = parseFloat(a[4]) || 0;
+            const debitB = parseFloat(b[4]) || 0;
+            const creditA = parseFloat(a[5]) || 0;
+            const creditB = parseFloat(b[5]) || 0;
+
+            const sortByDebit = debitA - debitB;
+            const sortByCredit = creditA - creditB;
+
+            if (newSortOrder === "asc") {
+                return sortByDebit !== 0 ? sortByDebit : sortByCredit;
+            } else {
+                return sortByDebit !== 0 ? -sortByDebit : -sortByCredit;
+            }
+        });
+
+        setData(sortedData);
+    };
+
+    const filteredData = data.filter(row =>
+        [row[0], row[1], row[2], row[3], row[6]]
+            .filter(Boolean) // Remove null/undefined values
+            .join(" ")
+            .toLowerCase()
+            .includes(searching.toLowerCase())
+    );
+
     return (
         <div className="generalLedger">
             <div className="body-content-container">
@@ -71,31 +86,17 @@ const BodyContent = () => {
                     <h1 className="subModule-title">General Ledger</h1>
                     <h2 className="subModule-subTitle">The whole record of transactions.</h2>
                 </div>
-                
+
 
                 <div className="parent-component-container">
 
                     <div className="component-container">
-                        <Forms type="text" placeholder="Search account ID..." />
-                    </div>
-
-                    <div className="component-container">
-                        <Dropdown
-                            options={accounts}
-                            style="selection"
-                            defaultOption="Select account..."
-                            onChange={setSelectedAccount}
-                        />
-                        <Dropdown
-                            options={filteredSubAccounts.length > 0 ? filteredSubAccounts : ["No subaccounts available"]}
-                            style="selection"
-                            defaultOption="Select subaccount..."
-                            onChange={setSelectedSubAccount}
-                        />
+                        <Dropdown options={["Ascending", "Descending"]} style="selection" defaultOption="Sort Debit Credit.." onChange={handleSort} />
+                        <Search type="text" placeholder="Search Entries.. " value={searching} onChange={(e) => setSearching(e.target.value)} />
                     </div>
                 </div>
 
-                <Table data={data} columns={columns} />
+                <Table data={filteredData} columns={columns} />
             </div>
         </div>
     );
