@@ -81,6 +81,8 @@ function App() {
       "Journal Entry": "JournalEntry",
       "General Ledger": "GeneralLedger",
       "General Ledger Accounts": "GeneralLedgerAccounts",
+      "Accounts Receivables": "AccountsReceivable",
+      "Accounts Payables": "AccountsPayable",
       "Official Receipts": "OfficialReceipts",
     },
     "Financials": {
