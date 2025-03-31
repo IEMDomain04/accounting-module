@@ -2,13 +2,12 @@ import React, { useState, useEffect } from 'react';
 import "../styles/Accounting-Global-Styling.css";
 import Forms from "../components/Forms";
 import Table from "../components/Table";
-
-
+import Search from "../components/Search";
 
 const OfficialReceipts = () => {
   const columns = ["OR ID", "Invoice ID", "Customer ID", "OR Date", "Settled Amount", "Remaining Amount", "Payment Method", "Reference #", "Created By"];
   const [data, setData] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searching, setSearching] = useState("");
 
   const fetchData = () => {
     fetch('http://127.0.0.1:8000/api/official-receipts/')
@@ -48,11 +47,11 @@ const OfficialReceipts = () => {
 
   // Filter based on OR ID (first column)
   const filteredData = data.filter(row =>
-    [row[0], row[1], row[2], row[7]]
+    [row[0], row[1], row[2], row[6], row[7], row[8]]
       .filter(Boolean) // Remove null/undefined values
       .join(" ")
       .toLowerCase()
-      .includes(searchTerm.toLowerCase())
+      .includes(searching.toLowerCase())
   );
 
 
@@ -66,7 +65,7 @@ const OfficialReceipts = () => {
         </div>
 
         <div className="parent-component-container">
-          <Forms formName="Search Record" type="text" placeholder="Search transaction..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+          <Search type="text" placeholder="Search Record.." value={searching} onChange={(e) => setSearching(e.target.value)} />
         </div>
 
         <Table data={filteredData} columns={columns} enableCheckbox={false} />
