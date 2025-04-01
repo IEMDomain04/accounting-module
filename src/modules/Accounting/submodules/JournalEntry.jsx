@@ -263,8 +263,8 @@ const JournalEntry = () => {
 
                     <div className="totals-row">
                         <div className="column account-column">Totals</div>
-                        <div className="column debit-column">{totalDebit.toFixed(2)}</div>
-                        <div className="column credit-column">{totalCredit.toFixed(2)}</div>
+                        <div className="column debit-column">{totalDebit.toLocaleString("en-US", { minimumFractionDigits: 2 })}</div>
+                        <div className="column credit-column">{totalCredit.toLocaleString("en-US", { minimumFractionDigits: 2 })}</div>
                     </div>
                 </div>
 

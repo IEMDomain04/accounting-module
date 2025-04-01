@@ -12,7 +12,6 @@ const AccountsPayable = () => {
 
                 <div className="title-subtitle-container">
                     <h1 className="subModule-title">Accounts Payable</h1>
-                    <h2 className="subModule-subTitle">List of accounts payable in this system.</h2>
                 </div>
 
                 <div className="parent-component-container">
