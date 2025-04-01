@@ -28,7 +28,6 @@ thead {
 /* Ensure header cells align with body */
 th,
 td {
-  padding: 1rem;
   text-align: left;
   border-bottom: 1px solid #e8e8e8;
 }
@@ -38,6 +37,7 @@ tr:hover {
 }
 
 th {
+  padding: 1rem;
   background-color: #5a9ecf;
   color: white;
   font-size: 16px;
@@ -45,6 +45,7 @@ th {
 }
 
 td {
+  padding: .3rem 1rem;
   font-size: 14px;
   font-weight: 300;
   text-wrap: wrap;
