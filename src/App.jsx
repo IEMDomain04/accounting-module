@@ -1,6 +1,6 @@
-import { useState, useRef, Suspense, lazy, act } from 'react'
-import './App.css'
-import './MediaQueries.css'
+import { useState, useRef, Suspense, lazy, act, useEffect } from "react";
+import "./App.css";
+import "./MediaQueries.css";
 import SearchBar from "./shared/components/SearchBar";
 
 function App() {
@@ -28,9 +28,15 @@ function App() {
 
   // load jsx files for main modules
   const loadMainModule = (moduleId) => {
-    if (moduleFileNames[moduleId] && !(activeModule == moduleId && !activeSubModule)) {
-
-      const LazyComponent = lazy(() => import(/* @vite-ignore */ `./modules/${moduleFileNames[moduleId]}/${moduleFileNames[moduleId]}.jsx`));
+    if (
+      moduleFileNames[moduleId] &&
+      !(activeModule == moduleId && !activeSubModule)
+    ) {
+      const LazyComponent = lazy(() =>
+        import(
+          /* @vite-ignore */ `./modules/${moduleFileNames[moduleId]}/${moduleFileNames[moduleId]}.jsx`
+        )
+      );
 
       setModuleComponent(() => LazyComponent);
     }
@@ -38,93 +44,102 @@ function App() {
 
   // load jsx files for submodules
   const loadSubModule = (submoduleId) => {
-    if (moduleSubmoduleFileNames[activeModule][submoduleId] && !(activeSubModule == submoduleId)) {
-
-      const LazyComponent = lazy(() => import(/* @vite-ignore */ `./modules/${moduleFileNames[activeModule]}/submodules/${moduleSubmoduleFileNames[activeModule][submoduleId]}.jsx`));
+    if (
+      moduleSubmoduleFileNames[activeModule][submoduleId] &&
+      !(activeSubModule == submoduleId)
+    ) {
+      const LazyComponent = lazy(() =>
+        import(
+          /* @vite-ignore */ `./modules/${moduleFileNames[activeModule]}/submodules/${moduleSubmoduleFileNames[activeModule][submoduleId]}.jsx`
+        )
+      );
 
       setModuleComponent(() => LazyComponent);
     }
   };
 
   const moduleFileNames = {
-    "Management": "Management",
-    "Administration": "Administration",
-    "Accounting": "Accounting",
-    "Financials": "Financials",
-    "Purchasing": "Purchasing",
-    "Operations": "Operations",
-    "Sales": "Sales",
-    "CRM": "CRM",
+    Management: "Management",
+    Administration: "Administration",
+    Accounting: "Accounting",
+    Financials: "Financials",
+    Purchasing: "Purchasing",
+    Operations: "Operations",
+    Sales: "Sales",
+    CRM: "CRM",
     "Support & Services": "SupportServices",
-    "Inventory": "Inventory",
-    "Distribution": "Distribution",
-    "Production": "Production",
-    "MRP": "MRP",
+    Inventory: "Inventory",
+    Distribution: "Distribution",
+    Production: "Production",
+    MRP: "MRP",
     "Project Management": "ProjectManagement",
     "Human Resources": "HumanResources",
     "Report Generator": "ReportGenerator",
   };
 
   const moduleSubmoduleFileNames = {
-    "Management": {
+    Management: {
       "User Roles": "UserRoles",
       "Access Control": "AccessControl",
-      "Settings": "Settings",
+      Settings: "Settings",
     },
-    "Administration": {
+    Administration: {
       "Company Policies": "CompanyPolicies",
       "User Accounts": "UserAccounts",
     },
-    "Accounting": {
-      "Chart of Accounts": "ChartOfAccounts",
-      "Journal": "Journal",
-      "Journal Entry": "JournalEntry",
+    Accounting: {
       "General Ledger": "GeneralLedger",
-      "General Ledger Accounts": "GeneralLedgerAccounts",
-      "Accounts Receivables": "AccountsReceivable",
-      "Accounts Payables": "AccountsPayable",
-      "Official Receipts": "OfficialReceipts",
+      "Accounts Payable": "AccountsPayable",
+      "Accounts Receivable": "AccountsReceivable",
     },
-    "Financials": {
-      "Budgeting": "Budgeting",
+    Financials: {
+      Budgeting: "Budgeting",
       "Cash Flow": "CashFlow",
       "Financial Reports": "FinancialReports",
     },
-    "Purchasing": {
+    Purchasing: {
       "Supplier Management": "SupplierManagement",
       "Purchase Orders": "PurchaseOrders",
     },
-    "Operations": {
+    Operations: {
       "Workflow Automation": "WorkflowAutomation",
       "Operational Analytics": "OperationalAnalytics",
     },
-    "Sales": {
-      "Lead Management": "LeadManagement",
-      "Invoices": "Invoices",
-      "Quotations": "Quotations",
-    },
-    "CRM": {
+    Sales: {
+      Quotation: "Quotation",
+      Order: "Order",
+      Delivery: "Delivery",
+      Invoice: "Invoice",
+      "Master List": "MasterList",
+      Dunning: "Dunning",
+      Reporting: "Reporting",
+      Returns: "Returns",
       "Contact Management": "ContactManagement",
-      "Marketing": "Marketing",
+      Marketing: "Marketing",
+      "Customer Support": "CustomerSupport",
+    },
+    CRM: {
+      "Contact Management": "ContactManagement",
+      Marketing: "Marketing",
       "Customer Support": "CustomerSupport",
     },
     "Support & Services": {
       "Ticketing System": "TicketingSystem",
       "Customer Support": "CustomerSupport",
     },
-    "Inventory": {
+    Inventory: {
       "Stock Levels": "StockLevels",
       "Product Catalog": "ProductCatalog",
     },
-    "Distribution": {
-      "Shipping": "Shipping",
+    Distribution: {
+      Shipping: "Shipping",
       "Order Fulfillment": "OrderFulfillment",
     },
-    "Production": {
+    Production: {
       "Manufacturing Process": "ManufacturingProcess",
       "Quality Control": "QualityControl",
     },
-    "MRP": {
+    MRP: {
       "Material Requirements Planning": "MaterialRequirementsPlanning",
       "Production Scheduling": "ProductionScheduling",
     },
@@ -134,8 +149,8 @@ function App() {
     },
     "Human Resources": {
       "Employee Records": "EmployeeRecords",
-      "Payroll": "Payroll",
-      "Recruitment": "Recruitment",
+      Payroll: "Payroll",
+      Recruitment: "Recruitment",
     },
     "Report Generator": {
       "Custom Reports": "CustomReports",
@@ -148,19 +163,18 @@ function App() {
     icon: `/icons/module-icons/${moduleFileNames[module]}.png`,
   }));
 
-
-
-
   return (
-    <div className='shell'>
-      <div className='shell-container'>
-
+    <div className="shell">
+      <div className="shell-container">
         {/* collapsible menu */}
 
         {/* static left navi -- icons */}
-        <div className='sidebar-icons-container'>
-          <div className='sidebar-icons-hamburger-container'>
-            <div className='sidebar-icons-ham-icon-wrapper' onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+        <div className="sidebar-icons-container">
+          <div className="sidebar-icons-hamburger-container">
+            <div
+              className="sidebar-icons-ham-icon-wrapper"
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            >
               <div className={`ham-menu-icon ${isSidebarOpen ? "active" : ""}`}>
                 <span></span>
                 <span></span>
@@ -169,7 +183,7 @@ function App() {
             </div>
           </div>
 
-          <div className='sidebar-main-menu-container'></div>
+          <div className="sidebar-main-menu-container"></div>
 
           <div
             className={`sidebar-module-icons ${isSidebarOpen ? "opened" : ""}`}
@@ -181,10 +195,9 @@ function App() {
                 {/* Main Module Icons */}
                 <div
                   className={`sidebar-module-icons-item 
-                      ${isSidebarOpen ? "opened" : ""}
+                      ${isSidebarOpen ? "opened" : ""} 
                       ${activeModule === module.id ? "active" : ""} 
-                      ${hoveredModule === module.id ? "hovered" : ""}`
-                  }
+                      ${hoveredModule === module.id ? "hovered" : ""}`}
                   onClick={() => {
                     setActiveModule(module.id);
                     setActiveSubModule(null); // Reset submodule when a main module is clicked
@@ -195,42 +208,44 @@ function App() {
                   onMouseLeave={() => setHoveredModule(null)}
                 >
                   <img src={module.icon} alt={module.id} />
-
                 </div>
 
-
                 <div
-                  className={`sidebar-submodule-empty-container ${(isSidebarOpen && activeModule === module.id) ? "opened" : ""}`}
+                  className={`sidebar-submodule-empty-container ${
+                    isSidebarOpen && activeModule === module.id ? "opened" : ""
+                  }`}
                 >
                   {/* Submodules - Only show if this module is active */}
                   {moduleSubmoduleFileNames[module.id] &&
-                    Object.keys(moduleSubmoduleFileNames[module.id]).map((submodule, index) => (
-                      <div key={index} className="sidebar-submodule-item-empty">
-                        <p></p>
-                      </div>
-                    ))}
-
-
+                    Object.keys(moduleSubmoduleFileNames[module.id]).map(
+                      (submodule, index) => (
+                        <div
+                          key={index}
+                          className="sidebar-submodule-item-empty"
+                        >
+                          <p></p>
+                        </div>
+                      )
+                    )}
                 </div>
-
               </div>
             ))}
           </div>
 
-          <div className='sidebar-kinetiq-footer'>
+          <div className="sidebar-kinetiq-footer">
             <img src={"/icons/Kinetiq-Logo.png"} alt={"Kinetiq Logo"}></img>
           </div>
         </div>
 
-
-
         {/* collapsible description navi */}
-        <div className={`sidebar-desc-container ${isSidebarOpen ? "" : "closed"}`}>
-          <div className='sidebar-icons-hamburger-container'></div>
-          <div className='sidebar-main-menu-container'></div>
+        <div
+          className={`sidebar-desc-container ${isSidebarOpen ? "" : "closed"}`}
+        >
+          <div className="sidebar-icons-hamburger-container"></div>
+          <div className="sidebar-main-menu-container"></div>
 
           <div
-            className='sidebar-module-descs'
+            className="sidebar-module-descs"
             ref={descsRef}
             onScroll={() => handleScroll("descs")}
           >
@@ -240,8 +255,7 @@ function App() {
                 <div
                   className={`sidebar-module-desc-item 
                             ${activeModule === module.id ? "active" : ""} 
-                            ${hoveredModule === module.id ? "hovered" : ""}`
-                  }
+                            ${hoveredModule === module.id ? "hovered" : ""}`}
                   onClick={() => {
                     setActiveModule(module.id);
                     setActiveSubModule(null);
@@ -254,79 +268,104 @@ function App() {
                 </div>
 
                 <div
-                  className={`sidebar-submodule-empty-container ${(isSidebarOpen && activeModule === module.id) ? "opened" : ""}`}
+                  className={`sidebar-submodule-empty-container ${
+                    isSidebarOpen && activeModule === module.id ? "opened" : ""
+                  }`}
                 >
-
                   {/* Submodules - only show if the main module is active */}
                   {moduleSubmoduleFileNames[module.id] &&
-                    Object.keys(moduleSubmoduleFileNames[module.id]).map((sub, index) => (
-                      <div
-                        key={index}
-                        className={`sidebar-submodule-item
+                    Object.keys(moduleSubmoduleFileNames[module.id]).map(
+                      (sub, index) => (
+                        <div
+                          key={index}
+                          className={`sidebar-submodule-item
                             ${activeSubModule === sub ? "active" : ""} 
                             ${hoveredSubModule === sub ? "hovered" : ""}`}
-                        onClick={() => { setActiveSubModule(sub); loadSubModule(sub); }}
-                        onMouseEnter={() => setHoveredSubModule(sub)}
-                        onMouseLeave={() => setHoveredSubModule(null)}
-                      >
-                        <p>{sub}</p>
-                      </div>
-                    ))}
-
+                          onClick={() => {
+                            setActiveSubModule(sub);
+                            loadSubModule(sub);
+                          }}
+                          onMouseEnter={() => setHoveredSubModule(sub)}
+                          onMouseLeave={() => setHoveredSubModule(null)}
+                        >
+                          <p>{sub}</p>
+                        </div>
+                      )
+                    )}
                 </div>
               </div>
             ))}
           </div>
 
-
-
-          <div className='sidebar-kinetiq-footer-desc'>
+          <div className="sidebar-kinetiq-footer-desc">
             <p>Kinetiq</p>
           </div>
         </div>
 
         {/* adjustable right content */}
-        <div className='header-body-container'>
-          <div className='header-navi'>
-            <div className={`header-tabs-container ${activeModule ? "visible" : "hidden"}`}>
-              <img src={`/icons/header-module-icons/${moduleFileNames[activeModule]}.png`} alt={activeModule} />
-              <p className={`header-module-name ${!activeSubModule ? "active" : ""}`} onClick={() => {
-                setActiveModule(activeModule);
-                setActiveSubModule(null);
-              }}>
+        <div className="header-body-container">
+          <div className="header-navi">
+            <div
+              className={`header-tabs-container ${
+                activeModule ? "visible" : "hidden"
+              }`}
+            >
+              <img
+                src={`/icons/header-module-icons/${moduleFileNames[activeModule]}.png`}
+                alt={activeModule}
+              />
+              <p
+                className={`header-module-name ${
+                  !activeSubModule ? "active" : ""
+                }`}
+                onClick={() => {
+                  setActiveModule(activeModule);
+                  loadMainModule(activeModule);
+                  setActiveSubModule(null);
+                  loadSubModule(null);
+                }}
+              >
                 {activeModule}
               </p>
 
               <p>{activeSubModule ? ` > ` : ""}</p>
-              <p id="header-submodule-name">{activeSubModule ? activeSubModule : ""}</p>
+              <p id="header-submodule-name">
+                {activeSubModule ? activeSubModule : ""}
+              </p>
             </div>
 
-
-            <div className='header-right-container'>
+            <div className="header-right-container">
               <SearchBar />
-              <img src={`/icons/Notification-${hasNotification ? "active-" : ""}logo.png`}
-                alt='Notificaton-Logo' onClick={() => setHasNotification(!hasNotification)}></img>
-              <div className='header-profile-container'>
-                <div className='header-profile-icon'> <p>C</p></div>
-                <p className='header-profile-name'>Crusch K.</p>
+              <img
+                src={`/icons/Notification-${
+                  hasNotification ? "active-" : ""
+                }logo.png`}
+                alt="Notificaton-Logo"
+                onClick={() => setHasNotification(!hasNotification)}
+              ></img>
+              <div className="header-profile-container">
+                <div className="header-profile-icon">
+                  {" "}
+                  <p>C</p>
+                </div>
+                <p className="header-profile-name">Crusch K.</p>
               </div>
             </div>
-
-
           </div>
-          <div className='body-container'>
+          <div className="body-container">
             {ModuleComponent && (
               <Suspense>
-                <ModuleComponent />
+                <ModuleComponent
+                  loadSubModule={loadSubModule}
+                  setActiveSubModule={setActiveSubModule}
+                />
               </Suspense>
             )}
-
           </div>
         </div>
-
       </div>
     </div>
-  )
+  );
 }
 
 export default App;
