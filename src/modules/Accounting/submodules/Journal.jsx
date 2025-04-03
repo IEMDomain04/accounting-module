@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import '../styles/Accounting-Global-Styling.css';
+import '../styles/accounting-styling.css';
 import Button from '../components/Button';
 import Dropdown from '../components/Dropdown';
 import Table from '../components/Table';
@@ -159,7 +159,7 @@ const Journal = () => {
                     isOpen: true,
                     type: "error",
                     title: "Error Adding Journal",
-                    message: error.message,
+                    message: "Check you database connection.",
                 });
             });
     };
@@ -190,7 +190,7 @@ const Journal = () => {
 
     const filteredData = data.filter(row =>
         [row[0], row[1], row[2], row[5], row[6]]
-            .filter(Boolean) // Remove null/undefined values
+            .filter(Boolean)
             .join(" ")
             .toLowerCase()
             .includes(searching.toLowerCase())

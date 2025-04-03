@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import "../styles/Accounting-Global-Styling.css";
-import Forms from "../components/Forms";
+import "../styles/accounting-styling.css";
 import Table from "../components/Table";
 import Search from "../components/Search";
 

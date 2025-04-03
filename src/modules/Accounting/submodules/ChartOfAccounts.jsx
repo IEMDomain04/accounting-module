@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import "../styles/Accounting-Global-Styling.css";
+// import axios from "axios";
+import "../styles/accounting-styling.css";
 import { accounts } from "./ListOfAccounts";
+import SearchBar from "../../../shared/components/SearchBar";
 import Button from "../components/Button";
 import Dropdown from "../components/Dropdown";
 import Table from "../components/Table";
 import CoaModalInput from "../components/CoaModalInput";
 import NotifModal from "../components/modalNotif/NotifModal";
-import Search from "../components/Search";
 
 const BodyContent = () => {
     const columns = ["Account code", "Account name", "Account type"];
@@ -23,14 +23,14 @@ const BodyContent = () => {
         account_type: ""
     });
 
-    // Fetch data from API when the component mounts
-    useEffect(() => {
-        axios.get("http://127.0.0.1:8000/api/chart-of-accounts/")
-            .then(response => {
-                setData(response.data.map(acc => [acc.account_code, acc.account_name, acc.account_type]));
-            })
-            .catch(error => console.error("Error fetching data:", error));
-    }, []);
+    // // Fetch data from API when the component mounts
+    // useEffect(() => {
+    //     axios.get("http://127.0.0.1:8000/api/chart-of-accounts/")
+    //         .then(response => {
+    //             setData(response.data.map(acc => [acc.account_code, acc.account_name, acc.account_type]));
+    //         })
+    //         .catch(error => console.error("Error fetching data:", error));
+    // }, []);
 
     // Handle Input Change
     const handleInputChange = (field, value) => {
@@ -55,11 +55,21 @@ const BodyContent = () => {
             return;
         }
 
+        if (!newAccount.account_type) {
+            setValidation({
+                isOpen: true,
+                type: "warning",
+                title: "Missing Account Type",
+                message: "Please select an account type.",
+            });
+            return;
+        }
+
         if (!newAccount.account_code) {
             setValidation({
                 isOpen: true,
                 type: "warning",
-                title: "Account Code Required",
+                title: "Missing Account Code",
                 message: "Please provide an account code.",
             });
             return;
@@ -69,18 +79,8 @@ const BodyContent = () => {
             setValidation({
                 isOpen: true,
                 type: "warning",
-                title: "Account Name Required",
+                title: "Missing Account Name",
                 message: "Please provide an account name.",
-            });
-            return;
-        }
-
-        if (!newAccount.account_type) {
-            setValidation({
-                isOpen: true,
-                type: "warning",
-                title: "Account Type Required",
-                message: "Please select an account type.",
             });
             return;
         }
@@ -127,7 +127,7 @@ const BodyContent = () => {
                 isOpen: true,
                 type: "error",
                 title: "Check Connection!",
-                message: "Kindly Check your connection",
+                message: "Kindly check your connection to the database.",
             });
         }
     };
@@ -143,7 +143,7 @@ const BodyContent = () => {
                 <div className="parent-component-container">
                     <div className="component-container">
                         <Dropdown options={accounts} style="selection" defaultOption="Sort account.." />
-                        <Search />
+                        <SearchBar />
                     </div>
 
                     <div className="component-container">

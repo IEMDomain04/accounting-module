@@ -51,7 +51,7 @@ label {
   }
   .input-component {
     font-size: 12px;
-    padding: 8px 10px;
+    padding: 6px 8px;
   }
 }
 
@@ -59,7 +59,7 @@ label {
 @media (max-width: 768px) {
   .input-component {
     font-size: 13px;
-    padding: 9px 11px;
+    padding: 7px 9px;
   }
 }
 
@@ -67,7 +67,7 @@ label {
 @media (min-width: 769px) and (max-width: 1024px) {
   .input-component {
     font-size: 14px;
-    padding: 10px 12px;
+    padding: 8px 10px;
   }
 }
 
@@ -75,6 +75,6 @@ label {
 @media (min-width: 1025px) and (max-width: 1280px) {
   .input-component {
     font-size: 15px;
-    padding: 12px 14px;
+    padding: 8px 10px;
   }
 }

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import '../styles/JournalEntry.css';
-import '../styles/Accounting-Global-Styling.css';
+import '../styles/accounting-styling.css';
 import Button from '../components/Button';
 import Forms from '../components/Forms';
 import NotifModal from '../components/modalNotif/NotifModal'; // Import NotifModal
@@ -92,7 +92,6 @@ const JournalEntry = () => {
             });
             return;
         }
-
         if (journalForm.transactions.length < 2) {
             setValidation({
                 isOpen: true,
@@ -107,7 +106,7 @@ const JournalEntry = () => {
                 isOpen: true,
                 type: "warning",
                 title: "Unbalanced Entry",
-                message: "Total Debit must be equal to Total Credit and cannot be zero.",
+                message: "Total Debit must equal Total Credit and cannot be zero.",
             });
             return;
         }
@@ -159,8 +158,8 @@ const JournalEntry = () => {
             setValidation({
                 isOpen: true,
                 type: "error",
-                title: "Journal Entry Error!",
-                message: "The provided journal ID is incorrect, does not exist, or is not recorded."
+                title: "Error Updating Journal Entry",
+                message: error.message,
             });
         }
     };
@@ -170,11 +169,10 @@ const JournalEntry = () => {
             <div className="body-content-container">
                 <div className="title-subtitle-container">
                     <h1 className="subModule-title">Journal Entry</h1>
-                    <h2 className="subModule-subTitle">Enter debit and credit details for transactions.</h2>
                 </div>
 
                 <div className="parent-component-container">
-                    <div className="component-container">
+                    <div className="parent-component-container">
                         <div className="flex flex-col w-80">
                             <Forms
                                 type="text"
