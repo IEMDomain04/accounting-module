@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../styles/JournalEntry.css';
 import '../styles/accounting-styling.css';
 import Button from '../components/Button';
 import Forms from '../components/Forms';
 import NotifModal from '../components/modalNotif/NotifModal'; // Import NotifModal
+import Dropdown from '../components/Dropdown';
+import AddAccountModal from '../components/AddAccountModal';
 
 const JournalEntry = () => {
     const [journalForm, setJournalForm] = useState({
@@ -13,6 +15,8 @@ const JournalEntry = () => {
     });
     const [totalDebit, setTotalDebit] = useState(0);
     const [totalCredit, setTotalCredit] = useState(0);
+    const [journalOptions, setJournalOptions] = useState([]);
+    const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
 
     // New state for modal notification
     const [validation, setValidation] = useState({
@@ -23,14 +27,20 @@ const JournalEntry = () => {
     });
 
     const handleInputChange = (index, field, value) => {
+        // Remove commas from input before storing in state
+        const sanitizedValue = value.replace(/,/g, '');
+
         setJournalForm((prevState) => {
             const updatedTransactions = prevState.transactions.map((entry, i) =>
-                i === index ? { ...entry, [field]: value } : entry
+                i === index ? { ...entry, [field]: sanitizedValue } : entry
             );
             updateTotals(updatedTransactions);
             return { ...prevState, transactions: updatedTransactions };
         });
     };
+
+
+
 
     const addEntry = (type) => {
         setJournalForm((prevState) => {
@@ -61,6 +71,12 @@ const JournalEntry = () => {
         setTotalDebit(debitSum);
         setTotalCredit(creditSum);
     };
+
+    const handleAddAccount = () => {
+        console.log("handleAddAccount called");
+        setIsAccountModalOpen(false); // closes the modal after submission
+    };
+    
 
     const handleSubmit = async () => {
         if (!journalForm.journalId && !journalForm.description) {
@@ -111,6 +127,7 @@ const JournalEntry = () => {
             return;
         }
 
+        // Numbers comma formatted
         const payload = {
             total_debit: totalDebit.toFixed(2),
             total_credit: totalCredit.toFixed(2),
@@ -125,6 +142,7 @@ const JournalEntry = () => {
         };
         console.log('Submitting payload to PATCH /journal-entries:', payload);
 
+        // Display the Data to the Table
         try {
             const response = await fetch(`http://127.0.0.1:8000/api/journal-entries/${journalForm.journalId}/`, {
                 method: 'PATCH',
@@ -164,6 +182,25 @@ const JournalEntry = () => {
         }
     };
 
+    // Checking if the journal ID is already in use
+    useEffect(() => {
+        const fetchJournalIDs = async () => {
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/journal-entries/');
+                const result = await response.json();
+                const zeroBalanceJournals = result
+                    .filter(entry => parseFloat(entry.total_debit) === 0 && parseFloat(entry.total_credit) === 0)
+                    .map(entry => entry.journal_id || entry.id);
+                setJournalOptions(zeroBalanceJournals);
+            } catch (error) {
+                console.error('Error fetching journal IDs:', error);
+            }
+        };
+
+        fetchJournalIDs();
+    }, []);
+
+
     return (
         <div className="JournalEntry">
             <div className="body-content-container">
@@ -172,15 +209,23 @@ const JournalEntry = () => {
                 </div>
 
                 <div className="parent-component-container">
-                    <div className="parent-component-container">
-                        <div className="flex flex-col w-80">
-                            <Forms
-                                type="text"
-                                formName="Journal ID*"
-                                placeholder="Enter Journal ID"
-                                value={journalForm.journalId}
-                                onChange={(e) => setJournalForm({ ...journalForm, journalId: e.target.value })}
-                            />
+                    <div className="flex justify-between gap-x-5">
+
+
+                        {/* Top Buttons */}
+                        <div className="flex gap-x-5 w-auto">
+
+                            <div className="flex flex-col">
+                                <label htmlFor="journalId">Journal ID*</label>
+                                <Dropdown
+                                    options={journalOptions}
+                                    style="selection"
+                                    defaultOption="Select Journal ID"
+                                    value={journalForm.journalId}
+                                    onChange={(value) => setJournalForm({ ...journalForm, journalId: value })}
+                                />
+                            </div>
+
                             <Forms
                                 type="text"
                                 formName="Description*"
@@ -189,6 +234,8 @@ const JournalEntry = () => {
                                 onChange={(e) => setJournalForm({ ...journalForm, description: e.target.value })}
                             />
                         </div>
+
+                        {/* Add Debit and Credit Buttons */}
                         <div className="component-container">
                             <Button name="+ Add debit" variant="standard2" onclick={() => addEntry('debit')} />
                             <Button name="+ Add credit" variant="standard2" onclick={() => addEntry('credit')} />
@@ -211,59 +258,63 @@ const JournalEntry = () => {
                     </div>
                 </div>
 
+
+                {/* Debit and Credit table  */}
                 <div className="journal-table">
                     <div className="table-header">
                         <div className="column account-column">Accounts Affected</div>
-                        <div className="column debit-column">Debit</div>
-                        <div className="column credit-column">Credit</div>
+                        <div className="column debit-column">Debit Input</div>
+                        <div className="column credit-column">Credit Input</div>
                     </div>
 
                     {journalForm.transactions.map((entry, index) => (
-                        <div
-                            key={index}
-                            className={`table-row ${entry.type === 'credit' ? 'credit-row' : ''}`}
-                        >
+                        <div key={index} className={`table-row ${entry.type === 'credit' ? 'credit-row' : ''}`}>
                             <div
-                                className={`column account-column ${entry.type === 'credit' ? 'indent' : ''}`}
-                            >
-                                <Forms
-                                    type="text"
-                                    placeholder={entry.type === 'credit' ? 'To Account ID' : 'Account ID'}
-                                    value={entry.glAccountId}
-                                    onChange={(e) => handleInputChange(index, 'glAccountId', e.target.value)}
+                                className={`column account-column ${entry.type === 'credit' ? 'ml-6' : ''}`}>
+                                <Button
+                                    name={entry.type === 'credit' ? 'Select Account' : 'Select Account'}
+                                    variant="standard2"
+                                    onclick={() => {
+                                        console.log('Opening Account Modal');
+                                        setIsAccountModalOpen(true);
+                                    }}
                                 />
+
                             </div>
+
                             <div className="column debit-column">
                                 {entry.type === 'debit' && (
                                     <Forms
-                                        type="number"
+                                        type="number" // Keep it text to allow formatted display
                                         placeholder="Enter Debit"
-                                        value={entry.amount}
+                                        value={entry.amount ? Number(entry.amount).toLocaleString() : ''}
                                         onChange={(e) => handleInputChange(index, 'amount', e.target.value)}
                                     />
                                 )}
                             </div>
+
                             <div className="column credit-column">
                                 {entry.type === 'credit' && (
                                     <Forms
-                                        type="number"
+                                        type="number" // Keep it text to allow formatted display
                                         placeholder="Enter Credit"
-                                        value={entry.amount}
+                                        value={entry.amount ? Number(entry.amount).toLocaleString() : ''}
                                         onChange={(e) => handleInputChange(index, 'amount', e.target.value)}
                                     />
                                 )}
                             </div>
+
                             <button className="remove-btn" onClick={() => removeEntry(index)}>
                                 Remove
                             </button>
                         </div>
                     ))}
+                </div>
 
-                    <div className="totals-row">
-                        <div className="column account-column">Totals</div>
-                        <div className="column debit-column">{totalDebit.toLocaleString("en-US", { minimumFractionDigits: 2 })}</div>
-                        <div className="column credit-column">{totalCredit.toLocaleString("en-US", { minimumFractionDigits: 2 })}</div>
-                    </div>
+                <div className="totals-row">
+                    <div className="column account-column">Totals</div>
+                    <div className="column debit-column">{totalDebit.toLocaleString("en-US", { minimumFractionDigits: 2 })}</div>
+                    <div className="column credit-column">{totalCredit.toLocaleString("en-US", { minimumFractionDigits: 2 })}</div>
                 </div>
 
                 {/* Add NotifModal for feedback */}
@@ -276,6 +327,18 @@ const JournalEntry = () => {
                         message={validation.message}
                     />
                 )}
+
+                {isAccountModalOpen && (
+                    <AddAccountModal
+                        isModalOpen={isAccountModalOpen} // ✅ match the expected prop name
+                        closeModal={() => setIsAccountModalOpen(false)}
+                        reportForm={{}} // dummy placeholder
+                        handleInputChange={() => { }}
+                        handleSubmit={handleAddAccount} // ❌ This function is never defined in your component!
+                    />
+
+                )}
+
             </div>
         </div>
     );
