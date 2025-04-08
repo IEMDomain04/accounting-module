@@ -34,55 +34,26 @@ const BodyContent = () => {
     };
 
     const fetchData = () => {
-        fetch('http://127.0.0.1:8000/api/journal-entry-lines/')
-            .then(response => response.json())
-            .then(result => {
-                console.log('API Response:', result); // Log the API response for debugging
-
-                // Extract the highest numeric part of entry_line_id
-                let maxEntryLineId = 0;
-
-                result.forEach(entry => {
-                    const match = (entry.entry_line_id || "").match(/(\d+)$/); // Extract numeric part
-                    if (match) {
-                        const numericPart = parseInt(match[1], 10);
-                        if (numericPart > maxEntryLineId) {
-                            maxEntryLineId = numericPart;
-                        }
-                    }
-                });
-
-                const transformedData = result.flatMap(entry => {
-                    // Ensure GL Account ID is the same as Account Name if missing or invalid
-                    const glAccountId = entry.gl_account_id || entry.account_name || '-';
-                    const accountName = entry.account_name || '-';
-
-                    const baseRow = [
-                        glAccountId, // GL Account ID
-                        accountName, // Account Name
-                        entry.journal_id || entry.journal_entry || '-', // Journal ID
-                    ];
-
-                    const description = entry.description || '-'; // Description
-
-                    // Increment the entry_line_id for each new row
-                    const nextDebitEntryLineId = `ACC-JEL-2025-YZ${String(++maxEntryLineId).padStart(4, '0')}`;
-                    const nextCreditEntryLineId = `ACC-JEL-2025-YZ${String(++maxEntryLineId).padStart(4, '0')}`;
-
-                    const debitRow = [nextDebitEntryLineId, ...baseRow, parseFloat(entry.debit_amount || '0.00').toFixed(2), '0.00', description];
-                    const creditRow = [nextCreditEntryLineId, ...baseRow, '0.00', parseFloat(entry.credit_amount || '0.00').toFixed(2), description];
-
-                    return [
-                        ...(parseFloat(entry.debit_amount || '0.00') > 0 ? [debitRow] : []),
-                        ...(parseFloat(entry.credit_amount || '0.00') > 0 ? [creditRow] : [])
-                    ];
-                });
-
-                console.log('Transformed Data:', transformedData); // Log the transformed data for debugging
-                setData(transformedData);
-            })
-            .catch(error => console.error('Error fetching data:', error));
-    };
+        fetch('http://127.0.0.1:8000/api/general-ledger-jel-view/')
+          .then(response => response.json())
+          .then(result => {
+            console.log('API Response:', result); // Log the API response for debugging
+      
+            const transformedData = result.map(entry => [
+              entry.entry_line_id,          // Use the database-provided entry_line_id
+              entry.gl_account_id || 'N/A', // GL Account ID with fallback
+              entry.account_name || 'No Account', // Account Name with fallback
+              entry.journal_id || '-',      // Journal ID with fallback
+              parseFloat(entry.debit_amount || '0.00').toFixed(2), // Debit Amount
+              parseFloat(entry.credit_amount || '0.00').toFixed(2), // Credit Amount
+              entry.description || '-'      // Description with fallback
+            ]);
+      
+            console.log('Transformed Data:', transformedData); // Log the transformed data for debugging
+            setData(transformedData);
+          })
+          .catch(error => console.error('Error fetching data:', error));
+      };
 
     useEffect(() => {
         fetchData();

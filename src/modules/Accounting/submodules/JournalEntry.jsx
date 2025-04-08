@@ -17,7 +17,7 @@ const JournalEntry = () => {
   const [totalCredit, setTotalCredit] = useState(0);
   const [journalOptions, setJournalOptions] = useState([]);
   const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState(null); // Track the row being edited
+  const [selectedIndex, setSelectedIndex] = useState(null);
   const [validation, setValidation] = useState({
     isOpen: false,
     type: "warning",
@@ -27,7 +27,7 @@ const JournalEntry = () => {
 
   // Handle input changes for amount fields
   const handleInputChange = (index, field, value) => {
-    const sanitizedValue = value.replace(/,/g, ""); 
+    const sanitizedValue = value.replace(/,/g, "");
     setJournalForm((prevState) => {
       const updatedTransactions = prevState.transactions.map((entry, i) =>
         i === index ? { ...entry, [field]: sanitizedValue } : entry
@@ -84,7 +84,7 @@ const JournalEntry = () => {
     setSelectedIndex(null);
   };
 
-  // Submit journal entry to backend
+  // Submit journal entry to backend with new entry_line_id format
   const handleSubmit = async () => {
     if (!journalForm.journalId || !journalForm.description) {
       setValidation({
@@ -92,6 +92,18 @@ const JournalEntry = () => {
         type: "warning",
         title: "Missing Required Fields",
         message: "Please fill in all required fields: Journal ID and Description.",
+      });
+      return;
+    }
+    const invalidTransactions = journalForm.transactions.some(
+      (t) => !t.glAccountId || !t.accountName
+    );
+    if (invalidTransactions) {
+      setValidation({
+        isOpen: true,
+        type: "warning",
+        title: "Missing Account Details",
+        message: "All transactions must have a GL Account ID and Account Name.",
       });
       return;
     }
@@ -114,13 +126,18 @@ const JournalEntry = () => {
       return;
     }
 
+    // Get current year dynamically
+    const currentYear = new Date().getFullYear(); // e.g., 2025
+    const baseIdentifier = "YZ2020"; // Fixed identifier
+
     const payload = {
       total_debit: totalDebit.toFixed(2),
       total_credit: totalCredit.toFixed(2),
       description: journalForm.description,
       transactions: journalForm.transactions.map((t, index) => ({
-        entry_line_id: `${journalForm.journalId}-${index}-${Date.now()}`,
-        gl_account_id: t.glAccountId || null,
+        // New format: ACC-JEL-2025-YZ2020-1, ACC-JEL-2025-YZ2020-2, etc.
+        entry_line_id: `ACC-JEL-${currentYear}-${baseIdentifier}-${index}`,
+        gl_account_id: t.glAccountId,
         debit_amount: t.type === "debit" ? parseFloat(t.amount).toFixed(2) : "0.00",
         credit_amount: t.type === "credit" ? parseFloat(t.amount).toFixed(2) : "0.00",
         description: journalForm.description || null,
@@ -189,7 +206,6 @@ const JournalEntry = () => {
 
         <div className="parent-component-container">
           <div className="flex justify-between gap-x-5">
-            {/* Top Buttons */}
             <div className="flex gap-x-5 w-auto">
               <div className="flex flex-col">
                 <label htmlFor="journalId">Journal ID*</label>
@@ -210,7 +226,6 @@ const JournalEntry = () => {
               />
             </div>
 
-            {/* Add Debit and Credit Buttons */}
             <div className="component-container">
               <Button name="+ Add debit" variant="standard2" onclick={() => addEntry("debit")} />
               <Button name="+ Add credit" variant="standard2" onclick={() => addEntry("credit")} />
@@ -248,7 +263,7 @@ const JournalEntry = () => {
                   name={entry.glAccountId ? entry.accountName : "Select Account"}
                   variant="standard2"
                   onclick={() => {
-                    setSelectedIndex(index); // Track the row being edited
+                    setSelectedIndex(index);
                     setIsAccountModalOpen(true);
                   }}
                 />
@@ -259,8 +274,9 @@ const JournalEntry = () => {
                   <Forms
                     type="number"
                     placeholder="Enter Debit"
-                    value={entry.amount ? Number(entry.amount).toLocaleString() : ""}
+                    value={entry.amount}
                     onChange={(e) => handleInputChange(index, "amount", e.target.value)}
+                    step="any"
                   />
                 )}
               </div>
@@ -270,8 +286,9 @@ const JournalEntry = () => {
                   <Forms
                     type="number"
                     placeholder="Enter Credit"
-                    value={entry.amount ? Number(entry.amount).toLocaleString() : ""}
+                    value={entry.amount}
                     onChange={(e) => handleInputChange(index, "amount", e.target.value)}
+                    step="any"
                   />
                 )}
               </div>
@@ -293,7 +310,6 @@ const JournalEntry = () => {
           </div>
         </div>
 
-        {/* Notification Modal */}
         {validation.isOpen && (
           <NotifModal
             isOpen={validation.isOpen}
@@ -304,7 +320,6 @@ const JournalEntry = () => {
           />
         )}
 
-        {/* Add Account Modal */}
         {isAccountModalOpen && (
           <AddAccountModal
             isModalOpen={isAccountModalOpen}
