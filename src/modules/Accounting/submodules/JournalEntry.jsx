@@ -24,7 +24,6 @@ const JournalEntry = () => {
     title: "",
     message: "",
   });
-  const [latestEntryLineId, setLatestEntryLineId] = useState(20); // Start from the known latest entry ID
 
   // Handle input changes for amount fields
   const handleInputChange = (index, field, value) => {
@@ -85,7 +84,7 @@ const JournalEntry = () => {
     setSelectedIndex(null);
   };
 
-  // Submit journal entry to backend with new entry_line_id format
+  // Submit journal entry to backend without entry_line_id
   const handleSubmit = async () => {
     if (!journalForm.journalId || !journalForm.description) {
       setValidation({
@@ -97,14 +96,14 @@ const JournalEntry = () => {
       return;
     }
     const invalidTransactions = journalForm.transactions.some(
-      (t) => !t.glAccountId || !t.accountName
+      (t) => !t.glAccountId || !t.accountName || parseFloat(t.amount) <= 0
     );
     if (invalidTransactions) {
       setValidation({
         isOpen: true,
         type: "warning",
         title: "Missing Account Details",
-        message: "All transactions must have a GL Account ID and Account Name.",
+        message: "All transactions must have a GL Account ID, Account Name, and a positive amount.",
       });
       return;
     }
@@ -127,23 +126,16 @@ const JournalEntry = () => {
       return;
     }
 
-    // Get current year dynamically
-    const currentYear = new Date().getFullYear(); // e.g., 2025
-
     const payload = {
       total_debit: totalDebit.toFixed(2),
       total_credit: totalCredit.toFixed(2),
       description: journalForm.description,
-      transactions: journalForm.transactions.map((t, index) => {
-        const newEntryLineId = `ACC-JEL-${currentYear}-XZ${(latestEntryLineId + index + 1).toString().padStart(4, '0')}`;
-        return {
-          entry_line_id: newEntryLineId,
-          gl_account_id: t.glAccountId,
-          debit_amount: t.type === "debit" ? parseFloat(t.amount).toFixed(2) : "0.00",
-          credit_amount: t.type === "credit" ? parseFloat(t.amount).toFixed(2) : "0.00",
-          description: journalForm.description || null,
-        };
-      }),
+      transactions: journalForm.transactions.map((t) => ({
+        gl_account_id: t.glAccountId,
+        debit_amount: t.type === "debit" ? parseFloat(t.amount).toFixed(2) : "0.00",
+        credit_amount: t.type === "credit" ? parseFloat(t.amount).toFixed(2) : "0.00",
+        description: journalForm.description || null,
+      })),
     };
 
     try {
@@ -172,7 +164,6 @@ const JournalEntry = () => {
       });
       setTotalDebit(0);
       setTotalCredit(0);
-      setLatestEntryLineId(latestEntryLineId + journalForm.transactions.length); // Update the latest entry line ID
     } catch (error) {
       setValidation({
         isOpen: true,
