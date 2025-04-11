@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "../styles/accounting-styling.css";
-import { accounts } from "./ListOfAccounts";
-import SearchBar from "../../../shared/components/SearchBar";
+import { subAccounts } from "./ListOfAccounts";
+import Search from "../components/Search";
 import Button from "../components/Button";
 import Dropdown from "../components/Dropdown";
 import Table from "../components/Table";
@@ -23,14 +23,19 @@ const BodyContent = () => {
         account_type: ""
     });
 
-     // Fetch data from API when the component mounts
-     useEffect(() => {
-         axios.get("http://127.0.0.1:8000/api/chart-of-accounts/")
-             .then(response => {
-                 setData(response.data.map(acc => [acc.account_code, acc.account_name, acc.account_type]));
-             })
-             .catch(error => console.error("Error fetching data:", error));
-     }, []);
+    // Merged all of the sub-accounts for sorting
+    const mergeSubAccounts = (subAccounts) => {
+        return Object.values(subAccounts).flat();
+    };
+
+    // Fetch data from API when the component mounts
+    useEffect(() => {
+        axios.get("http://127.0.0.1:8000/api/chart-of-accounts/")
+            .then(response => {
+                setData(response.data.map(acc => [acc.account_code, acc.account_name, acc.account_type]));
+            })
+            .catch(error => console.error("Error fetching data:", error));
+    }, []);
 
     // Handle Input Change
     const handleInputChange = (field, value) => {
@@ -142,8 +147,8 @@ const BodyContent = () => {
 
                 <div className="parent-component-container">
                     <div className="component-container">
-                        <Dropdown options={accounts} style="selection" defaultOption="Sort account.." />
-                        <SearchBar />
+                        <Dropdown options={mergeSubAccounts(subAccounts)} style="selection" defaultOption="Sort accounts.." />
+                        <Search type="text" placeholder="Search account.." />
                     </div>
 
                     <div className="component-container">
