@@ -7,29 +7,8 @@ import { accounts, subAccounts } from '../submodules/ListOfAccounts';
 
 const CoaModalInput = ({ isModalOpen, closeModal, coaForm, handleInputChange, handleSubmit }) => {
     const [selectedAccount, setSelectedAccount] = useState("");
-    const [selectedSubAccount, setSelectedSubAccount] = useState("");
-    const [availableSubAccounts, setAvailableSubAccounts] = useState([]);
-
-    // Function for Selecting Accounts and Sub-Accounts
-    useEffect(() => {
-        if (!selectedAccount) {
-            setAvailableSubAccounts([]);
-            return;
-        }
-
-        const key = toCamelCaseKey(selectedAccount);
-        const subAccountsList = subAccounts[key] || [];
-
-        setAvailableSubAccounts(subAccountsList);
-        setSelectedSubAccount(""); // or [] based on how you store value
-    }, [selectedAccount]);
-
-    // Adapt the spacing and cases in the array for accounts and subAccounts
-    const toCamelCaseKey = (str) =>
-        str
-            .replace(/[^a-zA-Z0-9 ]/g, "") // Remove symbols
-            .replace(/\s(.)/g, (_, group1) => group1.toUpperCase()) // Capitalize after spaces
-            .replace(/^(.)/, (_, group1) => group1.toLowerCase()); // Lowercase first
+    const [accountCode, setAccountCode] = useState("ACC-COA-2025-<code>");
+    
 
     return (
         <div>
@@ -51,7 +30,17 @@ const CoaModalInput = ({ isModalOpen, closeModal, coaForm, handleInputChange, ha
                                 onChange={(e) => handleInputChange("account_name", e.target.value)}
                             />
 
-                            <Forms type="text" formName="Account Code*" placeholder="Enter account code" value={coaForm.account_code} onChange={(e) => handleInputChange("account_code", e.target.value)} />
+                            <Forms type="text"
+                                formName="Account Code*"
+                                placeholder="Enter account code"
+                                value={accountCode}
+                                onChange={(e) => {
+                                    const maxLength = 19; // Set the character limit
+                                    const limitedValue = e.target.value.substring(0, maxLength);
+                                    setAccountCode(limitedValue);
+                                    handleInputChange("account_code", e.target.value)
+                                }}
+                            />
 
                             <div className="flex gap-x-5 max-sm:flex-col max-sm:gap-3">
                                 {/* Account Dropdown */}
@@ -67,21 +56,6 @@ const CoaModalInput = ({ isModalOpen, closeModal, coaForm, handleInputChange, ha
                                             setSelectedAccount(value);
                                             handleInputChange("account", value);
                                             handleInputChange("accountCode", selectedAccountCode); // Set account code in form data
-                                        }}
-                                    />
-                                </div>
-
-                                {/* Sub-Account Dropdown */}
-                                <div className="flex flex-col gap-y-1">
-                                    <label> Select Sub-Account*</label>
-                                    <Dropdown
-                                        options={availableSubAccounts}
-                                        style="selection"
-                                        defaultOption="Select sub-account..."
-                                        value={selectedSubAccount}
-                                        onChange={(value) => {
-                                            setSelectedSubAccount(value);
-                                            handleInputChange("subAccount", value);
                                         }}
                                     />
                                 </div>
