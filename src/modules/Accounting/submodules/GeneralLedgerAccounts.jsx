@@ -140,7 +140,7 @@ const GeneralLedgerAccounts = () => {
 
   
   return (
-    <div className="generalLedger">
+    <div className="generalLedgerAccounts">
       <div className="body-content-container">
         <div className="title-subtitle-container">
           <h1 className="subModule-title">General Ledger Accounts</h1>

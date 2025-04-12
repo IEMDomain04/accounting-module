@@ -201,7 +201,7 @@ const OfficialReceipts = () => {
 
   
   return (
-    <div className="chartAccounts">
+    <div className="officialReceipts">
       <div className="body-content-container">
         <div className="title-subtitle-container">
           <h1 className="subModule-title">Official Receipts</h1>

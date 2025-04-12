@@ -3,7 +3,7 @@ import { BarChart } from '@mui/x-charts/BarChart';
 import { PieChart } from '@mui/x-charts/PieChart';
 import { Gauge } from '@mui/x-charts/Gauge';
 import axios from "axios";
-import "./styles/Accounting.css";
+import "./styles/accounting-styling.css";
 
 const BodyContent = () => {
     // Use states
@@ -87,25 +87,37 @@ const BodyContent = () => {
     return (
         <div className="accounting">
             <div className="body-content-container">
-                <h1 className="text-2xl font-bold text-gray-800 mb-6">Accounting Dashboard</h1>
+                <div className="title-subtitle-container">
+                    <h1 className="subModule-title">Accounting Dashboard</h1>
+                </div>
 
-                <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-
-                    {/* Bar chart: General Ledger */}
-                    <div className="bg-white rounded-2xl shadow-lg p-4 flex flex-col">
-                        <h1 className="font-bold">General Ledger</h1>
-                        <BarChart
+                <div className="flex flex-col bg-white rounded-2xl shadow-lg p-4 mb-10">
+                        <h1 className="font-bold">Journal</h1>
+                        {/* <BarChart
                             xAxis={[{ scaleType: "band", data: chartLabels }]}
                             series={chartSeries}
                             width={500}
                             height={300}
-                        />
+                        /> */}
+                    </div>
+
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+
+                    {/* Bar chart: General Ledger */}
+                    <div className="flex flex-col bg-white rounded-2xl shadow-lg p-4">
+                        <h1 className="font-bold">General Ledger</h1>
+                        {/* <BarChart
+                            xAxis={[{ scaleType: "band", data: chartLabels }]}
+                            series={chartSeries}
+                            width={500}
+                            height={300}
+                        /> */}
                     </div>
 
                     {/* Pie Chart: ??? */}
                     <div className="bg-white rounded-2xl shadow-lg p-4 flex flex-col">
                         <h1 className="font-bold">Chart of Accounts</h1>
-                        <PieChart
+                        {/* <PieChart
                             series={[
                                 {
                                     data: pieData,
@@ -113,7 +125,7 @@ const BodyContent = () => {
                             ]}
                             width={400}
                             height={400}
-                        />
+                        /> */}
                     </div>
                 </div>
 
