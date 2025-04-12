@@ -31,7 +31,7 @@
 .JournalEntry .table-header {
   display: grid;
   grid-template-columns: .5fr 0.5fr 0.5fr 0.2fr;
-  background-color: #5a9ecf;
+  background-color: #00a8a8; 
   color: white;
   font-weight: bold;
   padding: 1rem;
