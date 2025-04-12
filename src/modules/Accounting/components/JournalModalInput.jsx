@@ -46,15 +46,21 @@ const JournalModalInput = ({ isModalOpen, closeModal, journalForm, handleInputCh
                                 onChange={(e) => handleInputChange("invoiceId", e.target.value)}
                             />
 
-                            <Dropdown
-                                style="selection"
-                                defaultOption="Select currency..."
-                                options={["Test1", "Test2"]} 
-                                value={journalForm.currencyId} 
-                                onChange={(value) => handleInputChange("currencyId", value)}
-                            />
-
+                            {/* Currency Dropdown */}
+                            <div className="flex gap-x-5 max-sm:flex-col max-sm:gap-3">
+                            <div className="flex flex-col gap-y-1">
+                                <label>Currency*</label>
+                                <Dropdown
+                                    style="selection"
+                                    defaultOption="Select currency..."
+                                    options={["Test1", "Test2"]}
+                                    value={journalForm.currencyId}
+                                    onChange={(value) => handleInputChange("currencyId", value)}
+                                />
+                            </div>
+                            </div>
                         </div>
+
 
                         <div className="modal-footer">
                             <Button name="Cancel" variant="standard1" onclick={closeModal} />
