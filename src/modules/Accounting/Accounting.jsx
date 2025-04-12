@@ -116,21 +116,21 @@ const BodyContent = () => {
 
                 {/* Summary Cards */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                    <div className="bg-gradient-to-r from-white to-green-200 shadow-lg rounded-2xl p-4 hover:shadow-2xl transition duration-300 ease-in-out transform hover:scale-105">
+                    <div className="bg-gradient-to-r from-white to-green-50 shadow-lg rounded-2xl p-4 hover:shadow-2xl transition duration-300 ease-in-out transform hover:scale-105">
                         <p className="text-gray-800 truncate">Total Debit</p>
                         <p className="text-xl font-semibold text-green-700 truncate">{Number(summary.debit).toLocaleString()}</p>
                     </div>
-                    <div className="bg-gradient-to-r from-white to-red-200 shadow-lg rounded-2xl p-4 hover:shadow-2xl transition duration-300 ease-in-out transform hover:scale-105">
+                    <div className="bg-gradient-to-r from-white to-red-50 shadow-lg rounded-2xl p-4 hover:shadow-2xl transition duration-300 ease-in-out transform hover:scale-105">
                         <p className="text-gray-800 truncate">Total Credit</p>
                         <p className="text-xl font-semibold text-red-700 truncate">{Number(summary.credit).toLocaleString()}</p>
                     </div>
-                    <div className="bg-gradient-to-r from-white to-orange-200 shadow-lg rounded-2xl p-4 hover:shadow-2xl transition duration-300 ease-in-out transform hover:scale-105">
+                    <div className="bg-gradient-to-r from-white to-orange-50 shadow-lg rounded-2xl p-4 hover:shadow-2xl transition duration-300 ease-in-out transform hover:scale-105">
                         <p className="text-gray-800 truncate">Accounts Payables</p>
                         <div className="text-xl font-semibold text-orange-600 truncate">
                             {Number(summary.payable).toLocaleString()}
                         </div>
                     </div>
-                    <div className="bg-gradient-to-r from-white to-blue-200 shadow-lg rounded-2xl p-4 hover:shadow-2xl transition duration-300 ease-in-out transform hover:scale-105">
+                    <div className="bg-gradient-to-r from-white to-blue-50 shadow-lg rounded-2xl p-4 hover:shadow-2xl transition duration-300 ease-in-out transform hover:scale-105">
                         <p className="text-gray-800 truncate">Accounts Receivables</p>
                         <div className="text-xl font-semibold text-blue-600 truncate">
                             {Number(summary.receivable).toLocaleString()}
