@@ -18,7 +18,7 @@ const AddAccountModal = ({ isModalOpen, closeModal, handleSubmit }) => {
         setAllAccounts(result);
 
         // Extract unique GL account IDs for main accounts
-        const mains = [...new Set(result.map(a => a.gl_account_id))];
+        const mains = [...new Set(result.map(a => a.account_code))];
         setMainAccounts(mains);
       } catch (error) {
         console.error("Error fetching accounts:", error);
@@ -36,9 +36,9 @@ const AddAccountModal = ({ isModalOpen, closeModal, handleSubmit }) => {
 
     // Filter sub-accounts based on selected GL account ID
     const filteredSubAccounts = allAccounts
-      .filter(a => a.gl_account_id === selectedMainAccount)
+      .filter(a => a.account_code === selectedMainAccount)
       .map(a => ({
-        gl_account_id: a.gl_account_id,
+        account_code: a.account_code,
         name: a.account_name
       }));
     setSubAccounts(filteredSubAccounts);
@@ -51,9 +51,9 @@ const AddAccountModal = ({ isModalOpen, closeModal, handleSubmit }) => {
       return;
     }
 
-    const selectedAccount = subAccounts.find(a => a.gl_account_id === selectedSubAccount);
+    const selectedAccount = subAccounts.find(a => a.account_code === selectedSubAccount);
     const accountData = {
-      glAccountId: selectedAccount.gl_account_id, // Use the actual gl_account_id
+      glAccountId: selectedAccount.account_code, // Use the actual account_code
       accountName: selectedAccount.name // Display purposes
     };
 
@@ -93,10 +93,10 @@ const AddAccountModal = ({ isModalOpen, closeModal, handleSubmit }) => {
                 options={subAccounts.map(a => a.name)}
                 style="selection"
                 defaultOption="Select Account Name..."
-                value={subAccounts.find(a => a.gl_account_id === selectedSubAccount)?.name || ""}
+                value={subAccounts.find(a => a.account_code === selectedSubAccount)?.name || ""}
                 onChange={(value) => {
                   const sub = subAccounts.find(a => a.name === value);
-                  setSelectedSubAccount(sub?.gl_account_id || "");
+                  setSelectedSubAccount(sub?.account_code || "");
                 }}
               />
             </div>
