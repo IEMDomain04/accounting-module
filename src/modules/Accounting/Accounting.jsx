@@ -116,21 +116,21 @@ const BodyContent = () => {
 
                 {/* Summary Cards */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                    <div className="bg-gradient-to-r from-green-100 to-green-200 shadow-lg rounded-2xl p-4 hover:shadow-2xl transition duration-300 ease-in-out transform hover:scale-105">
+                    <div className="bg-gradient-to-r from-white to-green-200 shadow-lg rounded-2xl p-4 hover:shadow-2xl transition duration-300 ease-in-out transform hover:scale-105">
                         <p className="text-gray-800 truncate">Total Debit</p>
                         <p className="text-xl font-semibold text-green-700 truncate">{Number(summary.debit).toLocaleString()}</p>
                     </div>
-                    <div className="bg-gradient-to-r from-red-100 to-red-200 shadow-lg rounded-2xl p-4 hover:shadow-2xl transition duration-300 ease-in-out transform hover:scale-105">
+                    <div className="bg-gradient-to-r from-white to-red-200 shadow-lg rounded-2xl p-4 hover:shadow-2xl transition duration-300 ease-in-out transform hover:scale-105">
                         <p className="text-gray-800 truncate">Total Credit</p>
                         <p className="text-xl font-semibold text-red-700 truncate">{Number(summary.credit).toLocaleString()}</p>
                     </div>
-                    <div className="bg-gradient-to-r from-orange-100 to-orange-200 shadow-lg rounded-2xl p-4 hover:shadow-2xl transition duration-300 ease-in-out transform hover:scale-105">
+                    <div className="bg-gradient-to-r from-white to-orange-200 shadow-lg rounded-2xl p-4 hover:shadow-2xl transition duration-300 ease-in-out transform hover:scale-105">
                         <p className="text-gray-800 truncate">Accounts Payables</p>
                         <div className="text-xl font-semibold text-orange-600 truncate">
                             {Number(summary.payable).toLocaleString()}
                         </div>
                     </div>
-                    <div className="bg-gradient-to-r from-blue-100 to-blue-200 shadow-lg rounded-2xl p-4 hover:shadow-2xl transition duration-300 ease-in-out transform hover:scale-105">
+                    <div className="bg-gradient-to-r from-white to-blue-200 shadow-lg rounded-2xl p-4 hover:shadow-2xl transition duration-300 ease-in-out transform hover:scale-105">
                         <p className="text-gray-800 truncate">Accounts Receivables</p>
                         <div className="text-xl font-semibold text-blue-600 truncate">
                             {Number(summary.receivable).toLocaleString()}
@@ -140,8 +140,8 @@ const BodyContent = () => {
 
                 {/* Charts */}
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6">
-                    <div className="bg-gradient-to-r from-green-50 to-green-100 shadow-lg rounded-2xl p-4 hover:shadow-2xl transition duration-300 ease-in-out transform hover:scale-105">
-                        <h2 className="font-bold mb-5 text-gray-800">Debit and Credit per Account</h2>
+                    <div className="bg-gradient-to-r from-white to-blue-50 shadow-lg rounded-2xl p-4 hover:shadow-2xl transition duration-300 ease-in-out transform hover:scale-105">
+                        <h2 className="font-bold mt-2 mb-5 text-gray-800">Debit and Credit per Account</h2>
                         <ResponsiveContainer width="100%" height={300}>
                             <BarChart data={chartSeries}>
                                 <XAxis dataKey="name" tick={{ fontSize: 12 }} />
@@ -155,7 +155,7 @@ const BodyContent = () => {
                     </div>
 
                     <div className="bg-gradient-to-r from-gray-800 to-gray-600 shadow-lg rounded-2xl p-4 hover:shadow-2xl transition duration-300 ease-in-out transform hover:scale-105">
-                        <h2 className="font-bold mb-5 text-white">Chart of Account Types</h2>
+                        <h2 className="font-bold mt-2 mb-5 text-white">Chart of Account Types</h2>
                         <ResponsiveContainer width="100%" height={300}>
                             <PieChart>
                                 <Pie
