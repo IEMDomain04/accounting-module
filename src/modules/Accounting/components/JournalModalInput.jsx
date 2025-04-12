@@ -2,24 +2,25 @@ import React from 'react';
 import './ModalInput.css';
 import Forms from './Forms';
 import Button from '../components/Button';
+import Dropdown from './Dropdown';
 
-const JournalModalInput = ({ isModalOpen, closeModal, journalForm, handleInputChange, handleSubmit }) => {
+const JournalModalInput = ({ isModalOpen, closeModal, journalForm, handleInputChange, handleSubmit, currencyOptions }) => {
     return (
         <div>
             {isModalOpen && (
                 <div className="modal-overlay">
-
-
                     <div className="modal-container">
-
-
                         <div className="modal-header">
                             <h2>Create Journal ID</h2>
-                            <img className="cursor-pointer hover:scale-110" src="./accounting/Close.svg" alt="x button" onClick={closeModal} />
+                            <img
+                                className="cursor-pointer hover:scale-110"
+                                src="./accounting/Close.svg"
+                                alt="x button"
+                                onClick={closeModal}
+                            />
                         </div>
 
                         <div className="modal-body">
-
                             <div className="form-group">
                                 <label>Journal Date*</label>
                                 <input
@@ -44,13 +45,15 @@ const JournalModalInput = ({ isModalOpen, closeModal, journalForm, handleInputCh
                                 value={journalForm.invoiceId}
                                 onChange={(e) => handleInputChange("invoiceId", e.target.value)}
                             />
-                            <Forms
-                                type="text"
-                                formName="Currency ID*"
-                                placeholder="Enter currency ID"
-                                value={journalForm.currencyId}
-                                onChange={(e) => handleInputChange("currencyId", e.target.value)}
+
+                            <Dropdown
+                                style="selection"
+                                defaultOption="Select currency..."
+                                options={["Test1", "Test2"]} 
+                                value={journalForm.currencyId} 
+                                onChange={(value) => handleInputChange("currencyId", value)}
                             />
+
                         </div>
 
                         <div className="modal-footer">
