@@ -32,13 +32,6 @@ const JournalModalInput = ({ isModalOpen, closeModal, journalForm, handleInputCh
 
                             <Forms
                                 type="text"
-                                formName="Journal ID*"
-                                placeholder="Enter Journal ID"
-                                value={journalForm.journalId}
-                                onChange={(e) => handleInputChange("journalId", e.target.value)}
-                            />
-                            <Forms
-                                type="text"
                                 formName="Description*"
                                 placeholder="Enter Description"
                                 value={journalForm.description}

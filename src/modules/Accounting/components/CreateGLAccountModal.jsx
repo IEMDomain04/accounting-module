@@ -83,12 +83,6 @@ const CreateGLAccountModal = ({ isModalOpen, closeModal, handleSubmit }) => {
 
           <Forms
             type="text"
-            formName="GL Account ID*"
-            placeholder="Enter GL Account ID"
-            onChange={(e) => handleInputChange("glAccountID", e.target.value)}
-          />
-          <Forms
-            type="text"
             formName="Account Name*"
             placeholder="Enter Account Name*"
             onChange={(e) => handleInputChange("accountName", e.target.value)}
