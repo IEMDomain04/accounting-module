@@ -8,6 +8,7 @@ import CreateGLAccountModal from '../components/CreateGLAccountModal';
 import NotifModal from '../components/modalNotif/NotifModal';
 
 const GeneralLedgerAccounts = () => {
+  // Use states
   const columns = ["GL Account ID", "Account name", "Account code", "Account ID", "Status", "Created at.."];
   const [data, setData] = useState([]);
   const [searching, setSearching] = useState("");
@@ -21,9 +22,16 @@ const GeneralLedgerAccounts = () => {
     message: "",
   });
 
+
+  // Open modal function
   const openModal = () => setIsModalOpen(true);
+
+
+  // Close modal function
   const closeModal = () => setIsModalOpen(false);
 
+
+  // Fetch data
   const fetchData = () => {
     fetch('http://127.0.0.1:8000/api/general-ledger-accounts/')
       .then(response => response.json())
@@ -45,6 +53,8 @@ const GeneralLedgerAccounts = () => {
     fetchData();
   }, []);
 
+
+  // Ascending and Descending Sorting
   const handleSort = () => {
     const newSortOrder = sortOrder === "asc" ? "desc" : "asc";
     setSortOrder(newSortOrder);
@@ -58,6 +68,8 @@ const GeneralLedgerAccounts = () => {
     setStatusFilter(status === "" ? "All" : status);
   };
 
+
+  // Input new Accounts w/ user validations
   const handleCreateAccount = (newAccount) => {
     if (!newAccount.createdAt || !newAccount.glAccountID || !newAccount.accountName || !newAccount.accountID || !newAccount.status || !newAccount.account || !newAccount.subAccount) {
       setValidation({
@@ -82,36 +94,38 @@ const GeneralLedgerAccounts = () => {
         created_at: newAccount.createdAt
       })
     })
-    .then(response => {
-      if (!response.ok) {
-        return response.json().then(error => {
-          throw new Error(error.detail || 'Error creating account');
+      .then(response => {
+        if (!response.ok) {
+          return response.json().then(error => {
+            throw new Error(error.detail || 'Error creating account');
+          });
+        }
+        return response.json();
+      })
+      .then(result => {
+        console.log('API Response (handleCreateAccount):', result);
+        fetchData(); // Refresh data after creating a new account
+        closeModal();
+        setValidation({
+          isOpen: true,
+          type: "success",
+          title: "Account Created",
+          message: "General Ledger Account created successfully!",
         });
-      }
-      return response.json();
-    })
-    .then(result => {
-      console.log('API Response (handleCreateAccount):', result);
-      fetchData(); // Refresh data after creating a new account
-      closeModal();
-      setValidation({
-        isOpen: true,
-        type: "success",
-        title: "Account Created",
-        message: "General Ledger Account created successfully!",
+      })
+      .catch(error => {
+        console.error('Error creating account:', error);
+        setValidation({
+          isOpen: true,
+          type: "error",
+          title: "Error Creating Account",
+          message: "Check your database connection.",
+        });
       });
-    })
-    .catch(error => {
-      console.error('Error creating account:', error);
-      setValidation({
-        isOpen: true,
-        type: "error",
-        title: "Error Creating Account",
-        message: "Check your database connection.",
-      });
-    });
   };
 
+
+  // Search Filtering
   const filteredData = data.filter(row => {
     const matchesSearch = [row[0], row[1], row[2], row[3], row[4], row[5]]
       .filter(Boolean)
@@ -124,6 +138,7 @@ const GeneralLedgerAccounts = () => {
     return matchesSearch && matchesStatus;
   });
 
+  
   return (
     <div className="generalLedger">
       <div className="body-content-container">

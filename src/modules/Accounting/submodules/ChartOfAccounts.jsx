@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
 import "../styles/accounting-styling.css";
+import React, { useState, useEffect } from "react";
 import { subAccounts } from "./ListOfAccounts";
+import axios from "axios";
 import Search from "../components/Search";
 import Button from "../components/Button";
 import Dropdown from "../components/Dropdown";
@@ -10,12 +10,9 @@ import CoaModalInput from "../components/CoaModalInput";
 import NotifModal from "../components/modalNotif/NotifModal";
 
 const BodyContent = () => {
+    // Use states
     const columns = ["Account code", "Account name", "Account type"];
-
-    // State for account data and form handling
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const openModal = () => setIsModalOpen(true);
-    const closeModal = () => setIsModalOpen(false);
     const [data, setData] = useState([]);
     const [newAccount, setNewAccount] = useState({
         account_code: "",
@@ -23,12 +20,16 @@ const BodyContent = () => {
         account_type: ""
     });
 
-    // Merged all of the sub-accounts for sorting
-    const mergeSubAccounts = (subAccounts) => {
-        return Object.values(subAccounts).flat();
-    };
 
-    // Fetch data from API when the component mounts
+    // Open modal function
+    const openModal = () => setIsModalOpen(true);
+    
+    
+    // Close modal function
+    const closeModal = () => setIsModalOpen(false);
+
+
+    // Fetch data
     useEffect(() => {
         axios.get("http://127.0.0.1:8000/api/chart-of-accounts/")
             .then(response => {
@@ -37,11 +38,11 @@ const BodyContent = () => {
             .catch(error => console.error("Error fetching data:", error));
     }, []);
 
+
     // Handle Input Change
     const handleInputChange = (field, value) => {
         setNewAccount(prev => ({ ...prev, [field]: value }));
     };
-
     const [validation, setValidation] = useState({
         isOpen: false,
         type: "warning",
@@ -49,6 +50,8 @@ const BodyContent = () => {
         message: "",
     });
 
+    
+    // Submit input w/ user validations
     const handleSubmit = async () => {
         if (!newAccount.account_code && !newAccount.account_name && !newAccount.account_type) {
             setValidation({
@@ -90,7 +93,8 @@ const BodyContent = () => {
             return;
         }
 
-        // Check if the account_code already exists
+
+        // Checks if the account_code already exists
         const accountCodeExists = data.some(row => row[0] === newAccount.account_code);
         if (accountCodeExists) {
             setValidation({
@@ -102,6 +106,8 @@ const BodyContent = () => {
             return;
         }
 
+
+        // Checks if data is successfully submitted
         try {
             console.log("Submitting data:", newAccount);
 
@@ -135,6 +141,12 @@ const BodyContent = () => {
                 message: "Kindly check your connection to the database.",
             });
         }
+    };
+
+
+    // Merged all of the sub-accounts for sorting
+    const mergeSubAccounts = (subAccounts) => {
+        return Object.values(subAccounts).flat();
     };
 
     return (

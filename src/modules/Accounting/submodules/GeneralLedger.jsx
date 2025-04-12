@@ -7,6 +7,7 @@ import Search from "../components/Search";
 import ReportModalInput from "../components/ReportModalInput";
 
 const BodyContent = () => {
+    // Use state
     const columns = ["Entry Line ID", "GL Account ID", "Account name", "Journal ID", "Debit", "Credit", "Description"];
     const [data, setData] = useState([]);
     const [searching, setSearching] = useState("");
@@ -21,35 +22,33 @@ const BodyContent = () => {
         currencyId: ""
     });
 
+    
+    // Open modal function
     const openModal = () => setIsModalOpen(true);
+
+
+    // Close modal function
     const closeModal = () => setIsModalOpen(false);
 
-    const handleInputChange = (field, value) => {
-        setReportForm(prevState => ({ ...prevState, [field]: value }));
-    };
 
-    const handleSubmit = () => {
-        console.log("Form submitted with data: ", reportForm);
-        closeModal();
-    };
-
+    // Fetch data
     const fetchData = () => {
         fetch('http://127.0.0.1:8000/api/general-ledger-jel-view/')
           .then(response => response.json())
           .then(result => {
-            console.log('API Response:', result); // Log the API response for debugging
+            console.log('API Response:', result); 
       
             const transformedData = result.map(entry => [
-              entry.entry_line_id,          // Use the database-provided entry_line_id
-              entry.gl_account_id || 'N/A', // GL Account ID with fallback
-              entry.account_name || 'No Account', // Account Name with fallback
-              entry.journal_id || '-',      // Journal ID with fallback
-              parseFloat(entry.debit_amount || '0.00').toFixed(2), // Debit Amount
-              parseFloat(entry.credit_amount || '0.00').toFixed(2), // Credit Amount
-              entry.description || '-'      // Description with fallback
+              entry.entry_line_id,          
+              entry.gl_account_id || 'N/A', 
+              entry.account_name || 'No Account', 
+              entry.journal_id || '-',      
+              parseFloat(entry.debit_amount || '0.00').toFixed(2), 
+              parseFloat(entry.credit_amount || '0.00').toFixed(2), 
+              entry.description || '-'      
             ]);
       
-            console.log('Transformed Data:', transformedData); // Log the transformed data for debugging
+            console.log('Transformed Data:', transformedData); 
             setData(transformedData);
           })
           .catch(error => console.error('Error fetching data:', error));
@@ -59,6 +58,25 @@ const BodyContent = () => {
         fetchData();
     }, []);
 
+
+    // Update the report form state when an input field changes
+    const handleInputChange = (field, value) => {
+        setReportForm(prevState => ({ ...prevState, [field]: value }));
+    };
+
+    // Handle the submission of the report form and close the modal
+    const handleSubmit = () => {
+        console.log("Form submitted with data: ", reportForm);
+        closeModal();
+    };
+
+
+    // Compute the total debit and credit
+    const totalDebit = data.reduce((sum, row) => sum + (parseFloat(row[4]) || 0), 0);
+    const totalCredit = data.reduce((sum, row) => sum + (parseFloat(row[5]) || 0), 0);
+
+    
+    //Ascending and Descending sorting
     const handleSort = () => {
         const newSortOrder = sortOrder === "asc" ? "desc" : "asc";
         setSortOrder(newSortOrder);
@@ -82,6 +100,8 @@ const BodyContent = () => {
         setData(sortedData);
     };
 
+
+    // Search Filter
     const filteredData = data.filter(row =>
         [row[0], row[1], row[2], row[3], row[6]]
             .filter(Boolean)
@@ -90,9 +110,8 @@ const BodyContent = () => {
             .includes(searching.toLowerCase())
     );
 
-    const totalDebit = data.reduce((sum, row) => sum + (parseFloat(row[4]) || 0), 0);
-    const totalCredit = data.reduce((sum, row) => sum + (parseFloat(row[5]) || 0), 0);
 
+    // Format the numbers with comma
     const formatNumber = (num) => num.toLocaleString("en-US", { minimumFractionDigits: 2 });
     const formattedTotalDebit = formatNumber(totalDebit);
     const formattedTotalCredit = formatNumber(totalCredit);

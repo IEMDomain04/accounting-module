@@ -4,6 +4,9 @@ import Table from "../components/Table";
 import Search from "../components/Search";
 
 const AccountsPayable = () => {
+  // Use States
+  const [data, setData] = useState([]);
+  const [searching, setSearching] = useState("");
   const columns = [
     "GL Account ID",
     "Account Name",
@@ -13,9 +16,8 @@ const AccountsPayable = () => {
     "Description",
   ];
 
-  const [data, setData] = useState([]);
-  const [searching, setSearching] = useState("");
 
+  // Fetch Data
   const fetchData = () => {
     fetch("http://127.0.0.1:8000/api/general-ledger-jel-view/")
       .then((response) => response.json())
@@ -46,21 +48,28 @@ const AccountsPayable = () => {
     fetchData();
   }, []);
 
+
+  // Calculates the total for debit and credit
+  const totalDebit = data.reduce((sum, row) => sum + parseFloat(row[3]) || 0, 0); // Debit (index 3)
+  const totalCredit = data.reduce((sum, row) => sum + parseFloat(row[4]) || 0, 0); // Credit (index 4)
+
+
+  // Search Sorting 
   const filteredData = data.filter((row) =>
-    [row[0], row[1], row[2], row[5]] // Search GL Account ID, Account Name, Journal ID, Description
+    [row[0], row[1], row[2], row[5]]
       .filter(Boolean)
       .join(" ")
       .toLowerCase()
       .includes(searching.toLowerCase())
   );
 
-  const totalDebit = data.reduce((sum, row) => sum + parseFloat(row[3]) || 0, 0); // Debit (index 3)
-  const totalCredit = data.reduce((sum, row) => sum + parseFloat(row[4]) || 0, 0); // Credit (index 4)
 
+  // Format the money with comma
   const formatNumber = (num) =>
     num.toLocaleString("en-US", { minimumFractionDigits: 2 });
   const formattedTotalDebit = formatNumber(totalDebit);
   const formattedTotalCredit = formatNumber(totalCredit);
+
 
   return (
     <div className="accountsPayable">

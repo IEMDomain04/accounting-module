@@ -7,28 +7,18 @@ import CreateReceiptModal from "../components/CreateReceiptModal";
 import NotifModal from "../components/modalNotif/NotifModal";
 
 const OfficialReceipts = () => {
+  // Use states
   const columns = ["OR ID", "Invoice ID", "Customer ID", "OR Date", "Settled Amount", "Remaining Amount", "Payment Method", "Reference #", "Created By"];
   const [data, setData] = useState([]);
   const [searching, setSearching] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
 
-  // State to store form data
-  const [reportForm, setReportForm] = useState({
-    startDate: "",
-    salesInvoiceId: "",
-    amountPaid: "",
-    createdBy: ""
-  });
 
-  // State for validation and notifications
-  const [validation, setValidation] = useState({
-    isOpen: false,
-    type: "warning",
-    title: "",
-    message: "",
-  });
-
+  // Open modal function
   const openModal = () => setModalOpen(true);
+
+
+  // Close modal function
   const closeModal = () => {
     setModalOpen(false);
     setReportForm({
@@ -39,6 +29,25 @@ const OfficialReceipts = () => {
     });
   };
 
+
+  // State to store form data
+  const [reportForm, setReportForm] = useState({
+    startDate: "",
+    salesInvoiceId: "",
+    amountPaid: "",
+    createdBy: ""
+  });
+
+
+  // State for validation and notifications
+  const [validation, setValidation] = useState({
+    isOpen: false,
+    type: "warning",
+    title: "",
+    message: "",
+  });
+
+  
   // Fetch data from the backend
   const fetchData = () => {
     fetch('http://127.0.0.1:8000/api/official-receipts/')
@@ -62,6 +71,7 @@ const OfficialReceipts = () => {
   useEffect(() => {
     fetchData();
   }, []);
+
 
   // Fetch the latest reference number and increment it
   const fetchLatestReferenceNumber = async () => {
@@ -89,6 +99,7 @@ const OfficialReceipts = () => {
     }
   };
 
+
   // Generate custom OR ID
   const generateCustomORID = () => {
     const prefix = "ACC-OFR"; // Static prefix
@@ -97,6 +108,7 @@ const OfficialReceipts = () => {
     return `${prefix}-${year}-${randomString}`;
   };
 
+
   // Handle input changes in the modal
   const handleInputChange = (field, value) => {
     setReportForm((prevForm) => ({
@@ -104,6 +116,7 @@ const OfficialReceipts = () => {
       [field]: value
     }));
   };
+
 
   // Handle form submission
   const handleSubmit = async () => {
@@ -117,7 +130,9 @@ const OfficialReceipts = () => {
       return;
     }
 
+
     const referenceNumber = await fetchLatestReferenceNumber(); // Fetch and increment reference number
+
 
     const newReceipt = {
       or_id: generateCustomORID(), // Use the custom OR ID generator
@@ -174,6 +189,7 @@ const OfficialReceipts = () => {
     }
   };
 
+
   // Filter the data based on the search input
   const filteredData = data.filter(row =>
     [row[0], row[1], row[2], row[6], row[7], row[8]]
@@ -183,6 +199,7 @@ const OfficialReceipts = () => {
       .includes(searching.toLowerCase())
   );
 
+  
   return (
     <div className="chartAccounts">
       <div className="body-content-container">

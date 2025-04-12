@@ -6,10 +6,11 @@ import axios from "axios";
 import "./styles/Accounting.css";
 
 const BodyContent = () => {
+    // Use states
     const [chartLabels, setChartLabels] = useState([]);
     const [chartSeries, setChartSeries] = useState([]);
-    const [data, setData] = useState([]);
     const [pieData, setPieData] = useState([]);
+    const [data, setData] = useState([]);
 
 
     // Bar graph: General ledger view 
@@ -89,6 +90,8 @@ const BodyContent = () => {
                 <h1 className="text-2xl font-bold text-gray-800 mb-6">Accounting Dashboard</h1>
 
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+
+                    {/* Bar chart: General Ledger */}
                     <div className="bg-white rounded-2xl shadow-lg p-4 flex flex-col">
                         <h1 className="font-bold">General Ledger</h1>
                         <BarChart
@@ -99,8 +102,9 @@ const BodyContent = () => {
                         />
                     </div>
 
+                    {/* Pie Chart: ??? */}
                     <div className="bg-white rounded-2xl shadow-lg p-4 flex flex-col">
-                    <h1 className="font-bold">Chart of Accounts</h1>
+                        <h1 className="font-bold">Chart of Accounts</h1>
                         <PieChart
                             series={[
                                 {
@@ -110,7 +114,6 @@ const BodyContent = () => {
                             width={400}
                             height={400}
                         />
-
                     </div>
                 </div>
 

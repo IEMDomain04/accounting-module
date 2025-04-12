@@ -1,29 +1,31 @@
 import React, { useState, useEffect } from "react";
-import "../styles/JournalEntry.css"; 
-import "../styles/accounting-styling.css"; 
-import Button from "../components/Button"; 
-import Forms from "../components/Forms"; 
-import NotifModal from "../components/modalNotif/NotifModal";   
-import Dropdown from "../components/Dropdown"; 
-import AddAccountModal from "../components/AddAccountModal"; 
+import "../styles/JournalEntry.css";
+import "../styles/accounting-styling.css";
+import Button from "../components/Button";
+import Forms from "../components/Forms";
+import NotifModal from "../components/modalNotif/NotifModal";
+import Dropdown from "../components/Dropdown";
+import AddAccountModal from "../components/AddAccountModal";
 
 const JournalEntry = () => {
-  const [journalForm, setJournalForm] = useState({
-    journalId: "",
-    transactions: [{ type: "debit", glAccountId: "", amount: "", accountName: "" }],
-    description: "",
-  });
+  // Use states
   const [totalDebit, setTotalDebit] = useState(0);
   const [totalCredit, setTotalCredit] = useState(0);
   const [journalOptions, setJournalOptions] = useState([]);
   const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(null);
+  const [journalForm, setJournalForm] = useState({
+    journalId: "",
+    transactions: [{ type: "debit", glAccountId: "", amount: "", accountName: "" }],
+    description: "",
+  });
   const [validation, setValidation] = useState({
     isOpen: false,
     type: "warning",
     title: "",
     message: "",
   });
+
 
   // Handle input changes for amount fields
   const handleInputChange = (index, field, value) => {
@@ -37,6 +39,7 @@ const JournalEntry = () => {
     });
   };
 
+
   // Add a new transaction entry
   const addEntry = (type) => {
     setJournalForm((prevState) => {
@@ -49,6 +52,7 @@ const JournalEntry = () => {
     });
   };
 
+
   // Remove a transaction entry
   const removeEntry = (index) => {
     setJournalForm((prevState) => {
@@ -57,6 +61,7 @@ const JournalEntry = () => {
       return { ...prevState, transactions: updatedTransactions };
     });
   };
+
 
   // Calculate totals for debit and credit
   const updateTotals = (transactions) => {
@@ -69,6 +74,7 @@ const JournalEntry = () => {
     setTotalDebit(debitSum);
     setTotalCredit(creditSum);
   };
+
 
   // Handle adding selected account from modal
   const handleAddAccount = (accountData) => {
@@ -84,7 +90,8 @@ const JournalEntry = () => {
     setSelectedIndex(null);
   };
 
-  // Submit journal entry to backend without entry_line_id
+  
+  // Submit journal entry to backend without entry_line_id w/ user validations
   const handleSubmit = async () => {
     if (!journalForm.journalId || !journalForm.description) {
       setValidation({
@@ -126,6 +133,8 @@ const JournalEntry = () => {
       return;
     }
 
+
+    // Payloads
     const payload = {
       total_debit: totalDebit.toFixed(2),
       total_credit: totalCredit.toFixed(2),
@@ -174,6 +183,7 @@ const JournalEntry = () => {
     }
   };
 
+
   // Fetch journal IDs for dropdown
   useEffect(() => {
     const fetchJournalIDs = async () => {
@@ -191,6 +201,7 @@ const JournalEntry = () => {
     fetchJournalIDs();
   }, []);
 
+  
   return (
     <div className="JournalEntry">
       <div className="body-content-container">
