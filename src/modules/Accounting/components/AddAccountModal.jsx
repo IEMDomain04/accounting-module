@@ -82,7 +82,7 @@ const AddAccountModal = ({ isModalOpen, closeModal, handleSubmit }) => {
               <Dropdown
                 options={mainAccounts}
                 style="selection"
-                defaultOption="Select GL Account ID..."
+                defaultOption="Select account code..."
                 value={selectedMainAccount}
                 onChange={(value) => setSelectedMainAccount(value)}
               />
