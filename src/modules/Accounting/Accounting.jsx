@@ -91,7 +91,7 @@ const BodyContent = () => {
                     <h1 className="subModule-title">Accounting Dashboard</h1>
                 </div>
 
-                <div className="flex flex-col bg-white rounded-2xl shadow-lg p-4 mb-10">
+                <div className="flex flex-col bg-white rounded-2xl shadow-lg p-4 mb-56">
                         <h1 className="font-bold">Journal</h1>
                         {/* <BarChart
                             xAxis={[{ scaleType: "band", data: chartLabels }]}
