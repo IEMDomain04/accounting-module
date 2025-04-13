@@ -3,7 +3,7 @@ import './ModalInput.css';
 import Forms from './Forms';
 import Dropdown from './Dropdown';
 import Button from '../components/Button';
-import { accounts, subAccounts } from '../submodules/ListOfAccounts';
+import { accounts } from '../submodules/ListOfAccounts';
 
 const CoaModalInput = ({ isModalOpen, closeModal, coaForm, handleInputChange, handleSubmit }) => {
     const [selectedAccount, setSelectedAccount] = useState("");
