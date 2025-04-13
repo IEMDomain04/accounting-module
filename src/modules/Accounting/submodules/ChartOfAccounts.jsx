@@ -1,6 +1,6 @@
 import "../styles/accounting-styling.css";
 import React, { useState, useEffect } from "react";
-import { subAccounts } from "./ListOfAccounts";
+import { accounts } from "./ListOfAccounts";
 import axios from "axios";
 import Search from "../components/Search";
 import Button from "../components/Button";
@@ -13,6 +13,7 @@ const BodyContent = () => {
     // Use states
     const columns = ["Account code", "Account name", "Account type"];
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [searching, setSearching] = useState("");
     const [data, setData] = useState([]);
     const [newAccount, setNewAccount] = useState({
         account_code: "",
@@ -23,8 +24,8 @@ const BodyContent = () => {
 
     // Open modal function
     const openModal = () => setIsModalOpen(true);
-    
-    
+
+
     // Close modal function
     const closeModal = () => setIsModalOpen(false);
 
@@ -50,7 +51,7 @@ const BodyContent = () => {
         message: "",
     });
 
-    
+
     // Submit input w/ user validations
     const handleSubmit = async () => {
         if (!newAccount.account_code && !newAccount.account_name && !newAccount.account_type) {
@@ -144,10 +145,15 @@ const BodyContent = () => {
     };
 
 
-    // Merged all of the sub-accounts for sorting
-    const mergeSubAccounts = (subAccounts) => {
-        return Object.values(subAccounts).flat();
-    };
+    // Search Sorting 
+    const filteredData = data.filter((row) =>
+        [row[0], row[1], row[2]]
+            .filter(Boolean)
+            .join(" ")
+            .toLowerCase()
+            .includes(searching.toLowerCase())
+    );
+
 
     return (
         <div className="chartAccounts">
@@ -159,8 +165,8 @@ const BodyContent = () => {
 
                 <div className="parent-component-container">
                     <div className="component-container">
-                        <Dropdown options={mergeSubAccounts(subAccounts)} style="selection" defaultOption="Sort accounts.." />
-                        <Search type="text" placeholder="Search account.." />
+                        <Dropdown options={accounts} style="selection" defaultOption="Sort accounts.." />
+                        <Search type="text" placeholder="Search account.." onChange={(e) => setSearching(e.target.value)} />
                     </div>
 
                     <div className="component-container">
@@ -169,7 +175,7 @@ const BodyContent = () => {
                 </div>
 
                 {/* Table Display */}
-                <Table data={data} columns={columns} enableCheckbox={false} />
+                <Table data={filteredData} columns={columns} enableCheckbox={false} />
             </div>
 
             <CoaModalInput
