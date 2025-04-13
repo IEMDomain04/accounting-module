@@ -12,7 +12,9 @@ import NotifModal from "../components/modalNotif/NotifModal";
 const BodyContent = () => {
     // Use states
     const columns = ["Account code", "Account name", "Account type"];
+    const [selectedAccountType, setSelectedAccountType] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [accountTypes, setAccountTypes] = useState([]);
     const [searching, setSearching] = useState("");
     const [data, setData] = useState([]);
     const [newAccount, setNewAccount] = useState({
@@ -34,10 +36,20 @@ const BodyContent = () => {
     useEffect(() => {
         axios.get("http://127.0.0.1:8000/api/chart-of-accounts/")
             .then(response => {
-                setData(response.data.map(acc => [acc.account_code, acc.account_name, acc.account_type]));
+                const rawData = response.data.map(acc => [
+                    acc.account_code,
+                    acc.account_name,
+                    acc.account_type
+                ]);
+                setData(rawData);
+
+                // Extract unique account types from fetched data
+                const uniqueTypes = [...new Set(response.data.map(acc => acc.account_type))];
+                setAccountTypes(uniqueTypes);
             })
             .catch(error => console.error("Error fetching data:", error));
     }, []);
+
 
 
     // Handle Input Change
@@ -145,14 +157,21 @@ const BodyContent = () => {
     };
 
 
-    // Search Sorting 
-    const filteredData = data.filter((row) =>
-        [row[0], row[1], row[2]]
-            .filter(Boolean)
-            .join(" ")
-            .toLowerCase()
-            .includes(searching.toLowerCase())
-    );
+    // Filter data based on search and selected account type
+    const filteredData = data.filter(([code, name, type]) => {
+        const matchesSearch =
+            [code, name, type]
+                .filter(Boolean)
+                .join(" ")
+                .toLowerCase()
+                .includes(searching.toLowerCase());
+
+        const matchesType = selectedAccountType
+            ? type === selectedAccountType
+            : true;
+
+        return matchesSearch && matchesType;
+    });
 
 
     return (
@@ -165,7 +184,14 @@ const BodyContent = () => {
 
                 <div className="parent-component-container">
                     <div className="component-container">
-                        <Dropdown options={accounts} style="selection" defaultOption="Sort accounts.." />
+                        <Dropdown
+                            options={accountTypes}
+                            style="selection"
+                            defaultOption="Sort accounts..."
+                            value={selectedAccountType}
+                            onChange={(value) => setSelectedAccountType(value)}
+                        />
+
                         <Search type="text" placeholder="Search account.." onChange={(e) => setSearching(e.target.value)} />
                     </div>
 
