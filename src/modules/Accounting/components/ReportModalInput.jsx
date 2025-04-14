@@ -33,7 +33,7 @@ const ReportModalInput = ({ isModalOpen, closeModal, reportForm, handleInputChan
       .replace(/^(.)/, (match, group1) => group1.toLowerCase()); // Lowercase first
 
   return (
-    <div>
+    <div className="accounting-modal">
       {isModalOpen && (
         <div className="modal-overlay">
           <div className="modal-container">

@@ -6,7 +6,7 @@ import Dropdown from './Dropdown';
 
 const JournalModalInput = ({ isModalOpen, closeModal, journalForm, handleInputChange, handleSubmit, currencyOptions }) => {
     return (
-        <div>
+        <div className='accounting-modal'>
             {isModalOpen && (
                 <div className="modal-overlay">
                     <div className="modal-container">

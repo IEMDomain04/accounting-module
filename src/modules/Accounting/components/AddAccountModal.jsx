@@ -64,48 +64,50 @@ const AddAccountModal = ({ isModalOpen, closeModal, handleSubmit }) => {
   if (!isModalOpen) return null;
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-container">
-        <div className="modal-header">
-          <h2 className="text-lg font-semibold">Select Account</h2>
-          <img
-            className="cursor-pointer hover:scale-110"
-            src="/accounting/Close.svg"
-            alt="Close"
-            onClick={closeModal}
-          />
-        </div>
+    <div className="accounting-modal">
+      <div className="modal-overlay">
+        <div className="modal-container">
+          <div className="modal-header">
+            <h2 className="text-lg font-semibold">Select Account</h2>
+            <img
+              className="cursor-pointer hover:scale-110"
+              src="/accounting/Close.svg"
+              alt="Close"
+              onClick={closeModal}
+            />
+          </div>
 
-        <div className="modal-body mt-4">
-          <div className="flex gap-x-5 max-sm:flex-col max-sm:gap-3">
-            <div className="-mt-2">
-              <Dropdown
-                options={mainAccounts}
-                style="selection"
-                defaultOption="Select account code..."
-                value={selectedMainAccount}
-                onChange={(value) => setSelectedMainAccount(value)}
-              />
-            </div>
+          <div className="modal-body mt-4">
+            <div className="flex gap-x-5 max-sm:flex-col max-sm:gap-3">
+              <div className="-mt-2">
+                <Dropdown
+                  options={mainAccounts}
+                  style="selection"
+                  defaultOption="Select account code..."
+                  value={selectedMainAccount}
+                  onChange={(value) => setSelectedMainAccount(value)}
+                />
+              </div>
 
-            <div className="-mt-2">
-              <Dropdown
-                options={subAccounts.map(a => a.name)}
-                style="selection"
-                defaultOption="Select Account Name..."
-                value={subAccounts.find(a => a.account_code === selectedSubAccount)?.name || ""}
-                onChange={(value) => {
-                  const sub = subAccounts.find(a => a.name === value);
-                  setSelectedSubAccount(sub?.account_code || "");
-                }}
-              />
+              <div className="-mt-2">
+                <Dropdown
+                  options={subAccounts.map(a => a.name)}
+                  style="selection"
+                  defaultOption="Select Account Name..."
+                  value={subAccounts.find(a => a.account_code === selectedSubAccount)?.name || ""}
+                  onChange={(value) => {
+                    const sub = subAccounts.find(a => a.name === value);
+                    setSelectedSubAccount(sub?.account_code || "");
+                  }}
+                />
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="modal-footer mt-5 flex justify-end space-x-3">
-          <Button name="Cancel" variant="standard1" onclick={closeModal} />
-          <Button name="Add" variant="standard2" onclick={onAddAccount} />
+          <div className="modal-footer mt-5 flex justify-end space-x-3">
+            <Button name="Cancel" variant="standard1" onclick={closeModal} />
+            <Button name="Add" variant="standard2" onclick={onAddAccount} />
+          </div>
         </div>
       </div>
     </div>

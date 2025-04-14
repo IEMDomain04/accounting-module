@@ -25,7 +25,7 @@ const CoaModalInput = ({ isModalOpen, closeModal, coaForm, handleInputChange, ha
     }, [coaForm.account_name]); // Re-run effect when account name changes
 
     return (
-        <div>
+        <div className="accounting-modal">
             {isModalOpen && (
                 <div className="modal-overlay">
                     <div className="modal-container">
