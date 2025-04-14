@@ -53,7 +53,7 @@ const JournalModalInput = ({ isModalOpen, closeModal, journalForm, handleInputCh
                                 <Dropdown
                                     style="selection"
                                     defaultOption="Select currency..."
-                                    options={["Test1", "Test2"]}
+                                    options={["Test1", "Test2", "ACC-CUR-2025-X1Y2Z3"]}
                                     value={journalForm.currencyId}
                                     onChange={(value) => handleInputChange("currencyId", value)}
                                 />
