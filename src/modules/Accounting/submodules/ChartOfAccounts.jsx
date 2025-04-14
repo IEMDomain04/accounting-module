@@ -66,6 +66,17 @@ const BodyContent = () => {
 
     // Submit input w/ user validations
     const handleSubmit = async () => {
+        // Define mapping between account names and expected account code prefixes
+        const accountCodeMapping = {
+            "Cash on Hand": "CA",
+            "Accounts Receivable": "AR",
+            "Sales Revenue": "SR",
+            "Cost of Goods Sold": "CG",
+            "Marketing Expenses": "ME",
+            // Add more mappings as needed
+        };
+    
+        // Check if required fields are filled
         if (!newAccount.account_code && !newAccount.account_name && !newAccount.account_type) {
             setValidation({
                 isOpen: true,
@@ -75,7 +86,7 @@ const BodyContent = () => {
             });
             return;
         }
-
+    
         if (!newAccount.account_type) {
             setValidation({
                 isOpen: true,
@@ -85,7 +96,7 @@ const BodyContent = () => {
             });
             return;
         }
-
+    
         if (!newAccount.account_code) {
             setValidation({
                 isOpen: true,
@@ -95,7 +106,7 @@ const BodyContent = () => {
             });
             return;
         }
-
+    
         if (!newAccount.account_name) {
             setValidation({
                 isOpen: true,
@@ -105,27 +116,37 @@ const BodyContent = () => {
             });
             return;
         }
-
-
-        // Checks if the account_code already exists
+    
+        // Check for mismatched account code and account name
+        const expectedPrefix = accountCodeMapping[newAccount.account_name];
+        if (expectedPrefix && !newAccount.account_code.startsWith(expectedPrefix)) {
+            setValidation({
+                isOpen: true,
+                type: "error",
+                title: "Account Code Mismatch",
+                message: `The account code "${newAccount.account_code}" does not match the expected prefix for "${newAccount.account_name}".`,
+            });
+            return;
+        }
+    
+        // Check if the account_code already exists
         const accountCodeExists = data.some(row => row[0] === newAccount.account_code);
         if (accountCodeExists) {
             setValidation({
                 isOpen: true,
                 type: "warning",
-                title: "Account Already Exist",
+                title: "Account Already Exists",
                 message: "The account you're creating is already created.",
             });
             return;
         }
-
-
-        // Checks if data is successfully submitted
+    
+        // Submit the new account to the backend
         try {
             console.log("Submitting data:", newAccount);
-
+    
             const response = await axios.post("http://127.0.0.1:8000/api/chart-of-accounts/", newAccount);
-
+    
             if (response.status === 201) {
                 const addedAccount = response.data;
                 setData(prevData => [...prevData, [addedAccount.account_code, addedAccount.account_name, addedAccount.account_type]]);
@@ -135,14 +156,14 @@ const BodyContent = () => {
                     isOpen: true,
                     type: "success",
                     title: "Account Added",
-                    message: "Successfully created account",
+                    message: "Successfully created account.",
                 });
             } else {
                 setValidation({
                     isOpen: true,
                     type: "error",
-                    title: "Server Error: Adding Account failed",
-                    message: "Creating account failed",
+                    title: "Server Error: Adding Account Failed",
+                    message: "Creating account failed.",
                 });
             }
         } catch (error) {
@@ -155,7 +176,6 @@ const BodyContent = () => {
             });
         }
     };
-
 
     // Filter data based on search and selected account type
     const filteredData = data.filter(([code, name, type]) => {
@@ -172,7 +192,6 @@ const BodyContent = () => {
 
         return matchesSearch && matchesType;
     });
-
 
     return (
         <div className="chartAccounts">
