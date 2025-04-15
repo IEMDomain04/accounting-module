@@ -127,7 +127,7 @@ const ReportModalInput = ({ isModalOpen, closeModal, reportForm, handleInputChan
             </div>
           </div>
         </div>
-      )};
+      )}
     </div>
   );
 };
