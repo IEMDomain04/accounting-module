@@ -9,7 +9,7 @@ const CreateReceiptModal = ({
   closeModal,
   reportForm,
   handleInputChange,
-  handleSubmit
+  handleSubmit,
 }) => {
   const [data, setData] = useState([]);
   const [bankAccounts, setBankAccounts] = useState([]);
@@ -19,7 +19,6 @@ const CreateReceiptModal = ({
     accountCode: "",
   });
 
-  // ✅ Fetch general ledger accounts and filter bank accounts
   const fetchData = () => {
     fetch('http://127.0.0.1:8000/api/general-ledger-accounts/')
       .then(response => response.json())
@@ -34,7 +33,6 @@ const CreateReceiptModal = ({
           entry.created_at ? new Date(entry.created_at).toLocaleString() : "-",
         ]));
 
-        // Filter bank accounts based on account name/type logic
         const filtered = result.filter(entry =>
           entry.account_name?.toLowerCase().includes("bank")
         );
@@ -47,20 +45,19 @@ const CreateReceiptModal = ({
     fetchData();
   }, []);
 
-  // ✅ Save new bank account
   const saveBankAccount = () => {
     const payload = {
       account_name: newBankAccount.accountName,
       account_code: newBankAccount.accountCode,
-      status: "active" // You may want to adjust this as needed
+      status: "active",
     };
 
     fetch('http://127.0.0.1:8000/api/general-ledger-accounts/', {
       method: 'POST',
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     })
       .then(response => {
         if (!response.ok) throw new Error("Failed to save bank account.");
@@ -68,8 +65,11 @@ const CreateReceiptModal = ({
       })
       .then(data => {
         console.log("Bank account saved:", data);
-        fetchData(); // Refresh the bankAccounts list
+        fetchData();
         setNewBankAccount({ accountName: "", accountCode: "" });
+        setShowBankInput(false);
+        // Automatically select the newly added bank account
+        handleInputChange("bankAccount", data.account_name);
       })
       .catch(error => console.error("Error saving bank account:", error));
   };
@@ -116,10 +116,7 @@ const CreateReceiptModal = ({
               onChange={(e) => handleInputChange("amountPaid", e.target.value)}
             />
 
-
-            {/* Payment Method */}
             <div className="flex flex-col md:flex-row md:space-x-5 space-y-5 md:space-y-0">
-              {/* Payment Method Dropdown */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium">Select Payment Method*</label>
                 <Dropdown
@@ -127,15 +124,17 @@ const CreateReceiptModal = ({
                   defaultOption="Select payment method..."
                   options={["Cash", "Credit Card", "Bank Transfer", "Check", "Mobile Payment"]}
                   value={reportForm.paymentMethod}
-                  onChange={(value) => handleInputChange("paymentMethod", value)}
+                  onChange={(value) => {
+                    handleInputChange("paymentMethod", value);
+                    if (value !== "Bank Transfer") {
+                      handleInputChange("bankAccount", ""); // Clear bankAccount if not Bank Transfer
+                    }
+                  }}
                 />
               </div>
 
-              {/* Bank Transfer Fields */}
               {reportForm.paymentMethod === "Bank Transfer" && (
                 <div className="md:w-2/3 border border-gray-300 rounded-lg p-4 bg-gray-100 space-y-4">
-
-                  {/* Radio Options */}
                   <div className="flex flex-col sm:flex-row gap-y-2 sm:gap-x-6 text-sm">
                     <label className="flex items-center gap-x-2">
                       <input
@@ -155,7 +154,6 @@ const CreateReceiptModal = ({
                     </label>
                   </div>
 
-                  {/* Existing or New Bank Account Fields */}
                   {!showBankInput ? (
                     <div>
                       <label className="block text-sm font-medium mb-1">Select Bank Account*</label>
@@ -181,7 +179,7 @@ const CreateReceiptModal = ({
                       <Forms
                         type="text"
                         formName="Account Code*"
-                        placeholder="Enter account code"
+                        placeholderInfluxDB://x.ai/docs/InfluxDB.html
                         value={newBankAccount.accountCode}
                         onChange={(e) =>
                           setNewBankAccount({ ...newBankAccount, accountCode: e.target.value })
@@ -197,7 +195,6 @@ const CreateReceiptModal = ({
                 </div>
               )}
             </div>
-
 
             <Forms
               type="text"
