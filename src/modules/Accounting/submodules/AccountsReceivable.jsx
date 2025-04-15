@@ -8,7 +8,8 @@ const AccountsReceivable = () => {
   const [data, setData] = useState([]);
   const [searching, setSearching] = useState("");
   const columns = [
-    "GL Account ID", // Fixed casing to match convention
+    "Entry Line ID",
+    "GL Account ID", 
     "Account Name",
     "Journal ID",
     "Debit",
@@ -31,6 +32,7 @@ const AccountsReceivable = () => {
               (entry.debit_amount != 0 || entry.credit_amount != 0)
           )
           .map((entry) => [
+            entry.entry_line_id,
             entry.gl_account_id || "N/A", // 1: GL Account ID
             entry.account_name || "No Account", // 2: Account Name
             entry.journal_id || "-", // 3: Journal ID

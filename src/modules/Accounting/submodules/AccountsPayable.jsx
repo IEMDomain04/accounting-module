@@ -8,6 +8,7 @@ const AccountsPayable = () => {
   const [data, setData] = useState([]);
   const [searching, setSearching] = useState("");
   const columns = [
+    "Entry Line ID",
     "GL Account ID",
     "Account Name",
     "Journal ID",
@@ -31,6 +32,7 @@ const AccountsPayable = () => {
               (entry.debit_amount != 0 || entry.credit_amount != 0)
           )
           .map((entry) => [
+            entry.entry_line_id,
             entry.gl_account_id || "N/A", // 1: GL Account ID
             entry.account_name || "No Account", // 2: Account Name
             entry.journal_id || "-", // 3: Journal ID
