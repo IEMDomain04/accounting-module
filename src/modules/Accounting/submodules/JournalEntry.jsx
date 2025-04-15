@@ -211,7 +211,7 @@ const JournalEntry = () => {
 
         <div className="parent-component-container">
           <div className="flex justify-between gap-x-5">
-            <div className="flex gap-x-5 w-auto">
+            <div className="flex items-end gap-x-5 w-auto">
               <div className="flex flex-col">
                 <label htmlFor="journalId">Journal ID*</label>
                 <Dropdown
