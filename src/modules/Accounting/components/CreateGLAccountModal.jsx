@@ -11,13 +11,12 @@ const CreateGLAccountModal = ({ isModalOpen, closeModal, handleSubmit }) => {
   const [availableSubAccounts, setAvailableSubAccounts] = useState([]);
   const [formData, setFormData] = useState({
     createdAt: "",
-    glAccountID: "",
+    glAccountID: "", // Will be auto-generated on submit
     accountName: "",
     accountID: "",
     status: "",
     account: "",
     subAccount: "",
-    accountCode: "" // Added field for account code
   });
 
   if (!isModalOpen) return null;
@@ -33,7 +32,7 @@ const CreateGLAccountModal = ({ isModalOpen, closeModal, handleSubmit }) => {
     const subAccountsList = subAccounts[key] || [];
 
     setAvailableSubAccounts(subAccountsList);
-    setSelectedSubAccount(""); // or [] based on how you store value
+    setSelectedSubAccount("");
   }, [selectedAccount]);
 
   // Adapt the spacing and cases in the array for accounts and subAccounts
@@ -45,15 +44,32 @@ const CreateGLAccountModal = ({ isModalOpen, closeModal, handleSubmit }) => {
 
   // Handle input change
   const handleInputChange = (field, value) => {
-    setFormData(prevState => ({
+    setFormData((prevState) => ({
       ...prevState,
-      [field]: value
+      [field]: value,
     }));
   };
 
-  // Submit form data
+  // Generate alphanumeric glAccountID in the format ACC-GLA-2025-XXXXXX
+  const generateGLAccountID = () => {
+    const year = new Date().getFullYear(); // Get current year (2025)
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'; // Alphanumeric characters
+    let randomPart = '';
+    for (let i = 0; i < 6; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      randomPart += characters[randomIndex];
+    }
+    return `ACC-GLA-${year}-${randomPart}`;
+  };
+
+  // Submit form data with auto-generated glAccountID
   const onSubmit = () => {
-    handleSubmit(formData);
+    const newGLAccountID = generateGLAccountID(); // Generate custom ID
+    const updatedFormData = {
+      ...formData,
+      glAccountID: newGLAccountID, // Set the generated ID
+    };
+    handleSubmit(updatedFormData);
   };
 
   // Modal UI
@@ -96,7 +112,7 @@ const CreateGLAccountModal = ({ isModalOpen, closeModal, handleSubmit }) => {
             />
 
             <div className="flex flex-col gap-y-1">
-              <label> Select status*</label>
+              <label>Select status*</label>
               <Dropdown
                 options={["Active", "Inactive"]}
                 style="selection"
@@ -108,24 +124,22 @@ const CreateGLAccountModal = ({ isModalOpen, closeModal, handleSubmit }) => {
             <div className="flex gap-x-5 max-sm:flex-col max-sm:gap-3">
               {/* Account Dropdown */}
               <div className="flex flex-col gap-y-1">
-                <label> Select Account*</label>
+                <label>Select Account*</label>
                 <Dropdown
                   options={accounts}
                   style="selection"
                   defaultOption="Select account..."
                   value={selectedAccount}
                   onChange={(value) => {
-                    const selectedAccountCode = value; // Assuming value is the account code
                     setSelectedAccount(value);
                     handleInputChange("account", value);
-                    handleInputChange("accountCode", selectedAccountCode); // Set account code in form data
                   }}
                 />
               </div>
 
               {/* Sub-Account Dropdown */}
               <div className="flex flex-col gap-y-1">
-                <label> Select Sub-Account*</label>
+                <label>Select Sub-Account*</label>
                 <Dropdown
                   options={availableSubAccounts}
                   style="selection"
