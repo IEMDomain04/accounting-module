@@ -98,7 +98,7 @@ const CoaModalInput = ({ isModalOpen, closeModal, coaForm, handleInputChange, ha
   }, [isModalOpen]);
 
     return (
-        <div>
+        <div className="accounting-modal">
             {isModalOpen && (
                 <div className="modal-overlay">
                     <div className="modal-container">
