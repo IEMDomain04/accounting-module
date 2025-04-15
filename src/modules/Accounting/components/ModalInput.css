@@ -63,3 +63,8 @@
   border-radius: 3px; /* Optional: Rounded corners */
   cursor: pointer;
 }
+
+.accounting-modal label {
+  font-size: 12px;
+  color: #646464; 
+}
