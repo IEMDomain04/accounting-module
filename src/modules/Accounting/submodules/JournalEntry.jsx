@@ -27,9 +27,10 @@ const JournalEntry = () => {
   });
 
 
-  // Handle input changes for amount fields
   const handleInputChange = (index, field, value) => {
-    const sanitizedValue = value.replace(/,/g, "");
+    // Allow only digits and decimal point
+    const sanitizedValue = value.replace(/[^0-9.]/g, "");
+  
     setJournalForm((prevState) => {
       const updatedTransactions = prevState.transactions.map((entry, i) =>
         i === index ? { ...entry, [field]: sanitizedValue } : entry
@@ -38,6 +39,7 @@ const JournalEntry = () => {
       return { ...prevState, transactions: updatedTransactions };
     });
   };
+  
 
 
   // Add a new transaction entry
@@ -277,7 +279,8 @@ const JournalEntry = () => {
               <div className="column debit-column">
                 {entry.type === "debit" && (
                   <Forms
-                    type="number"
+                    type="text"
+                    inputMode="decimal"
                     placeholder="Enter Debit"
                     value={entry.amount}
                     onChange={(e) => handleInputChange(index, "amount", e.target.value)}
@@ -289,7 +292,8 @@ const JournalEntry = () => {
               <div className="column credit-column">
                 {entry.type === "credit" && (
                   <Forms
-                    type="number"
+                    type="text"
+                    inputMode="decimal"
                     placeholder="Enter Credit"
                     value={entry.amount}
                     onChange={(e) => handleInputChange(index, "amount", e.target.value)}
