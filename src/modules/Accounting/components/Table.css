@@ -87,20 +87,16 @@ td {
 
 .accounting-table input[type="checkbox"] {
   appearance: none;
-
   width: 16px;
   height: 16px;
   border: 1.5px solid #a4a4a4;
   background-color: white;
-
   border-radius: 3px;
-
   cursor: pointer;
 }
 
 .accounting-table input[type="checkbox"]:checked {
   background-color: #a4a4a4;
-
 }
 
 .accounting-table .status-active {
@@ -120,6 +116,11 @@ td {
   width: fit-content;
   padding: 0.5vh 2vh;
 }
+
+.accounting-table .selected-row {
+  background-color: #d2f0ff !important;
+}
+
 
 
 @media (min-width: 1025px) and (max-width: 1280px) {

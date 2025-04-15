@@ -35,7 +35,10 @@ const Table = ({ columns, data, enableCheckbox }) => {
 
                     <tbody>
                         {data.map((row, rowIndex) => (
-                            <tr key={rowIndex}>
+                            <tr
+                            key={rowIndex}
+                            className={selectedRows.includes(rowIndex) ? "selected-row" : ""}
+                          >                          
                                 {enableCheckbox && (
                                     <td>
                                         <input
