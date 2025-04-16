@@ -13,15 +13,7 @@
   height: 100%;
 }
 
-.accounting .body-content-container,
-.chartAccounts .body-content-container,
-.Journal .body-content-container,
-.JournalEntry .body-content-container,
-.generalLedger .body-content-container,
-.generalLedgerAccounts .body-content-container,
-.accountsPayable .body-content-container,
-.accountsReceivable .body-content-container,
-.officialReceipts .body-content-container {
+.body-content-container {
   width: 100%;
   height: 100%;
   overflow-y: auto;
@@ -31,44 +23,22 @@
   box-shadow: 0rem 0.2rem 0.1rem rgba(162, 162, 162, 0.1);
 }
 
-.accounting .title-subtitle-container,
-.chartAccounts .title-subtitle-container,
-.Journal .title-subtitle-container,
-.JournalEntry .title-subtitle-container,
-.generalLedger .title-subtitle-container,
-.generalLedgerAccounts .title-subtitle-container,
-.accountsPayable .title-subtitle-container,
-.accountsReceivable .title-subtitle-container,
-.officialReceipts .title-subtitle-container {
+/* Title and Subtitles for each page */
+.title-subtitle-container {
   display: flex;
   flex-direction: column;
   gap: 10px;
   margin-bottom: 1rem;
 }
 
-.accounting .title-subtitle-container .subModule-title,
-.chartAccounts .title-subtitle-container .subModule-title,
-.Journal .title-subtitle-container .subModule-title,
-.JournalEntry .title-subtitle-container .subModule-title,
-.generalLedger .title-subtitle-container .subModule-title,
-.generalLedgerAccounts .title-subtitle-container .subModule-title,
-.accountsPayable .title-subtitle-container .subModule-title,
-.accountsReceivable .title-subtitle-container .subModule-title,
-.officialReceipts .title-subtitle-container .subModule-title {
+.title-subtitle-container .subModule-title {
   font-size: 20px;
   font-weight: bold;
   color: #006767;
 }
 
-.accounting .parent-component-container,
-.chartAccounts .parent-component-container,
-.Journal .parent-component-container,
-.JournalEntry .parent-component-container,
-.generalLedger .parent-component-container,
-.generalLedgerAccounts .parent-component-container,
-.accountsPayable .parent-component-container,
-.accountsReceivable .parent-component-container,
-.officialReceipts .parent-component-container {
+/* Components Spacing */
+.parent-component-container {
   display: flex;
   justify-content: space-between;
   align-items: end;
@@ -76,15 +46,7 @@
   margin-bottom: 1rem;
 }
 
-.accounting .component-container,
-.chartAccounts .component-container,
-.Journal .component-container,
-.JournalEntry .component-container,
-.generalLedger .component-container,
-.generalLedgerAccounts .component-container,
-.accountsPayable .component-container,
-.accountsReceivable .component-container,
-.officialReceipts .component-container {
+.component-container {
   display: flex;
   justify-content: center;
   align-items: end;
@@ -95,92 +57,36 @@
 
 /* Small Desktop */
 @media (min-width: 1025px) and (max-width: 1280px) {
-  .accounting .body-content-container,
-  .chartAccounts .body-content-container,
-  .Journal .body-content-container,
-  .JournalEntry .body-content-container,
-  .generalLedger .body-content-container,
-  .generalLedgerAccounts .body-content-container,
-  .accountsPayable .body-content-container,
-  .accountsReceivable .body-content-container,
-  .officialReceipts .body-content-container {
+  .body-content-container {
     padding: 2rem;
   }
 
-  .accounting .component-container,
-  .chartAccounts .component-container,
-  .Journal .component-container,
-  .JournalEntry .component-container,
-  .generalLedger .component-container,
-  .generalLedgerAccounts .component-container,
-  .accountsPayable .component-container,
-  .accountsReceivable .component-container,
-  .officialReceipts .component-container {
+  .component-container {
     gap: 30px;
   }
 }
 
 /* Tablet 769px – 1024px */
 @media (min-width: 769px) and (max-width: 1024px) {
-  .accounting .body-content-container,
-  .chartAccounts .body-content-container,
-  .Journal .body-content-container,
-  .JournalEntry .body-content-container,
-  .generalLedger .body-content-container,
-  .generalLedgerAccounts .body-content-container,
-  .accountsPayable .body-content-container,
-  .accountsReceivable .body-content-container,
-  .officialReceipts .body-content-container {
+  .body-content-container {
     padding: 1.8rem;
   }
 
-  .accounting .title-subtitle-container .subModule-title,
-  .chartAccounts .title-subtitle-container .subModule-title,
-  .Journal .title-subtitle-container .subModule-title,
-  .JournalEntry .title-subtitle-container .subModule-title,
-  .generalLedger .title-subtitle-container .subModule-title,
-  .generalLedgerAccounts .title-subtitle-container .subModule-title,
-  .accountsPayable .title-subtitle-container .subModule-title,
-  .accountsReceivable .title-subtitle-container .subModule-title,
-  .officialReceipts .title-subtitle-container .subModule-title {
+  .title-subtitle-container .subModule-title {
     font-size: 20px;
   }
 
-  .accounting .title-subtitle-container .subModule-subTitle,
-  .chartAccounts .title-subtitle-container .subModule-subTitle,
-  .Journal .title-subtitle-container .subModule-subTitle,
-  .JournalEntry .title-subtitle-container .subModule-subTitle,
-  .generalLedger .title-subtitle-container .subModule-subTitle,
-  .generalLedgerAccounts .title-subtitle-container .subModule-subTitle,
-  .accountsPayable .title-subtitle-container .subModule-subTitle,
-  .accountsReceivable .title-subtitle-container .subModule-subTitle,
-  .officialReceipts .title-subtitle-container .subModule-subTitle {
+  .title-subtitle-container .subModule-subTitle {
     font-size: 14px;
   }
 
-  .accounting .parent-component-container,
-  .chartAccounts .parent-component-container,
-  .Journal .parent-component-container,
-  .JournalEntry .parent-component-container,
-  .generalLedger .parent-component-container,
-  .generalLedgerAccounts .parent-component-container,
-  .accountsPayable .parent-component-container,
-  .accountsReceivable .parent-component-container,
-  .officialReceipts .parent-component-container {
+  .parent-component-container {
     flex-direction: column;
     align-items: center;
     gap: 20px;
   }
 
-  .accounting .component-container,
-  .chartAccounts .component-container,
-  .Journal .component-container,
-  .JournalEntry .component-container,
-  .generalLedger .component-container,
-  .generalLedgerAccounts .component-container,
-  .accountsPayable .component-container,
-  .accountsReceivable .component-container,
-  .officialReceipts .component-container {
+  .component-container {
     align-items: center;
     gap: 25px;
   }
@@ -188,65 +94,25 @@
 
 /* Mobile (large) */
 @media (max-width: 768px) {
-  .accounting .body-content-container,
-  .chartAccounts .body-content-container,
-  .Journal .body-content-container,
-  .JournalEntry .body-content-container,
-  .generalLedger .body-content-container,
-  .generalLedgerAccounts .body-content-container,
-  .accountsPayable .body-content-container,
-  .accountsReceivable .body-content-container,
-  .officialReceipts .body-content-container {
+  .body-content-container {
     padding: 1.5rem;
   }
 
-  .accounting .title-subtitle-container .subModule-title,
-  .chartAccounts .title-subtitle-container .subModule-title,
-  .Journal .title-subtitle-container .subModule-title,
-  .JournalEntry .title-subtitle-container .subModule-title,
-  .generalLedger .title-subtitle-container .subModule-title,
-  .generalLedgerAccounts .title-subtitle-container .subModule-title,
-  .accountsPayable .title-subtitle-container .subModule-title,
-  .accountsReceivable .title-subtitle-container .subModule-title,
-  .officialReceipts .title-subtitle-container .subModule-title {
+  .title-subtitle-container .subModule-title {
     font-size: 19px;
   }
 
-  .accounting .title-subtitle-container .subModule-subTitle,
-  .chartAccounts .title-subtitle-container .subModule-subTitle,
-  .Journal .title-subtitle-container .subModule-subTitle,
-  .JournalEntry .title-subtitle-container .subModule-subTitle,
-  .generalLedger .title-subtitle-container .subModule-subTitle,
-  .generalLedgerAccounts .title-subtitle-container .subModule-subTitle,
-  .accountsPayable .title-subtitle-container .subModule-subTitle,
-  .accountsReceivable .title-subtitle-container .subModule-subTitle,
-  .officialReceipts .title-subtitle-container .subModule-subTitle {
+  .title-subtitle-container .subModule-subTitle {
     font-size: 13px;
   }
 
-  .accounting .parent-component-container,
-  .chartAccounts .parent-component-container,
-  .Journal .parent-component-container,
-  .JournalEntry .parent-component-container,
-  .generalLedger .parent-component-container,
-  .generalLedgerAccounts .parent-component-container,
-  .accountsPayable .parent-component-container,
-  .accountsReceivable .parent-component-container,
-  .officialReceipts .parent-component-container {
+  .parent-component-container {
     flex-direction: column;
     align-items: center;
     gap: 20px;
   }
 
-  .accounting .component-container,
-  .chartAccounts .component-container,
-  .Journal .component-container,
-  .JournalEntry .component-container,
-  .generalLedger .component-container,
-  .generalLedgerAccounts .component-container,
-  .accountsPayable .component-container,
-  .accountsReceivable .component-container,
-  .officialReceipts .component-container {
+  .component-container {
     align-items: center;
     flex-direction: row;
     gap: 20px;
@@ -255,64 +121,24 @@
 
 /* Mobile (small) */
 @media (max-width: 480px) {
-  .accounting .body-content-container,
-  .chartAccounts .body-content-container,
-  .Journal .body-content-container,
-  .JournalEntry .body-content-container,
-  .generalLedger .body-content-container,
-  .generalLedgerAccounts .body-content-container,
-  .accountsPayable .body-content-container,
-  .accountsReceivable .body-content-container,
-  .officialReceipts .body-content-container {
+  .body-content-container {
     padding: 1rem;
   }
 
-  .accounting .title-subtitle-container .subModule-title,
-  .chartAccounts .title-subtitle-container .subModule-title,
-  .Journal .title-subtitle-container .subModule-title,
-  .JournalEntry .title-subtitle-container .subModule-title,
-  .generalLedger .title-subtitle-container .subModule-title,
-  .generalLedgerAccounts .title-subtitle-container .subModule-title,
-  .accountsPayable .title-subtitle-container .subModule-title,
-  .accountsReceivable .title-subtitle-container .subModule-title,
-  .officialReceipts .title-subtitle-container .subModule-title {
+  .title-subtitle-container .subModule-title {
     font-size: 18px;
   }
 
-  .accounting .title-subtitle-container .subModule-subTitle,
-  .chartAccounts .title-subtitle-container .subModule-subTitle,
-  .Journal .title-subtitle-container .subModule-subTitle,
-  .JournalEntry .title-subtitle-container .subModule-subTitle,
-  .generalLedger .title-subtitle-container .subModule-subTitle,
-  .generalLedgerAccounts .title-subtitle-container .subModule-subTitle,
-  .accountsPayable .title-subtitle-container .subModule-subTitle,
-  .accountsReceivable .title-subtitle-container .subModule-subTitle,
-  .officialReceipts .title-subtitle-container .subModule-subTitle {
+  .title-subtitle-container .subModule-subTitle {
     font-size: 12px;
   }
 
-  .accounting .parent-component-container,
-  .chartAccounts .parent-component-container,
-  .Journal .parent-component-container,
-  .JournalEntry .parent-component-container,
-  .generalLedger .parent-component-container,
-  .generalLedgerAccounts .parent-component-container,
-  .accountsPayable .parent-component-container,
-  .accountsReceivable .parent-component-container,
-  .officialReceipts .parent-component-container {
+  .parent-component-container {
     flex-direction: column;
     align-items: center;
   }
 
-  .accounting .component-container,
-  .chartAccounts .component-container,
-  .Journal .component-container,
-  .JournalEntry .component-container,
-  .generalLedger .component-container,
-  .generalLedgerAccounts .component-container,
-  .accountsPayable .component-container,
-  .accountsReceivable .component-container,
-  .officialReceipts .component-container {
+  .component-container {
     align-items: center;
     flex-direction: column;
     gap: 15px;
