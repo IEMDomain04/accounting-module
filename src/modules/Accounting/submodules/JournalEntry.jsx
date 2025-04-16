@@ -109,6 +109,7 @@ const JournalEntry = () => {
           { glAccountId: "ACC-COA-2025-CL2060", accountName: "Late Deduction" },
           { glAccountId: "ACC-COA-2025-CL2060", accountName: "Absent Deduction" },
           { glAccountId: "ACC-COA-2025-CL2060", accountName: "Undertime Deduction" },
+          { glAccountId: "", accountName: "" },
         ];
   
         creditEntries.forEach((credit) => {
