@@ -52,8 +52,8 @@ const AccountsPayable = () => {
 
 
   // Calculates the total for debit and credit
-  const totalDebit = data.reduce((sum, row) => sum + parseFloat(row[3]) || 0, 0); // Debit (index 3)
-  const totalCredit = data.reduce((sum, row) => sum + parseFloat(row[4]) || 0, 0); // Credit (index 4)
+  const totalDebit = data.reduce((sum, row) => sum + parseFloat(row[4]) || 0, 0); // Debit (index 3)
+  const totalCredit = data.reduce((sum, row) => sum + parseFloat(row[5]) || 0, 0); // Credit (index 4)
 
 
   // Search Sorting 

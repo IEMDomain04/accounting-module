@@ -52,8 +52,8 @@ const AccountsReceivable = () => {
 
 
   // Calculates the total debit and credit
-  const totalDebit = data.reduce((sum, row) => sum + (parseFloat(row[3]) || 0), 0); // Fixed to Debit (index 4)
-  const totalCredit = data.reduce((sum, row) => sum + (parseFloat(row[4]) || 0), 0); // Fixed to Credit (index 5)
+  const totalDebit = data.reduce((sum, row) => sum + (parseFloat(row[4]) || 0), 0); // Fixed to Debit (index 4)
+  const totalCredit = data.reduce((sum, row) => sum + (parseFloat(row[5]) || 0), 0); // Fixed to Credit (index 5)
   
 
   // Search Filter based on columns
