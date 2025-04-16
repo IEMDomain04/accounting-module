@@ -58,7 +58,7 @@ const AddAccountModal = ({ isModalOpen, closeModal, handleSubmit }) => {
     }
 
 
-    const selectedAccount = subAccounts.find(a => a.account_code === selectedSubAccount);
+    const selectedAccount = subAccounts.find(a => a.name === selectedSubAccount);
     const accountData = {
       glAccountId: selectedAccount.account_code, // Use the actual account_code
       accountName: selectedAccount.name // Display purposes

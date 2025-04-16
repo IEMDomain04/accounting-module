@@ -78,39 +78,45 @@ const JournalEntry = () => {
   };
 
 
-  // Handle adding selected account from modal
   const handleAddAccount = (accountData) => {
     setJournalForm((prevState) => {
       const updatedTransactions = prevState.transactions.map((entry, i) =>
         i === selectedIndex
-          ? { ...entry, glAccountId: accountData.glAccountId, accountName: accountData.accountName }
+          ? {
+              ...entry,
+              glAccountId: accountData.glAccountId,
+              accountName: accountData.accountName,
+            }
           : entry
       );
   
       // Check for the specific debit account code
-      if (
+      const isTargetDebit =
         accountData.glAccountId === "ACC-COA-2025-AE6010" &&
-        prevState.transactions[selectedIndex].type === "debit"
-      ) {
-        // Credit accounts to auto-add
-        const creditAccountsToAdd = [
-          "SSS Contribution",
-          "PhilHealth Contribution",
-          "Pagibig Contribution",
-          "Tax Payables",
-          "Late Deduction",
-          "Absent Deduction",
-          "Undertime Deduction",
-          "Net Pay",
+        prevState.transactions[selectedIndex].type === "debit";
+  
+      if (isTargetDebit) {
+        const creditEntries = [
+          // CL2060 - Contributions
+          { glAccountId: "ACC-COA-2025-CL2060", accountName: "SSS Contribution" },
+          { glAccountId: "ACC-COA-2025-CL2060", accountName: "Philhealth Contribution" },
+          { glAccountId: "ACC-COA-2025-CL2060", accountName: "Pagibig Contribution" },
+  
+          // CL2030 - Tax
+          { glAccountId: "ACC-COA-2025-CL2030", accountName: "Tax" },
+  
+          // CL2060 - Deductions
+          { glAccountId: "ACC-COA-2025-CL2060", accountName: "Late Deduction" },
+          { glAccountId: "ACC-COA-2025-CL2060", accountName: "Absent Deduction" },
+          { glAccountId: "ACC-COA-2025-CL2060", accountName: "Undertime Deduction" },
         ];
   
-        // Add them as credit entries with empty values
-        creditAccountsToAdd.forEach((name) => {
+        creditEntries.forEach((credit) => {
           updatedTransactions.push({
             type: "credit",
-            glAccountId: "", // Placeholder until selected
+            glAccountId: credit.glAccountId,
             amount: "",
-            accountName: name,
+            accountName: credit.accountName,
           });
         });
       }
@@ -121,6 +127,7 @@ const JournalEntry = () => {
     setIsAccountModalOpen(false);
     setSelectedIndex(null);
   };
+  
   
 
   
