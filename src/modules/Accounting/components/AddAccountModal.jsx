@@ -128,11 +128,8 @@ const AddAccountModal = ({ isModalOpen, closeModal, handleSubmit }) => {
                   options={subAccounts.map(a => a.name)}
                   style="selection"
                   defaultOption="Select Account Name..."
-                  value={subAccounts.find(a => a.account_code === selectedSubAccount)?.name || ""}
-                  onChange={(value) => {
-                    const sub = subAccounts.find(a => a.name === value);
-                    setSelectedSubAccount(sub?.account_code || "");
-                  }}
+                  value={selectedSubAccount}
+                  onChange={(value) => setSelectedSubAccount(value)}
                 />
               </div>
             </div>

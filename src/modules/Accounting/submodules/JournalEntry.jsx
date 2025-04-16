@@ -86,11 +86,42 @@ const JournalEntry = () => {
           ? { ...entry, glAccountId: accountData.glAccountId, accountName: accountData.accountName }
           : entry
       );
+  
+      // Check for the specific debit account code
+      if (
+        accountData.glAccountId === "ACC-COA-2025-AE6010" &&
+        prevState.transactions[selectedIndex].type === "debit"
+      ) {
+        // Credit accounts to auto-add
+        const creditAccountsToAdd = [
+          "SSS Contribution",
+          "PhilHealth Contribution",
+          "Pagibig Contribution",
+          "Tax Payables",
+          "Late Deduction",
+          "Absent Deduction",
+          "Undertime Deduction",
+          "Net Pay",
+        ];
+  
+        // Add them as credit entries with empty values
+        creditAccountsToAdd.forEach((name) => {
+          updatedTransactions.push({
+            type: "credit",
+            glAccountId: "", // Placeholder until selected
+            amount: "",
+            accountName: name,
+          });
+        });
+      }
+  
       return { ...prevState, transactions: updatedTransactions };
     });
+  
     setIsAccountModalOpen(false);
     setSelectedIndex(null);
   };
+  
 
   
   // Submit journal entry to backend without entry_line_id w/ user validations
