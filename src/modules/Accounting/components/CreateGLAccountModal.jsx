@@ -189,3 +189,4 @@ const CreateGLAccountModal = ({ isModalOpen, closeModal, handleSubmit }) => {
 };
 
 export default CreateGLAccountModal;
+//
