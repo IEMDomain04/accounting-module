@@ -1,5 +1,5 @@
 export const accountCodeMapping = {
-    "Assets": { prefix: "AS", baseNumber: 1010 },
+    "Assets": { prefix: "CA", baseNumber: 1010 },
     "Non-Current Assets": { prefix: "NC", baseNumber: 1100 },
     "Current Liabilities": { prefix: "CL", baseNumber: 2010 },
     "Non-Current Liabilities": { prefix: "NL", baseNumber: 2100 },
