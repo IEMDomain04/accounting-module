@@ -17,29 +17,38 @@ const AccountsPayable = () => {
     "Description",
   ];
 
-
   // Fetch Data
   const fetchData = () => {
     fetch("http://127.0.0.1:8000/api/general-ledger-jel-view/")
       .then((response) => response.json())
       .then((result) => {
         console.log("API Response:", result);
+
+        // Get journal IDs for entries involving "Accounts Payable" or "Cash in Bank"
+        const relevantJournalIds = new Set(
+          result
+            .filter(
+              (entry) =>
+                (entry.account_name === "Accounts Payable" ||
+                  entry.account_name === "Cash in Bank") &&
+                (entry.debit_amount != 0 || entry.credit_amount != 0)
+            )
+            .map((entry) => entry.journal_id)
+        );
+
+        // Include all entries for those journal IDs to capture both debit and credit sides
         const combinedData = result
-          .filter(
-            (entry) =>
-              (entry.account_name === "Accounts Payable" ||
-                entry.account_name === "Cash in Bank") &&
-              (entry.debit_amount != 0 || entry.credit_amount != 0)
-          )
+          .filter((entry) => relevantJournalIds.has(entry.journal_id))
           .map((entry) => [
-            entry.entry_line_id,
-            entry.gl_account_id || "N/A", // 1: GL Account ID
-            entry.account_name || "No Account", // 2: Account Name
-            entry.journal_id || "-", // 3: Journal ID
-            parseFloat(entry.debit_amount || "0.00").toFixed(2), // 4: Debit
-            parseFloat(entry.credit_amount || "0.00").toFixed(2), // 5: Credit
-            entry.description || "-", // 6: Description
+            entry.entry_line_id || "N/A",
+            entry.gl_account_id || "N/A",
+            entry.account_name || "No Account",
+            entry.journal_id || "-",
+            parseFloat(entry.debit_amount || "0.00").toFixed(2),
+            parseFloat(entry.credit_amount || "0.00").toFixed(2),
+            entry.description || "-",
           ]);
+
         console.log("Combined AP and Cash Data:", combinedData);
         setData(combinedData);
       })
@@ -50,13 +59,11 @@ const AccountsPayable = () => {
     fetchData();
   }, []);
 
-
   // Calculates the total for debit and credit
-  const totalDebit = data.reduce((sum, row) => sum + parseFloat(row[4]) || 0, 0); // Debit (index 3)
-  const totalCredit = data.reduce((sum, row) => sum + parseFloat(row[5]) || 0, 0); // Credit (index 4)
+  const totalDebit = data.reduce((sum, row) => sum + parseFloat(row[4] || 0), 0);
+  const totalCredit = data.reduce((sum, row) => sum + parseFloat(row[5] || 0), 0);
 
-
-  // Search Sorting 
+  // Search Sorting
   const filteredData = data.filter((row) =>
     [row[0], row[1], row[2], row[3], row[6]]
       .filter(Boolean)
@@ -65,13 +72,16 @@ const AccountsPayable = () => {
       .includes(searching.toLowerCase())
   );
 
-
   // Format the money with comma
   const formatNumber = (num) =>
     num.toLocaleString("en-US", { minimumFractionDigits: 2 });
   const formattedTotalDebit = formatNumber(totalDebit);
   const formattedTotalCredit = formatNumber(totalCredit);
 
+  // Log totals for debugging
+  useEffect(() => {
+    console.log("Total Debit:", totalDebit, "Total Credit:", totalCredit);
+  }, [totalDebit, totalCredit]);
 
   return (
     <div className="accountsPayable">
