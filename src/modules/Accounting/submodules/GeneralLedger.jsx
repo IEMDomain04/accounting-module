@@ -4,9 +4,11 @@ import Button from "../components/Button";
 import Dropdown from "../components/Dropdown";
 import Table from "../components/Table";
 import Search from "../components/Search";
+import NotifModal from "../components/modalNotif/NotifModal";
 import ReportModalInput from "../components/ReportModalInput";
 
 const BodyContent = () => {
+    // Use state
     const columns = ["Entry Line ID", "GL Account ID", "Account name", "Journal ID", "Debit", "Credit", "Description"];
     const [data, setData] = useState([]);
     const [journalDateMap, setJournalDateMap] = useState({});
@@ -14,7 +16,6 @@ const BodyContent = () => {
     const [sortOrder, setSortOrder] = useState("asc");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [scopedData, setScopedData] = useState(null);
-
     const [reportForm, setReportForm] = useState({
         startDate: "",
         endDate: "",
@@ -23,14 +24,26 @@ const BodyContent = () => {
         invoiceId: "",
         currencyId: ""
     });
+    const [validation, setValidation] = useState({
+        isOpen: false,
+        type: "warning",
+        title: "",
+        message: "",
+    });
 
+
+    // Open Modal
     const openModal = () => setIsModalOpen(true);
 
+
+    // Close Modal
     const closeModal = () => {
         setIsModalOpen(false);
         setScopedData(null);
     };
 
+
+    // Fetch Journal Dates for Generate Report
     const fetchJournalDates = async () => {
         try {
             const response = await fetch('http://127.0.0.1:8000/api/journal-entries/');
@@ -47,6 +60,8 @@ const BodyContent = () => {
         }
     };
 
+
+    // Fetch General Ledger Data
     const fetchData = async () => {
         try {
             const response = await fetch('http://127.0.0.1:8000/api/general-ledger-jel-view/');
@@ -89,10 +104,14 @@ const BodyContent = () => {
         }
     }, [journalDateMap]);
 
+
+    // Handle Input Change
     const handleInputChange = (field, value) => {
         setReportForm(prevState => ({ ...prevState, [field]: value }));
     };
 
+
+    // Handle Submit 
     const handleSubmit = async () => {
         const { startDate, endDate } = reportForm;
         const start = new Date(startDate);
@@ -125,10 +144,21 @@ const BodyContent = () => {
 
             if (!response.ok) throw new Error("Failed to submit report.");
 
-            console.log("Report successfully created.");
+            setValidation({
+                isOpen: true,
+                type: "success",
+                title: "Report Generated",
+                message: "Report generated successfully!",
+            });
             closeModal();
         } catch (error) {
             console.error("Error submitting report:", error);
+            setValidation({
+                isOpen: true,
+                type: "error",
+                title: "Error Submitting Report",
+                message: error.message,
+            });
         }
     };
 
@@ -200,6 +230,16 @@ const BodyContent = () => {
                 handleInputChange={handleInputChange}
                 handleSubmit={handleSubmit}
             />
+
+            {validation.isOpen && (
+                <NotifModal
+                    isOpen={validation.isOpen}
+                    onClose={() => setValidation({ ...validation, isOpen: false })}
+                    type={validation.type}
+                    title={validation.title}
+                    message={validation.message}
+                />
+            )}
         </div>
     );
 };
