@@ -8,7 +8,6 @@ import CreateGLAccountModal from '../components/CreateGLAccountModal';
 import NotifModal from '../components/modalNotif/NotifModal';
 
 const GeneralLedgerAccounts = () => {
-  // Use states
   const columns = ["GL Account ID", "Account name", "Account code", "Account ID", "Status", "Created at.."];
   const [data, setData] = useState([]);
   const [searching, setSearching] = useState("");
@@ -22,16 +21,9 @@ const GeneralLedgerAccounts = () => {
     message: "",
   });
 
-
-  // Open modal function
   const openModal = () => setIsModalOpen(true);
-
-
-  // Close modal function
   const closeModal = () => setIsModalOpen(false);
 
-
-  // Fetch data
   const fetchData = () => {
     fetch('http://127.0.0.1:8000/api/general-ledger-accounts/')
       .then(response => response.json())
@@ -53,8 +45,6 @@ const GeneralLedgerAccounts = () => {
     fetchData();
   }, []);
 
-
-  // Ascending and Descending Sorting
   const handleSort = () => {
     const newSortOrder = sortOrder === "asc" ? "desc" : "asc";
     setSortOrder(newSortOrder);
@@ -68,8 +58,6 @@ const GeneralLedgerAccounts = () => {
     setStatusFilter(status === "" ? "All" : status);
   };
 
-
-  // Input new Accounts w/ user validations
   const handleCreateAccount = (newAccount) => {
     if (!newAccount.createdAt || !newAccount.glAccountID || !newAccount.accountName || !newAccount.accountID || !newAccount.status || !newAccount.account || !newAccount.subAccount) {
       setValidation({
@@ -91,7 +79,9 @@ const GeneralLedgerAccounts = () => {
         account_name: newAccount.accountName,
         account_code: newAccount.accountID,
         status: newAccount.status,
-        created_at: newAccount.createdAt
+        created_at: newAccount.createdAt,
+        account: newAccount.account,
+        sub_account: newAccount.subAccount
       })
     })
       .then(response => {
@@ -104,7 +94,7 @@ const GeneralLedgerAccounts = () => {
       })
       .then(result => {
         console.log('API Response (handleCreateAccount):', result);
-        fetchData(); // Refresh data after creating a new account
+        fetchData();
         closeModal();
         setValidation({
           isOpen: true,
@@ -124,8 +114,6 @@ const GeneralLedgerAccounts = () => {
       });
   };
 
-
-  // Search Filtering
   const filteredData = data.filter(row => {
     const matchesSearch = [row[0], row[1], row[2], row[3], row[4], row[5]]
       .filter(Boolean)
@@ -138,7 +126,6 @@ const GeneralLedgerAccounts = () => {
     return matchesSearch && matchesStatus;
   });
 
-  
   return (
     <div className="generalLedgerAccounts">
       <div className="body-content-container">

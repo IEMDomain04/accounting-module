@@ -11,7 +11,7 @@ const CreateGLAccountModal = ({ isModalOpen, closeModal, handleSubmit }) => {
   const [availableSubAccounts, setAvailableSubAccounts] = useState([]);
   const [formData, setFormData] = useState({
     createdAt: "",
-    glAccountID: "", // Will be auto-generated on submit
+    glAccountID: "",
     accountName: "",
     accountID: "",
     status: "",
@@ -21,28 +21,32 @@ const CreateGLAccountModal = ({ isModalOpen, closeModal, handleSubmit }) => {
 
   if (!isModalOpen) return null;
 
-  // Function for Selecting Accounts and Sub-Accounts
+  // Convert string to camelCase for accessing subAccounts object
+  const toCamelCaseKey = (str) =>
+    str
+      .replace(/[^a-zA-Z0-9 ]/g, "")
+      .replace(/\s(.)/g, (match, group1) => group1.toUpperCase())
+      .replace(/^(.)/, (match, group1) => group1.toLowerCase());
+
+  // Validate that subAccount belongs to selected account
+  const isValidAccountAndSubAccount = (account, subAccount) => {
+    const key = toCamelCaseKey(account);
+    const validSubs = subAccounts[key] || [];
+    return validSubs.includes(subAccount);
+  };
+
+  // Update sub-account options on account selection
   useEffect(() => {
     if (!selectedAccount) {
       setAvailableSubAccounts([]);
       return;
     }
-
     const key = toCamelCaseKey(selectedAccount);
     const subAccountsList = subAccounts[key] || [];
-
     setAvailableSubAccounts(subAccountsList);
     setSelectedSubAccount("");
   }, [selectedAccount]);
 
-  // Adapt the spacing and cases in the array for accounts and subAccounts
-  const toCamelCaseKey = (str) =>
-    str
-      .replace(/[^a-zA-Z0-9 ]/g, "") // Remove symbols
-      .replace(/\s(.)/g, (match, group1) => group1.toUpperCase()) // Capitalize after spaces
-      .replace(/^(.)/, (match, group1) => group1.toLowerCase()); // Lowercase first
-
-  // Handle input change
   const handleInputChange = (field, value) => {
     setFormData((prevState) => ({
       ...prevState,
@@ -50,10 +54,10 @@ const CreateGLAccountModal = ({ isModalOpen, closeModal, handleSubmit }) => {
     }));
   };
 
-  // Generate alphanumeric glAccountID in the format ACC-GLA-2025-XXXXXX
+  // Generate GL Account ID
   const generateGLAccountID = () => {
-    const year = new Date().getFullYear(); // Get current year (2025)
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'; // Alphanumeric characters
+    const year = new Date().getFullYear();
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     let randomPart = '';
     for (let i = 0; i < 6; i++) {
       const randomIndex = Math.floor(Math.random() * characters.length);
@@ -62,17 +66,36 @@ const CreateGLAccountModal = ({ isModalOpen, closeModal, handleSubmit }) => {
     return `ACC-GLA-${year}-${randomPart}`;
   };
 
-  // Submit form data with auto-generated glAccountID
+  // Final validation and submission
   const onSubmit = () => {
-    const newGLAccountID = generateGLAccountID(); // Generate custom ID
+    const requiredFields = [
+      formData.createdAt,
+      formData.accountName,
+      formData.accountID,
+      formData.status,
+      formData.account,
+      formData.subAccount,
+    ];
+
+    if (requiredFields.includes("")) {
+      alert("Please fill in all required fields.");
+      return;
+    }
+
+    if (!isValidAccountAndSubAccount(formData.account, formData.subAccount)) {
+      alert("Selected Sub-Account does not match the chosen Account.");
+      return;
+    }
+
+    const newGLAccountID = generateGLAccountID();
     const updatedFormData = {
       ...formData,
-      glAccountID: newGLAccountID, // Set the generated ID
+      glAccountID: newGLAccountID,
     };
+
     handleSubmit(updatedFormData);
   };
 
-  // Modal UI
   return (
     <div className="accounting-modal">
       <div className="modal-overlay">
