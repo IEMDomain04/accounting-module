@@ -96,6 +96,7 @@ function App() {
       "Accounts Receivable": "AccountsReceivable",
       "Accounts Payable": "AccountsPayable",
       "Official Receipts": "OfficialReceipts",
+      "Financial Report": "FinancialReport",
     },
     Financials: {
       Budgeting: "Budgeting",
