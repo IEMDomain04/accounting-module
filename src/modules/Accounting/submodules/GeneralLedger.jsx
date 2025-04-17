@@ -7,12 +7,14 @@ import Search from "../components/Search";
 import ReportModalInput from "../components/ReportModalInput";
 
 const BodyContent = () => {
-    // Use state
     const columns = ["Entry Line ID", "GL Account ID", "Account name", "Journal ID", "Debit", "Credit", "Description"];
     const [data, setData] = useState([]);
+    const [journalDateMap, setJournalDateMap] = useState({});
     const [searching, setSearching] = useState("");
     const [sortOrder, setSortOrder] = useState("asc");
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [scopedData, setScopedData] = useState(null);
+
     const [reportForm, setReportForm] = useState({
         startDate: "",
         endDate: "",
@@ -22,96 +24,145 @@ const BodyContent = () => {
         currencyId: ""
     });
 
-    
-    // Open modal function
     const openModal = () => setIsModalOpen(true);
 
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setScopedData(null);
+    };
 
-    // Close modal function
-    const closeModal = () => setIsModalOpen(false);
+    const fetchJournalDates = async () => {
+        try {
+            const response = await fetch('http://127.0.0.1:8000/api/journal-entries/');
+            const result = await response.json();
 
+            const dateMap = {};
+            result.forEach(entry => {
+                dateMap[entry.journal_id || entry.id] = entry.journal_date || entry.date;
+            });
 
-    // Fetch data
-    const fetchData = () => {
-        fetch('http://127.0.0.1:8000/api/general-ledger-jel-view/')
-          .then(response => response.json())
-          .then(result => {
-            console.log('API Response:', result); 
-      
-            const transformedData = result.map(entry => [
-              entry.entry_line_id,          
-              entry.gl_account_id || 'N/A', 
-              entry.account_name || 'No Account', 
-              entry.journal_id || '-',      
-              parseFloat(entry.debit_amount || '0.00').toFixed(2), 
-              parseFloat(entry.credit_amount || '0.00').toFixed(2), 
-              entry.description || '-'      
-            ]);
-      
-            console.log('Transformed Data:', transformedData); 
-            setData(transformedData);
-          })
-          .catch(error => console.error('Error fetching data:', error));
-      };
+            setJournalDateMap(dateMap);
+        } catch (error) {
+            console.error("Error fetching journal dates:", error);
+        }
+    };
+
+    const fetchData = async () => {
+        try {
+            const response = await fetch('http://127.0.0.1:8000/api/general-ledger-jel-view/');
+            const result = await response.json();
+
+            const enrichedData = result.map(entry => {
+                const journalId = entry.journal_id;
+                const journalDate = journalDateMap[journalId] || null;
+
+                return {
+                    row: [
+                        entry.entry_line_id,
+                        entry.gl_account_id || 'N/A',
+                        entry.account_name || 'No Account',
+                        journalId || '-',
+                        parseFloat(entry.debit_amount || '0.00').toFixed(2),
+                        parseFloat(entry.credit_amount || '0.00').toFixed(2),
+                        entry.description || '-'
+                    ],
+                    journalDate
+                };
+            });
+
+            setData(enrichedData);
+        } catch (error) {
+            console.error("Error fetching GL data:", error);
+        }
+    };
 
     useEffect(() => {
-        fetchData();
+        const fetchAll = async () => {
+            await fetchJournalDates();
+        };
+        fetchAll();
     }, []);
 
+    useEffect(() => {
+        if (Object.keys(journalDateMap).length > 0) {
+            fetchData();
+        }
+    }, [journalDateMap]);
 
-    // Update the report form state when an input field changes
     const handleInputChange = (field, value) => {
         setReportForm(prevState => ({ ...prevState, [field]: value }));
     };
 
-    // Handle the submission of the report form and close the modal
-    const handleSubmit = () => {
-        console.log("Form submitted with data: ", reportForm);
-        closeModal();
-    };
+    const handleSubmit = async () => {
+        const { startDate, endDate } = reportForm;
+        const start = new Date(startDate);
+        const end = new Date(endDate);
 
-
-    // Compute the total debit and credit
-    const totalDebit = data.reduce((sum, row) => sum + (parseFloat(row[4]) || 0), 0);
-    const totalCredit = data.reduce((sum, row) => sum + (parseFloat(row[5]) || 0), 0);
-
-    
-    //Ascending and Descending sorting
-    const handleSort = () => {
-        const newSortOrder = sortOrder === "asc" ? "desc" : "asc";
-        setSortOrder(newSortOrder);
-
-        const sortedData = [...data].sort((a, b) => {
-            const debitA = parseFloat(a[4]) || 0;
-            const creditA = parseFloat(a[5]) || 0;
-            const debitB = parseFloat(b[4]) || 0;
-            const creditB = parseFloat(b[5]) || 0;
-
-            const totalA = debitA + creditA;
-            const totalB = debitB + creditB;
-
-            if (newSortOrder === "asc") {
-                return totalA - totalB; // Sort in ascending order based on the combined debit/credit amount
-            } else {
-                return totalB - totalA; // Sort in descending order based on the combined debit/credit amount
-            }
+        const filteredData = data.filter(item => {
+            const journalDate = new Date(item.journalDate);
+            return journalDate >= start && journalDate <= end;
         });
 
-        setData(sortedData);
+        setScopedData(filteredData);
+
+        const totalCost = filteredData.reduce((sum, item) => sum + (parseFloat(item.row[4]) || 0), 0);
+
+        const reportPayload = {
+            report_id: `FR-${Date.now()}`,
+            report_type: reportForm.typeOfReport,
+            total_cost: totalCost.toFixed(2),
+            start_date: startDate,
+            end_date: endDate,
+            generated_by: reportForm.generatedBy
+        };
+
+        try {
+            const response = await fetch("http://127.0.0.1:8000/api/financial-reports/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(reportPayload)
+            });
+
+            if (!response.ok) throw new Error("Failed to submit report.");
+
+            console.log("Report successfully created.");
+            closeModal();
+        } catch (error) {
+            console.error("Error submitting report:", error);
+        }
     };
 
-
-    // Search Filter
-    const filteredData = data.filter(row =>
-        [row[0], row[1], row[2], row[3], row[6]]
+    const filteredData = data.filter(item =>
+        item.row.slice(0, 4).concat(item.row[6])
             .filter(Boolean)
             .join(" ")
             .toLowerCase()
             .includes(searching.toLowerCase())
     );
 
+    const dataToCalculate = scopedData || filteredData;
+    const totalDebit = dataToCalculate.reduce((sum, item) => sum + (parseFloat(item.row[4]) || 0), 0);
+    const totalCredit = dataToCalculate.reduce((sum, item) => sum + (parseFloat(item.row[5]) || 0), 0);
 
-    // Format the numbers with comma
+    const handleSort = () => {
+        const newSortOrder = sortOrder === "asc" ? "desc" : "asc";
+        setSortOrder(newSortOrder);
+
+        const sortedData = [...data].sort((a, b) => {
+            const debitA = parseFloat(a.row[4]) || 0;
+            const creditA = parseFloat(a.row[5]) || 0;
+            const debitB = parseFloat(b.row[4]) || 0;
+            const creditB = parseFloat(b.row[5]) || 0;
+
+            const totalA = debitA + creditA;
+            const totalB = debitB + creditB;
+
+            return newSortOrder === "asc" ? totalA - totalB : totalB - totalA;
+        });
+
+        setData(sortedData);
+    };
+
     const formatNumber = (num) => num.toLocaleString("en-US", { minimumFractionDigits: 2 });
     const formattedTotalDebit = formatNumber(totalDebit);
     const formattedTotalCredit = formatNumber(totalCredit);
@@ -130,7 +181,8 @@ const BodyContent = () => {
                     <div><Button name="Generate report" variant="standard2" onclick={openModal} /></div>
                 </div>
 
-                <Table data={filteredData} columns={columns} />
+                <Table data={filteredData.map(item => item.row)} columns={columns} />
+
                 <div className="grid grid-cols-7 gap-4 mt-4 items-center border-t pt-2 
                  font-light max-sm:text-[10px] max-sm:font-light max-md:text-[10px] max-md:font-light 
                 max-lg:text-[10px] max-lg:font-light max-xl:text-[10px] max-xl:font-light 2xl:text-[10px] 2xl:font-light">
