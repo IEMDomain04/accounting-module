@@ -10,26 +10,24 @@ const AddAccountModal = ({ isModalOpen, closeModal, handleSubmit }) => {
   const [availableSubAccounts, setAvailableSubAccounts] = useState([]);
   const [selectedMainAccount, setSelectedMainAccount] = useState("");
   const [selectedSubAccount, setSelectedSubAccount] = useState("");
-
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedAccount, setSelectedAccount] = useState(null);
 
   // Fetch accounts
   useEffect(() => {
-    const fetchAccounts = async () => {
-      try {
-        const response = await fetch("http://127.0.0.1:8000/api/general-ledger-accounts/");
-        if (!response.ok) throw new Error("Failed to fetch accounts");
-        const result = await response.json();
-        setAllAccounts(result);
-
-        const mains = [...new Set(result.map(a => a.gl_account_id))];
-        setMainAccounts(mains);
-      } catch (error) {
-        console.error("Error fetching accounts:", error);
-      }
-    };
-    if (isModalOpen) fetchAccounts();
+    if (!isModalOpen) return;
+    fetch("http://127.0.0.1:8000/api/general-ledger-accounts/")
+      .then((res) => res.json())
+      .then((data) => setAllAccounts(data))
+      .catch((err) => console.error("Error fetching accounts:", err));
   }, [isModalOpen]);
+
+  const filteredAccounts = allAccounts.filter((a) =>
+    `${a.account_name} ${a.gl_account_id}`
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase())
+  );
+
 
   // Update sub-accounts when GL ID changes
   useEffect(() => {
@@ -47,20 +45,14 @@ const AddAccountModal = ({ isModalOpen, closeModal, handleSubmit }) => {
   }, [selectedMainAccount, allAccounts]);
 
   const onAddAccount = () => {
-    if (!selectedMainAccount || !selectedSubAccount) {
-      alert("Please select both an account and a sub-account.");
+    if (!selectedAccount) {
+      alert("Please select an account.");
       return;
     }
 
-    const selectedAccount = allAccounts.find(
-      a =>
-        a.gl_account_id === selectedMainAccount &&
-        a.account_name === selectedSubAccount
-    );
-
     const accountData = {
       glAccountId: selectedAccount.gl_account_id,
-      accountName: selectedAccount.account_name
+      accountName: selectedAccount.account_name,
     };
 
     handleSubmit(accountData);
@@ -92,47 +84,42 @@ const AddAccountModal = ({ isModalOpen, closeModal, handleSubmit }) => {
             />
           </div>
 
-          {/* === Final Search + Dropdown Layout === */}
           <div className="modal-body mt-4">
+            <Search
+              type="text"
+              placeholder="Search by Name or GL Account ID..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
 
-            <div className="mb-4">
-              <Search
-                type="text"
-                placeholder={
-                  !selectedMainAccount
-                    ? "Search GL Account ID..."
-                    : "Search Account Name..."
+
+            <div className="mt-3">
+              <Dropdown
+                options={filteredAccounts.map(
+                  (a) => `${a.account_name} (ID: ${a.gl_account_id})`
+                )}
+                style="selection"
+                defaultOption="Select Account..."
+                value={
+                  selectedAccount
+                    ? `${selectedAccount.account_name} (ID: ${selectedAccount.gl_account_id})`
+                    : ""
                 }
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(label) => {
+                  const matched = allAccounts.find(
+                    (a) => `${a.account_name} (ID: ${a.gl_account_id})` === label
+                  );
+                  setSelectedAccount(matched || null);
+                }}
               />
+
             </div>
 
-            <div className="flex gap-x-5 max-sm:flex-col max-sm:gap-3">
-
-              <div className="-mt-2">
-                <Dropdown
-                  options={filteredMainAccounts}
-                  style="selection"
-                  defaultOption="Select GL Account ID..."
-                  value={selectedMainAccount}
-                  onChange={(value) => {
-                    setSelectedMainAccount(value);
-                    setSearchTerm(""); // reset search to allow filtering account names
-                  }}
-                />
+            {selectedAccount && (
+              <div className="mt-4 text-sm text-gray-600">
+                <strong>GL Account ID:</strong> {selectedAccount.gl_account_id}
               </div>
-
-              <div className="-mt-2">
-                <Dropdown
-                  options={filteredSubAccounts}
-                  style="selection"
-                  defaultOption="Select Account Name..."
-                  value={selectedSubAccount}
-                  onChange={(value) => setSelectedSubAccount(value)}
-                />
-              </div>
-            </div>
+            )}
           </div>
 
           <div className="modal-footer mt-5 flex justify-end space-x-3">
