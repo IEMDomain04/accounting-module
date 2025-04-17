@@ -21,7 +21,7 @@ const OfficialReceipts = () => {
       salesInvoiceId: "",
       amountPaid: "",
       paymentMethod: "",
-      bankAccount: "", // Include bankAccount for Bank Transfer
+      bankAccount: "",
       createdBy: "",
     });
   };
@@ -31,7 +31,7 @@ const OfficialReceipts = () => {
     salesInvoiceId: "",
     amountPaid: "",
     paymentMethod: "",
-    bankAccount: "", // Include bankAccount for Bank Transfer
+    bankAccount: "",
     createdBy: "",
   });
 
@@ -41,6 +41,41 @@ const OfficialReceipts = () => {
     title: "",
     message: "",
   });
+
+  // Function to calculate the new remaining amount based on the latest remaining amount
+  const calculateRemainingAmount = (invoiceId, newSettledAmount) => {
+    // Filter receipts for the given invoice
+    const invoiceReceipts = data.filter(row => row[1] === invoiceId);
+
+    // Parse the new settled amount and ensure it's a valid number
+    const settledAmount = parseFloat(newSettledAmount);
+    if (isNaN(settledAmount) || settledAmount < 0) {
+      throw new Error("Invalid settled amount. Please enter a valid positive number.");
+    }
+
+    if (invoiceReceipts.length === 0) {
+      // If no previous receipts exist, fetch the invoice total amount (or set a default)
+      const initialRemainingAmount = 10000; // Adjust this value or fetch from API
+      const newRemaining = initialRemainingAmount - settledAmount;
+      return newRemaining >= 0 ? newRemaining : 0;
+    }
+
+    // Sort receipts by OR ID to ensure the latest receipt is last
+    const sortedReceipts = [...invoiceReceipts].sort((a, b) => parseInt(a[0]) - parseInt(b[0]));
+
+    // Get the latest receipt
+    const latestReceipt = sortedReceipts[sortedReceipts.length - 1];
+    const latestRemaining = parseFloat(latestReceipt[5]); // Remaining Amount is at index 5
+
+    // Validate that latestRemaining is a valid number
+    if (isNaN(latestRemaining)) {
+      throw new Error("Invalid remaining amount in the latest receipt.");
+    }
+
+    // Calculate new remaining amount
+    const newRemaining = latestRemaining - settledAmount;
+    return newRemaining >= 0 ? newRemaining : 0;
+  };
 
   const fetchData = () => {
     fetch('http://127.0.0.1:8000/api/official-receipts/')
@@ -52,7 +87,7 @@ const OfficialReceipts = () => {
           entry.customer_id || "-",
           entry.or_date ? new Date(entry.or_date).toLocaleString() : "-",
           entry.settled_amount || "-",
-          entry.remaining_amount || "-",
+          entry.remaining_amount || "-", // Ensure this matches the API field
           entry.payment_method || "-",
           entry.reference_number || "-",
           entry.created_by || "-",
@@ -97,7 +132,7 @@ const OfficialReceipts = () => {
   };
 
   const handleInputChange = (field, value) => {
-    console.log(`Updating ${field} to ${value}`); // Debug log
+    console.log(`Updating ${field} to ${value}`);
     setReportForm((prevForm) => ({
       ...prevForm,
       [field]: value,
@@ -105,7 +140,9 @@ const OfficialReceipts = () => {
   };
 
   const handleSubmit = async () => {
-    console.log("Form data on submit:", reportForm); // Debug log
+    console.log("Form data on submit:", reportForm);
+
+    // Validate required fields
     if (
       !reportForm.startDate ||
       !reportForm.salesInvoiceId ||
@@ -123,24 +160,38 @@ const OfficialReceipts = () => {
       return;
     }
 
-    const referenceNumber = await fetchLatestReferenceNumber();
-
-    const newReceipt = {
-      or_id: generateCustomORID(),
-      invoice_id: reportForm.salesInvoiceId,
-      customer_id: "SALES-CUST-2025",
-      or_date: reportForm.startDate,
-      settled_amount: reportForm.amountPaid,
-      remaining_amount: "0.00",
-      payment_method: reportForm.paymentMethod,
-      reference_number: referenceNumber,
-      created_by: reportForm.createdBy,
-      bank_account: reportForm.paymentMethod === "Bank Transfer" ? reportForm.bankAccount : null, // Include bank account if Bank Transfer
-    };
-
-    console.log("Submitting receipt:", newReceipt);
-
     try {
+      // Calculate the new remaining amount based on the latest remaining amount
+      const newRemainingAmount = calculateRemainingAmount(reportForm.salesInvoiceId, reportForm.amountPaid);
+
+      // Validate that the new remaining amount is not negative
+      if (newRemainingAmount === 0 && parseFloat(reportForm.amountPaid) > 0) {
+        setValidation({
+          isOpen: true,
+          type: "warning",
+          title: "Invalid Payment",
+          message: `The settled amount (${reportForm.amountPaid}) exceeds the remaining invoice balance.`,
+        });
+        return;
+      }
+
+      const referenceNumber = await fetchLatestReferenceNumber();
+
+      const newReceipt = {
+        or_id: generateCustomORID(),
+        invoice_id: reportForm.salesInvoiceId,
+        customer_id: "SALES-CUST-2025",
+        or_date: reportForm.startDate,
+        settled_amount: reportForm.amountPaid,
+        remaining_amount: newRemainingAmount.toFixed(2), // Use the calculated remaining amount
+        payment_method: reportForm.paymentMethod,
+        reference_number: referenceNumber,
+        created_by: reportForm.createdBy,
+        bank_account: reportForm.paymentMethod === "Bank Transfer" ? reportForm.bankAccount : null,
+      };
+
+      console.log("Submitting receipt:", newReceipt);
+
       const response = await fetch('http://127.0.0.1:8000/api/official-receipts/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -176,7 +227,7 @@ const OfficialReceipts = () => {
         isOpen: true,
         type: "error",
         title: "Connection Error",
-        message: "Unable to connect to the server. Please check your connection.",
+        message: error.message || "Unable to connect to the server. Please check your connection.",
       });
     }
   };
