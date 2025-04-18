@@ -147,8 +147,8 @@ const BodyContent = () => {
             setValidation({
                 isOpen: true,
                 type: "success",
-                title: "Report Generated",
-                message: "Report generated successfully!",
+                title: "Report Generated Successfully",
+                message: "Kindly check it under the Financial Reports tab."
             });
             closeModal();
         } catch (error) {
