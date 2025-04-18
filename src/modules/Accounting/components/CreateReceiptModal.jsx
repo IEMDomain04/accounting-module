@@ -10,6 +10,7 @@ const CreateReceiptModal = ({
   reportForm,
   handleInputChange,
   handleSubmit,
+  setValidation,
 }) => {
   const [data, setData] = useState([]);
   const [bankAccounts, setBankAccounts] = useState([]);
@@ -20,25 +21,56 @@ const CreateReceiptModal = ({
   });
 
   const fetchData = () => {
-    fetch('http://127.0.0.1:8000/api/general-ledger-accounts/')
-      .then(response => response.json())
-      .then(result => {
-        console.log('API Response (fetchData):', result);
-        setData(result.map(entry => [
-          entry.gl_account_id || "-",
-          entry.account_name || "-",
-          entry.account_code || "-",
-          entry.account_id || "-",
-          entry.status || "-",
-          entry.created_at ? new Date(entry.created_at).toLocaleString() : "-",
-        ]));
-
-        const filtered = result.filter(entry =>
-          entry.account_name?.toLowerCase().includes("bank")
+    fetch("http://127.0.0.1:8000/api/general-ledger-accounts/")
+      .then((response) => {
+        if (!response.ok)
+          throw new Error(
+            `Failed to fetch general ledger accounts: ${response.status}`
+          );
+        return response.json();
+      })
+      .then((result) => {
+        console.log("API Response (fetchData):", result);
+        console.log("Existing account statuses:", result.map((entry) => entry.status));
+        setData(
+          result.map((entry) => [
+            entry.gl_account_id || "-",
+            entry.account_name || "-",
+            entry.account_code || "-",
+            entry.account_id || "-",
+            entry.status || "-",
+            entry.created_at
+              ? new Date(entry.created_at).toLocaleString()
+              : "-",
+          ])
+        );
+        // Broaden filter to include potential bank accounts
+        const filtered = result.filter(
+          (entry) =>
+            entry.account_name?.toLowerCase().includes("bank") ||
+            entry.account_type?.toLowerCase() === "bank" ||
+            entry.account_category?.toLowerCase() === "bank"
         );
         setBankAccounts(filtered);
+        if (filtered.length === 0) {
+          console.warn("No bank accounts found.");
+          setValidation({
+            isOpen: true,
+            type: "warning",
+            title: "No Bank Accounts",
+            message: "No bank accounts found. Please add a new bank account.",
+          });
+        }
       })
-      .catch(error => console.error('Error fetching data:', error));
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+        setValidation({
+          isOpen: true,
+          type: "error",
+          title: "Fetch Error",
+          message: `Unable to load bank accounts: ${error.message}. Please try again.`,
+        });
+      });
   };
 
   useEffect(() => {
@@ -46,32 +78,99 @@ const CreateReceiptModal = ({
   }, []);
 
   const saveBankAccount = () => {
-    const payload = {
-      account_name: newBankAccount.accountName,
-      account_code: newBankAccount.accountCode,
-      status: "active",
+    if (!newBankAccount.accountName || !newBankAccount.accountCode) {
+      setValidation({
+        isOpen: true,
+        type: "warning",
+        title: "Missing Fields",
+        message: "Please provide both account name and account code.",
+      });
+      return;
+    }
+
+    // Generate a unique gl_account_id
+    const generateGLAccountID = () => {
+      const prefix = "GL-BANK";
+      const randomString = Math.random()
+        .toString(36)
+        .substring(2, 7)
+        .toUpperCase();
+      return `${prefix}-${randomString}`;
     };
 
-    fetch('http://127.0.0.1:8000/api/general-ledger-accounts/', {
-      method: 'POST',
+    const payload = {
+      gl_account_id: generateGLAccountID(),
+      account_name: newBankAccount.accountName,
+      account_code: newBankAccount.accountCode,
+      account_type: "bank",
+      account_category: "bank",
+      status: "Active", // Fix: Changed to match status_enum value
+      created_by: reportForm.createdBy || "system",
+    };
+
+    console.log("Saving bank account with payload:", payload);
+
+    fetch("http://127.0.0.1:8000/api/general-ledger-accounts/", {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
+        // Add authentication header if required
+        // "Authorization": "Bearer <token>",
       },
       body: JSON.stringify(payload),
     })
-      .then(response => {
-        if (!response.ok) throw new Error("Failed to save bank account.");
+      .then(async (response) => {
+        // Check if response is JSON
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          const text = await response.text();
+          throw new Error(
+            `Expected JSON response but received HTML or other content: ${text.slice(
+              0,
+              100
+            )}...`
+          );
+        }
+        if (!response.ok) {
+          return response.json().then((err) => {
+            throw new Error(`Failed to save bank account: ${JSON.stringify(err)}`);
+          });
+        }
         return response.json();
       })
-      .then(data => {
+      .then((data) => {
         console.log("Bank account saved:", data);
-        fetchData();
+        fetchData(); // Refresh bank accounts
         setNewBankAccount({ accountName: "", accountCode: "" });
         setShowBankInput(false);
-        // Automatically select the newly added bank account
-        handleInputChange("bankAccount", data.account_name);
+        // Handle different possible response field names
+        const accountName =
+          data.account_name || data.name || newBankAccount.accountName;
+        handleInputChange("bankAccount", accountName);
+        setValidation({
+          isOpen: true,
+          type: "success",
+          title: "Bank Account Added",
+          message: `Bank account "${accountName}" has been successfully added.`,
+        });
       })
-      .catch(error => console.error("Error saving bank account:", error));
+      .catch((error) => {
+        console.error("Error saving bank account:", error);
+        let errorMessage = error.message;
+        if (error.message.includes("status_enum")) {
+          errorMessage =
+            "Invalid status value. Please contact support to verify valid status options.";
+        } else if (error.message.includes("Expected JSON response")) {
+          errorMessage =
+            "Server returned an unexpected response. Please check the server status or contact support.";
+        }
+        setValidation({
+          isOpen: true,
+          type: "error",
+          title: "Save Error",
+          message: `Unable to save the bank account: ${errorMessage}. Please try again.`,
+        });
+      });
   };
 
   if (!isModalOpen) return null;
@@ -118,16 +217,31 @@ const CreateReceiptModal = ({
 
             <div className="flex flex-col md:flex-row md:space-x-5 space-y-5 md:space-y-0">
               <div className="space-y-2">
-                <label className="block text-sm font-medium">Select Payment Method*</label>
+                <label className="block text-sm font-medium">
+                  Select Payment Method*
+                </label>
                 <Dropdown
                   style="selection"
                   defaultOption="Select payment method..."
-                  options={["Cash", "Credit Card", "Bank Transfer", "Check", "Mobile Payment"]}
+                  options={[
+                    "Cash",
+                    "Credit Card",
+                    "Bank Transfer",
+                    "Check",
+                    "Mobile Payment",
+                  ]}
                   value={reportForm.paymentMethod}
                   onChange={(value) => {
+                    console.log("Payment method changed to:", value);
                     handleInputChange("paymentMethod", value);
                     if (value !== "Bank Transfer") {
-                      handleInputChange("bankAccount", ""); // Clear bankAccount if not Bank Transfer
+                      handleInputChange("bankAccount", "");
+                    }
+                    if (value !== "Check") {
+                      handleInputChange("checkNumber", "");
+                    }
+                    if (value !== "Mobile Payment") {
+                      handleInputChange("transactionId", "");
                     }
                   }}
                 />
@@ -156,13 +270,18 @@ const CreateReceiptModal = ({
 
                   {!showBankInput ? (
                     <div>
-                      <label className="block text-sm font-medium mb-1">Select Bank Account*</label>
+                      <label className="block text-sm font-medium mb-1">
+                        Select Bank Account*
+                      </label>
                       <Dropdown
                         style="selection"
                         defaultOption="Select bank account..."
-                        options={bankAccounts.map(account => account.account_name)}
+                        options={bankAccounts.map((account) => account.account_name)}
                         value={reportForm.bankAccount}
-                        onChange={(value) => handleInputChange("bankAccount", value)}
+                        onChange={(value) => {
+                          console.log("Bank account selected:", value);
+                          handleInputChange("bankAccount", value);
+                        }}
                       />
                     </div>
                   ) : (
@@ -173,16 +292,22 @@ const CreateReceiptModal = ({
                         placeholder="Enter account name"
                         value={newBankAccount.accountName}
                         onChange={(e) =>
-                          setNewBankAccount({ ...newBankAccount, accountName: e.target.value })
+                          setNewBankAccount({
+                            ...newBankAccount,
+                            accountName: e.target.value,
+                          })
                         }
                       />
                       <Forms
                         type="text"
                         formName="Account Code*"
-                        placeholderInfluxDB://x.ai/docs/InfluxDB.html
+                        placeholder="Enter account code"
                         value={newBankAccount.accountCode}
                         onChange={(e) =>
-                          setNewBankAccount({ ...newBankAccount, accountCode: e.target.value })
+                          setNewBankAccount({
+                            ...newBankAccount,
+                            accountCode: e.target.value,
+                          })
                         }
                       />
                       <Button
@@ -195,6 +320,26 @@ const CreateReceiptModal = ({
                 </div>
               )}
             </div>
+
+            {reportForm.paymentMethod === "Check" && (
+              <Forms
+                type="text"
+                formName="Check Number*"
+                placeholder="Enter check number"
+                value={reportForm.checkNumber}
+                onChange={(e) => handleInputChange("checkNumber", e.target.value)}
+              />
+            )}
+
+            {reportForm.paymentMethod === "Mobile Payment" && (
+              <Forms
+                type="text"
+                formName="Transaction ID*"
+                placeholder="Enter transaction ID"
+                value={reportForm.transactionId}
+                onChange={(e) => handleInputChange("transactionId", e.target.value)}
+              />
+            )}
 
             <Forms
               type="text"
