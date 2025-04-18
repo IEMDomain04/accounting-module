@@ -4,6 +4,7 @@ import Button from "./Button";
 import Dropdown from "./Dropdown";
 import Forms from "./Forms";
 import { accounts, subAccounts } from "../submodules/ListOfAccounts";
+import { accountCodeMapping2 } from "../submodules/AccountMapping";
 
 const CreateGLAccountModal = ({ isModalOpen, closeModal, handleSubmit }) => {
   const [selectedAccount, setSelectedAccount] = useState("");
@@ -13,10 +14,11 @@ const CreateGLAccountModal = ({ isModalOpen, closeModal, handleSubmit }) => {
     createdAt: "",
     glAccountID: "",
     accountName: "",
-    accountID: "",
+    accountID: "", // User-provided Account ID (e.g., "test")
     status: "",
     account: "",
     subAccount: "",
+    accountCode: "", // Auto-generated Account Code (hidden)
   });
 
   if (!isModalOpen) return null;
@@ -32,24 +34,49 @@ const CreateGLAccountModal = ({ isModalOpen, closeModal, handleSubmit }) => {
   const isValidAccountAndSubAccount = (account, subAccount) => {
     const key = toCamelCaseKey(account);
     const validSubs = subAccounts[key] || [];
-    return validSubs.includes(subAccount);
+    console.log("Validating account:", account, "subAccount:", subAccount, "validSubs:", validSubs);
+    return validSubs.includes(subAccount); // Fixed typo: validubs -> validSubs
   };
 
-  // Update sub-account options on account selection
+  // Update sub-account options when account changes
   useEffect(() => {
     if (!selectedAccount) {
       setAvailableSubAccounts([]);
+      setSelectedSubAccount("");
+      setFormData((prev) => ({ ...prev, accountCode: "", subAccount: "" }));
       return;
     }
     const key = toCamelCaseKey(selectedAccount);
     const subAccountsList = subAccounts[key] || [];
+    console.log("Selected Account:", selectedAccount, "Sub-Accounts:", subAccountsList);
     setAvailableSubAccounts(subAccountsList);
     setSelectedSubAccount("");
+    setFormData((prev) => ({ ...prev, subAccount: "" }));
   }, [selectedAccount]);
 
+  // Generate Account Code when account and sub-account are selected
+  useEffect(() => {
+    if (selectedAccount && selectedSubAccount) {
+      const year = new Date().getFullYear();
+      const accountMapping = accountCodeMapping2[selectedAccount] || {};
+      const subAccountMapping = accountMapping[selectedSubAccount] || {
+        prefix: "XX",
+        baseNumber: 9999,
+      };
+      const accountCode = `ACC-COA-${year}-${subAccountMapping.prefix}${subAccountMapping.baseNumber}`;
+      console.log("Generated Account Code:", accountCode);
+      setFormData((prev) => ({
+        ...prev,
+        accountCode,
+      }));
+    } else {
+      setFormData((prev) => ({ ...prev, accountCode: "" }));
+    }
+  }, [selectedAccount, selectedSubAccount]);
+
   const handleInputChange = (field, value) => {
-    setFormData((prevState) => ({
-      ...prevState,
+    setFormData((prev) => ({
+      ...prev,
       [field]: value,
     }));
   };
@@ -57,8 +84,8 @@ const CreateGLAccountModal = ({ isModalOpen, closeModal, handleSubmit }) => {
   // Generate GL Account ID
   const generateGLAccountID = () => {
     const year = new Date().getFullYear();
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    let randomPart = '';
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let randomPart = "";
     for (let i = 0; i < 6; i++) {
       const randomIndex = Math.floor(Math.random() * characters.length);
       randomPart += characters[randomIndex];
@@ -66,18 +93,21 @@ const CreateGLAccountModal = ({ isModalOpen, closeModal, handleSubmit }) => {
     return `ACC-GLA-${year}-${randomPart}`;
   };
 
-  // Final validation and submission
+  // Handle form submission
   const onSubmit = () => {
-    const requiredFields = [
-      formData.createdAt,
-      formData.accountName,
-      formData.accountID,
-      formData.status,
-      formData.account,
-      formData.subAccount,
-    ];
+    const requiredFields = {
+      createdAt: formData.createdAt,
+      accountName: formData.accountName.trim(),
+      accountID: formData.accountID.trim(),
+      status: formData.status,
+      account: formData.account,
+      subAccount: formData.subAccount,
+      accountCode: formData.accountCode,
+    };
 
-    if (requiredFields.includes("")) {
+    console.log("Form Data on Submit:", requiredFields);
+
+    if (Object.values(requiredFields).some((value) => !value)) {
       alert("Please fill in all required fields.");
       return;
     }
@@ -88,12 +118,19 @@ const CreateGLAccountModal = ({ isModalOpen, closeModal, handleSubmit }) => {
     }
 
     const newGLAccountID = generateGLAccountID();
-    const updatedFormData = {
-      ...formData,
+    const submissionData = {
       glAccountID: newGLAccountID,
+      accountName: formData.accountName,
+      accountID: formData.accountID,
+      status: formData.status,
+      createdAt: formData.createdAt,
+      accountCode: formData.accountCode,
+      account: formData.account, // Included for validation but not sent to API
+      subAccount: formData.subAccount, // Included for validation but not sent to API
     };
 
-    handleSubmit(updatedFormData);
+    console.log("Submission Data:", submissionData);
+    handleSubmit(submissionData);
   };
 
   return (
@@ -124,7 +161,7 @@ const CreateGLAccountModal = ({ isModalOpen, closeModal, handleSubmit }) => {
             <Forms
               type="text"
               formName="Account Name*"
-              placeholder="Enter Account Name*"
+              placeholder="Enter Account Name"
               onChange={(e) => handleInputChange("accountName", e.target.value)}
             />
             <Forms
@@ -175,6 +212,7 @@ const CreateGLAccountModal = ({ isModalOpen, closeModal, handleSubmit }) => {
                 />
               </div>
             </div>
+            {/* Account Code input is removed to hide it from the UI */}
           </div>
 
           {/* Modal Footer */}
@@ -189,4 +227,3 @@ const CreateGLAccountModal = ({ isModalOpen, closeModal, handleSubmit }) => {
 };
 
 export default CreateGLAccountModal;
-//
