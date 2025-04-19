@@ -7,6 +7,11 @@ import CreateReceiptModal from "../components/CreateReceiptModal";
 import NotifModal from "../components/modalNotif/NotifModal";
 
 const OfficialReceipts = () => {
+  const getCurrentDate = () => {
+    const today = new Date();
+    return today.toISOString().split("T")[0]; // returns 'YYYY-MM-DD'
+  };
+
   const columns = [
     "OR ID",
     "Invoice ID",
@@ -45,7 +50,7 @@ const OfficialReceipts = () => {
   };
 
   const [reportForm, setReportForm] = useState({
-    startDate: "",
+    startDate: getCurrentDate(),
     salesInvoiceId: "",
     amountPaid: "",
     paymentMethod: "",

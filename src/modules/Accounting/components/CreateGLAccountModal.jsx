@@ -7,11 +7,16 @@ import { accounts, subAccounts } from "../submodules/ListOfAccounts";
 import { accountCodeMapping2 } from "../submodules/AccountMapping";
 
 const CreateGLAccountModal = ({ isModalOpen, closeModal, handleSubmit }) => {
+  const getCurrentDate = () => {
+    const today = new Date();
+    return today.toISOString().split("T")[0]; // returns 'YYYY-MM-DD'
+  };
+
   const [selectedAccount, setSelectedAccount] = useState("");
   const [selectedSubAccount, setSelectedSubAccount] = useState("");
   const [availableSubAccounts, setAvailableSubAccounts] = useState([]);
   const [formData, setFormData] = useState({
-    createdAt: "",
+    createdAt: getCurrentDate(),
     glAccountID: "",
     accountName: "",
     accountID: "", // User-provided Account ID (e.g., "test")
@@ -154,6 +159,7 @@ const CreateGLAccountModal = ({ isModalOpen, closeModal, handleSubmit }) => {
               <label>Created at..*</label>
               <input
                 type="date"
+                value={formData.createdAt}
                 onChange={(e) => handleInputChange("createdAt", e.target.value)}
               />
             </div>
