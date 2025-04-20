@@ -9,6 +9,11 @@ import NotifModal from "../components/modalNotif/NotifModal";
 import Search from "../components/Search";
 
 const Journal = () => {
+  const getCurrentDate = () => {
+    const today = new Date();
+    return today.toISOString().split("T")[0]; // returns 'YYYY-MM-DD'
+  };
+
   const columns = ["Journal Id", "Journal Date", "Description", "Debit", "Credit", "Invoice Id", "Currency Id"];
   const [latestJournalId, setLatestJournalId] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -17,7 +22,7 @@ const Journal = () => {
   const [sortBy, setSortBy] = useState("Debit");
   const [data, setData] = useState([]);
   const [journalForm, setJournalForm] = useState({
-    journalDate: "",
+    journalDate: getCurrentDate(),
     description: "",
     currencyId: "",
     invoiceId: "",
