@@ -175,19 +175,13 @@ const CreateReceiptModal = ({
               onChange={(e) => handleInputChange("salesInvoiceId", e.target.value)}
             />
 
-<Forms
-  type="text"
-  formName="Amount Paid*"
-  placeholder="Enter Amount paid"
-  value={reportForm.amountPaid}
-  onChange={(e) => {
-    const val = e.target.value;
-    if (/^\d*\.?\d*$/.test(val)) {
-      handleInputChange("amountPaid", val);
-    }
-  }}
-/>
-
+            <Forms
+              type="number"
+              formName="Amount Paid*"
+              placeholder="Enter Amount paid"
+              value={reportForm.amountPaid}
+              onChange={(e) => handleInputChange("amountPaid", e.target.value)}
+            />
 
             <div className="flex flex-col md:flex-row md:space-x-5 space-y-5 md:space-y-0">
               <div className="space-y-2">
@@ -201,8 +195,8 @@ const CreateReceiptModal = ({
                     "Cash",
                     "Credit Card",
                     "Bank Transfer",
-                    "Check",
-                    "Mobile Payment",
+                 // "Check",
+                 // "Mobile Payment",
                   ]}
                   value={reportForm.paymentMethod}
                   onChange={(value) => {
