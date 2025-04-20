@@ -40,108 +40,124 @@ const AccountingDashboard = () => {
   });
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
+  const [validation, setValidation] = useState({
+    isOpen: false,
+    type: "warning",
+    title: "",
+    message: "",
+  });
 
-  const fetchData = () => {
+  // API endpoint
+  const API_URL =
+    import.meta.env.VITE_API_URL ||
+    "https://vyr3yqctq8.execute-api.ap-southeast-1.amazonaws.com/dev";
+  const GENERAL_LEDGER_ENDPOINT = `${API_URL}/api/general-ledger-jel-view/`;
+  const CHART_OF_ACCOUNTS_ENDPOINT = `${API_URL}/api/chart-of-accounts/`;
+
+  const fetchData = async () => {
     setLoading(true);
-    
-    // Fetch General Ledger data
-    fetch("http://127.0.0.1:8000/api/general-ledger-jel-view/")
-      .then((response) => response.json())
-      .then((result) => {
-        const grouped = {};
-        let totalDebit = 0;
-        let totalCredit = 0;
-        let accountsPayableTotal = 0;
-        let accountsReceivableTotal = 0;
-        
-        result.forEach((entry) => {
-          const accountName = entry.account_name || "Unknown";
-          const debit = parseFloat(entry.debit_amount || 0);
-          const credit = parseFloat(entry.credit_amount || 0);
-          
-          // Grouping for bar chart
-          if (!grouped[accountName]) {
-            grouped[accountName] = { debit: 0, credit: 0 };
-          }
-          grouped[accountName].debit += debit;
-          grouped[accountName].credit += credit;
-          
-          // Totals
-          totalDebit += debit;
-          totalCredit += credit;
-          
-          // Accounts Payable Summary
-          if (accountName === "Accounts Payable" || accountName === "Cash in Bank") {
-            accountsPayableTotal += credit - debit; // Net Payable
-          }
-          
-          // Accounts Receivable Summary
-          if (accountName === "Accounts Receivable" || accountName === "Sales Revenue") {
-            accountsReceivableTotal += debit - credit; // Net Receivable
-          }
-        });
-        
-        // Set chart series
-        const labels = Object.keys(grouped);
-        const chartData = labels.map((label) => ({
-          name: label,
-          Debit: parseFloat(grouped[label].debit.toFixed(2)),
-          Credit: parseFloat(grouped[label].credit.toFixed(2)),
-        }));
-        
-        setChartSeries(chartData);
-        setSummary({
-          debit: totalDebit.toFixed(2),
-          credit: totalCredit.toFixed(2),
-          payable: accountsPayableTotal.toFixed(2),
-          receivable: accountsReceivableTotal.toFixed(2),
-          balance: (totalDebit - totalCredit).toFixed(2),
-        });
-        
-        // Generate mock trend data (this would ideally come from another API)
-        const mockTrendData = [
-          { month: "Jan", revenue: 19000, expenses: 15000 },
-          { month: "Feb", revenue: 21000, expenses: 16500 },
-          { month: "Mar", revenue: 20000, expenses: 17000 },
-          { month: "Apr", revenue: 22000, expenses: 16000 },
-          { month: "May", revenue: 24000, expenses: 17500 },
-          { month: "Jun", revenue: 26000, expenses: 18000 },
-        ];
-        
-        setTrendData(mockTrendData);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching GL data:", error);
-        setLoading(false);
+    try {
+      // Fetch General Ledger data
+      const glResponse = await axios.get(GENERAL_LEDGER_ENDPOINT);
+      const glData = glResponse.data;
+
+      const grouped = {};
+      let totalDebit = 0;
+      let totalCredit = 0;
+      let accountsPayableTotal = 0;
+      let accountsReceivableTotal = 0;
+
+      glData.forEach((entry) => {
+        const accountName = entry.account_name || "Unknown";
+        const debit = parseFloat(entry.debit_amount || 0);
+        const credit = parseFloat(entry.credit_amount || 0);
+
+        // Grouping for bar chart
+        if (!grouped[accountName]) {
+          grouped[accountName] = { debit: 0, credit: 0 };
+        }
+        grouped[accountName].debit += debit;
+        grouped[accountName].credit += credit;
+
+        // Totals
+        totalDebit += debit;
+        totalCredit += credit;
+
+        // Accounts Payable Summary
+        if (accountName === "Accounts Payable" || accountName === "Cash in Bank") {
+          accountsPayableTotal += credit - debit; // Net Payable
+        }
+
+        // Accounts Receivable Summary
+        if (accountName === "Accounts Receivable" || accountName === "Sales Revenue") {
+          accountsReceivableTotal += debit - credit; // Net Receivable
+        }
       });
-      
-    // Fetch Chart of Accounts data
-    axios.get("http://127.0.0.1:8000/api/chart-of-accounts/")
-      .then((response) => {
-        const rawData = response.data;
-        setData(rawData.map((acc, index) => ({
+
+      // Set chart series
+      const labels = Object.keys(grouped);
+      const chartData = labels.map((label) => ({
+        name: label,
+        Debit: parseFloat(grouped[label].debit.toFixed(2)),
+        Credit: parseFloat(grouped[label].credit.toFixed(2)),
+      }));
+
+      setChartSeries(chartData);
+      setSummary({
+        debit: totalDebit.toFixed(2),
+        credit: totalCredit.toFixed(2),
+        payable: accountsPayableTotal.toFixed(2),
+        receivable: accountsReceivableTotal.toFixed(2),
+        balance: (totalDebit - totalCredit).toFixed(2),
+      });
+
+      // Fetch Chart of Accounts data
+      const coaResponse = await axios.get(CHART_OF_ACCOUNTS_ENDPOINT);
+      const coaData = coaResponse.data;
+
+      setData(
+        coaData.map((acc, index) => ({
           id: index + 1,
           account_code: acc.account_code,
           account_name: acc.account_name,
           account_type: acc.account_type,
-        })));
-        
-        const typeCounts = {};
-        rawData.forEach((acc) => {
-          typeCounts[acc.account_type] = (typeCounts[acc.account_type] || 0) + 1;
-        });
-        
-        const formattedPie = Object.entries(typeCounts).map(([label, value]) => ({
-          name: label,
-          value,
-        }));
-        
-        setPieData(formattedPie);
-      })
-      .catch((error) => {
-        console.error("Error fetching COA data:", error);
+        }))
+      );
+
+      const typeCounts = {};
+      coaData.forEach((acc) => {
+        typeCounts[acc.account_type] = (typeCounts[acc.account_type] || 0) + 1;
       });
+
+      const formattedPie = Object.entries(typeCounts).map(([label, value]) => ({
+        name: label,
+        value,
+      }));
+
+      setPieData(formattedPie);
+
+      // Mock trend data (replace with API call if endpoint exists)
+      const mockTrendData = [
+        { month: "Jan", revenue: 19000, expenses: 15000 },
+        { month: "Feb", revenue: 21000, expenses: 16500 },
+        { month: "Mar", revenue: 20000, expenses: 17000 },
+        { month: "Apr", revenue: 22000, expenses: 16000 },
+        { month: "May", revenue: 24000, expenses: 17500 },
+        { month: "Jun", revenue: 26000, expenses: 18000 },
+      ];
+
+      setTrendData(mockTrendData);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching data:", error.response ? error.response.data : error);
+      setValidation({
+        isOpen: true,
+        type: "error",
+        title: "Fetch Error",
+        message: "Failed to load dashboard data. Please check your connection.",
+      });
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -474,6 +490,28 @@ const AccountingDashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Validation Modal */}
+      {validation.isOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full">
+            <h3 className={`text-lg font-semibold ${
+              validation.type === "error" ? "text-red-600" : "text-gray-800"
+            }`}>
+              {validation.title}
+            </h3>
+            <p className="text-gray-600 mt-2">{validation.message}</p>
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={() => setValidation({ ...validation, isOpen: false })}
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
