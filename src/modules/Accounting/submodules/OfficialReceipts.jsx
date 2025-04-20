@@ -159,10 +159,10 @@ const OfficialReceipts = () => {
 
     // Validate required fields
     if (
-      !reportForm.startDate ||
-      !reportForm.salesInvoiceId ||
-      !reportForm.amountPaid ||
-      !reportForm.paymentMethod ||
+      !reportForm.startDate &&
+      !reportForm.salesInvoiceId &&
+      !reportForm.amountPaid &&
+      !reportForm.paymentMethod &&
       !reportForm.createdBy
     ) {
       setValidation({
@@ -170,6 +170,46 @@ const OfficialReceipts = () => {
         type: "warning",
         title: "Missing Fields",
         message: "Please fill in all required fields.",
+      });
+      return;
+    }
+
+    if(!reportForm.salesInvoiceId) {
+      setValidation({
+        isOpen: true,
+        type: "warning",
+        title: "Missing Invoice ID",
+        message: "Enter sales invoice ID.",
+      });
+      return;
+    }
+
+    if (!reportForm.amountPaid) {
+      setValidation({
+        isOpen: true,
+        type: "warning",
+        title: "Missing Amount Paid",
+        message: "Please enter the amount paid.",
+      });
+      return;
+    }
+
+    if (!reportForm.paymentMethod) {
+      setValidation({
+        isOpen: true,
+        type: "warning",
+        title: "Missing Payment Method",
+        message: "Please select a payment method.",
+      });
+      return;
+    }
+
+    if (!reportForm.createdBy) {
+      setValidation({
+        isOpen: true,
+        type: "warning",
+        title: "Missing Created By",
+        message: "Please enter the name of the person creating the receipt.",
       });
       return;
     }

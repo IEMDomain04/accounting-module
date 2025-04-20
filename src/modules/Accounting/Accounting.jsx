@@ -486,7 +486,7 @@ const AccountingDashboard = () => {
 
           {/* Footnote */}
           <div className="text-center text-gray-500 text-sm mt-8">
-            <p>Last updated: April 20, 2025 • All figures shown in USD</p>
+            <p>Last updated: April 20, 2025 • All figures shown in Peso.</p>
           </div>
         </div>
       </div>
