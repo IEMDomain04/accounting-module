@@ -3,6 +3,8 @@ import "./ModalInput.css";
 import Button from "./Button";
 import Forms from "./Forms";
 import Dropdown from "./Dropdown";
+import NotifModal from "./modalNotif/NotifModal";
+import axios from "axios";
 
 const CreateReceiptModal = ({
   isModalOpen,
@@ -20,64 +22,62 @@ const CreateReceiptModal = ({
     accountCode: "",
   });
 
-  const fetchData = () => {
-    fetch("http://127.0.0.1:8000/api/general-ledger-accounts/")
-      .then((response) => {
-        if (!response.ok)
-          throw new Error(
-            `Failed to fetch general ledger accounts: ${response.status}`
-          );
-        return response.json();
-      })
-      .then((result) => {
-        console.log("API Response (fetchData):", result);
-        console.log("Existing account statuses:", result.map((entry) => entry.status));
-        setData(
-          result.map((entry) => [
-            entry.gl_account_id || "-",
-            entry.account_name || "-",
-            entry.account_code || "-",
-            entry.account_id || "-",
-            entry.status || "-",
-            entry.created_at
-              ? new Date(entry.created_at).toLocaleString()
-              : "-",
-          ])
-        );
-        // Broaden filter to include potential bank accounts
-        const filtered = result.filter(
-          (entry) =>
-            entry.account_name?.toLowerCase().includes("bank") ||
-            entry.account_type?.toLowerCase() === "bank" ||
-            entry.account_category?.toLowerCase() === "bank"
-        );
-        setBankAccounts(filtered);
-        if (filtered.length === 0) {
-          console.warn("No bank accounts found.");
-          setValidation({
-            isOpen: true,
-            type: "warning",
-            title: "No Bank Accounts",
-            message: "No bank accounts found. Please add a new bank account.",
-          });
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
+  // API endpoint
+  const API_URL =
+    import.meta.env.VITE_API_URL || "https://vyr3yqctq8.execute-api.ap-southeast-1.amazonaws.com/dev";
+  const GL_ACCOUNTS_ENDPOINT = `${API_URL}/api/general-ledger-accounts/`;
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(GL_ACCOUNTS_ENDPOINT);
+      console.log("API Response (fetchData):", response.data);
+      setData(
+        response.data.map((entry) => [
+          entry.gl_account_id || "-",
+          entry.account_name || "-",
+          entry.account_code || "-",
+          entry.account_id || "-",
+          entry.status || "-",
+          entry.created_at
+            ? new Date(entry.created_at).toLocaleString()
+            : "-",
+        ])
+      );
+      // Broaden filter to include potential bank accounts
+      const filtered = response.data.filter(
+        (entry) =>
+          entry.account_name?.toLowerCase().includes("bank") ||
+          entry.account_type?.toLowerCase() === "bank" ||
+          entry.account_category?.toLowerCase() === "bank"
+      );
+      setBankAccounts(filtered);
+      if (filtered.length === 0) {
+        console.warn("No bank accounts found.");
         setValidation({
           isOpen: true,
-          type: "error",
-          title: "Fetch Error",
-          message: `Unable to load bank accounts: ${error.message}. Please try again.`,
+          type: "warning",
+          title: "No Bank Accounts",
+          message: "No bank accounts found. Please add a new bank account.",
         });
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error.response ? error.response.data : error);
+      setValidation({
+        isOpen: true,
+        type: "error",
+        title: "Fetch Error",
+        message: "Unable to load bank accounts. Please try again.",
       });
+    }
   };
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (isModalOpen) {
+      fetchData();
+    }
+  }, [isModalOpen]);
 
-  const saveBankAccount = () => {
+  const saveBankAccount = async () => {
     if (!newBankAccount.accountName || !newBankAccount.accountCode) {
       setValidation({
         isOpen: true,
@@ -104,73 +104,41 @@ const CreateReceiptModal = ({
       account_code: newBankAccount.accountCode,
       account_type: "bank",
       account_category: "bank",
-      status: "Active", // Fix: Changed to match status_enum value
+      status: "Active",
       created_by: reportForm.createdBy || "system",
     };
 
     console.log("Saving bank account with payload:", payload);
 
-    fetch("http://127.0.0.1:8000/api/general-ledger-accounts/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        // Add authentication header if required
-        // "Authorization": "Bearer <token>",
-      },
-      body: JSON.stringify(payload),
-    })
-      .then(async (response) => {
-        // Check if response is JSON
-        const contentType = response.headers.get("content-type");
-        if (!contentType || !contentType.includes("application/json")) {
-          const text = await response.text();
-          throw new Error(
-            `Expected JSON response but received HTML or other content: ${text.slice(
-              0,
-              100
-            )}...`
-          );
-        }
-        if (!response.ok) {
-          return response.json().then((err) => {
-            throw new Error(`Failed to save bank account: ${JSON.stringify(err)}`);
-          });
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log("Bank account saved:", data);
-        fetchData(); // Refresh bank accounts
-        setNewBankAccount({ accountName: "", accountCode: "" });
-        setShowBankInput(false);
-        // Handle different possible response field names
-        const accountName =
-          data.account_name || data.name || newBankAccount.accountName;
-        handleInputChange("bankAccount", accountName);
-        setValidation({
-          isOpen: true,
-          type: "success",
-          title: "Bank Account Added",
-          message: `Bank account "${accountName}" has been successfully added.`,
-        });
-      })
-      .catch((error) => {
-        console.error("Error saving bank account:", error);
-        let errorMessage = error.message;
-        if (error.message.includes("status_enum")) {
-          errorMessage =
-            "Invalid status value. Please contact support to verify valid status options.";
-        } else if (error.message.includes("Expected JSON response")) {
-          errorMessage =
-            "Server returned an unexpected response. Please check the server status or contact support.";
-        }
-        setValidation({
-          isOpen: true,
-          type: "error",
-          title: "Save Error",
-          message: `Unable to save the bank account: ${errorMessage}. Please try again.`,
-        });
+    try {
+      const response = await axios.post(GL_ACCOUNTS_ENDPOINT, payload);
+      console.log("Bank account saved:", response.data);
+      fetchData(); // Refresh bank accounts
+      setNewBankAccount({ accountName: "", accountCode: "" });
+      setShowBankInput(false);
+      const accountName =
+        response.data.account_name || response.data.name || newBankAccount.accountName;
+      handleInputChange("bankAccount", accountName);
+      setValidation({
+        isOpen: true,
+        type: "success",
+        title: "Bank Account Added",
+        message: `Bank account "${accountName}" has been successfully added.`,
       });
+    } catch (error) {
+      console.error("Error saving bank account:", error.response ? error.response.data : error);
+      let errorMessage = error.response?.data?.detail || error.message;
+      if (errorMessage.includes("status_enum")) {
+        errorMessage =
+          "Invalid status value. Please contact support to verify valid status options.";
+      }
+      setValidation({
+        isOpen: true,
+        type: "error",
+        title: "Save Error",
+        message: `Unable to save the bank account: ${errorMessage}. Please try again.`,
+      });
+    }
   };
 
   if (!isModalOpen) return null;
@@ -356,6 +324,16 @@ const CreateReceiptModal = ({
           </div>
         </div>
       </div>
+
+      {validation.isOpen && (
+        <NotifModal
+          isOpen={validation.isOpen}
+          onClose={() => setValidation({ ...validation, isOpen: false })}
+          type={validation.type}
+          title={validation.title}
+          message={validation.message}
+        />
+      )}
     </div>
   );
 };

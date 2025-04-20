@@ -6,6 +6,7 @@ import Dropdown from "../components/Dropdown";
 import Button from "../components/Button";
 import CreateGLAccountModal from "../components/CreateGLAccountModal";
 import NotifModal from "../components/modalNotif/NotifModal";
+import axios from "axios";
 
 const GeneralLedgerAccounts = () => {
   const columns = [
@@ -28,28 +29,37 @@ const GeneralLedgerAccounts = () => {
     message: "",
   });
 
+  // API endpoint
+  const API_URL =
+    import.meta.env.VITE_API_URL || "https://vyr3yqctq8.execute-api.ap-southeast-1.amazonaws.com/dev";
+  const GL_ACCOUNTS_ENDPOINT = `${API_URL}/api/general-ledger-accounts/`;
+
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-  const fetchData = () => {
-    fetch("http://127.0.0.1:8000/api/general-ledger-accounts/")
-      .then((response) => response.json())
-      .then((result) => {
-        console.log("API Response (fetchData):", result);
-        setData(
-          result.map((entry) => [
-            entry.gl_account_id || "-",
-            entry.account_name || "-",
-            entry.account_code || "-",
-            entry.account_id || "-",
-            entry.status || "-",
-            entry.created_at
-              ? new Date(entry.created_at).toLocaleString()
-              : "-",
-          ])
-        );
-      })
-      .catch((error) => console.error("Error fetching data:", error));
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(GL_ACCOUNTS_ENDPOINT);
+      console.log("API Response (fetchData):", response.data);
+      setData(
+        response.data.map((entry) => [
+          entry.gl_account_id || "-",
+          entry.account_name || "-",
+          entry.account_code || "-",
+          entry.account_id || "-",
+          entry.status || "-",
+          entry.created_at ? new Date(entry.created_at).toLocaleString() : "-",
+        ])
+      );
+    } catch (error) {
+      console.error("Error fetching data:", error.response ? error.response.data : error);
+      setValidation({
+        isOpen: true,
+        type: "error",
+        title: "Fetch Error",
+        message: "Failed to load general ledger accounts. Please check your connection.",
+      });
+    }
   };
 
   useEffect(() => {
@@ -71,7 +81,7 @@ const GeneralLedgerAccounts = () => {
     setStatusFilter(status === "" ? "All" : status);
   };
 
-  const handleCreateAccount = (newAccount) => {
+  const handleCreateAccount = async (newAccount) => {
     const requiredFields = [
       newAccount.createdAt,
       newAccount.glAccountID,
@@ -95,7 +105,7 @@ const GeneralLedgerAccounts = () => {
       return;
     }
 
-    // Prepare payload for API, excluding account and subAccount
+    // Prepare payload for API
     const payload = {
       gl_account_id: newAccount.glAccountID,
       account_name: newAccount.accountName,
@@ -105,23 +115,10 @@ const GeneralLedgerAccounts = () => {
       created_at: newAccount.createdAt,
     };
 
-    fetch("http://127.0.0.1:8000/api/general-ledger-accounts/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          return response.json().then((error) => {
-            throw new Error(error.detail || "Error creating account");
-          });
-        }
-        return response.json();
-      })
-      .then((result) => {
-        console.log("API Response (handleCreateAccount):", result);
+    try {
+      const response = await axios.post(GL_ACCOUNTS_ENDPOINT, payload);
+      if (response.status === 201) {
+        console.log("API Response (handleCreateAccount):", response.data);
         fetchData();
         closeModal();
         setValidation({
@@ -130,16 +127,23 @@ const GeneralLedgerAccounts = () => {
           title: "Account Created",
           message: "General Ledger Account created successfully!",
         });
-      })
-      .catch((error) => {
-        console.error("Error creating account:", error);
+      } else {
         setValidation({
           isOpen: true,
           type: "error",
-          title: "Error Creating Account",
-          message: error.message || "Check your database connection.",
+          title: "Server Error",
+          message: "Failed to create account.",
         });
+      }
+    } catch (error) {
+      console.error("Error creating account:", error.response ? error.response.data : error);
+      setValidation({
+        isOpen: true,
+        type: "error",
+        title: "Check Connection!",
+        message: error.response?.data?.detail || "Failed to connect to the server.",
       });
+    }
   };
 
   const filteredData = data.filter((row) => {

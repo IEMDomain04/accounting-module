@@ -6,6 +6,7 @@ import Forms from "../components/Forms";
 import NotifModal from "../components/modalNotif/NotifModal";
 import Dropdown from "../components/Dropdown";
 import AddAccountModal from "../components/AddAccountModal";
+import axios from "axios";
 
 const JournalEntry = () => {
   const [totalDebit, setTotalDebit] = useState(0);
@@ -24,6 +25,11 @@ const JournalEntry = () => {
     title: "",
     message: "",
   });
+
+  // API endpoint
+  const API_URL =
+    import.meta.env.VITE_API_URL || "https://vyr3yqctq8.execute-api.ap-southeast-1.amazonaws.com/dev";
+  const JOURNAL_ENTRIES_ENDPOINT = `${API_URL}/api/journal-entries/`;
 
   const handleInputChange = (index, field, value) => {
     const sanitizedValue = value.replace(/[^0-9.]/g, "");
@@ -79,7 +85,7 @@ const JournalEntry = () => {
       );
 
       const isTargetDebit =
-        accountData.glAccountId === "ACC-GLA-2025-ae6010" && // Update to valid gl_account_id
+        accountData.glAccountId === "ACC-GLA-2025-ae6010" &&
         prevState.transactions[selectedIndex].type === "debit";
 
       if (isTargetDebit) {
@@ -169,37 +175,37 @@ const JournalEntry = () => {
     };
 
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/journal-entries/${journalForm.journalId}/`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      const response = await axios.patch(`${JOURNAL_ENTRIES_ENDPOINT}${journalForm.journalId}/`, payload);
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Failed to update journal: ${response.status} - ${errorText}`);
+      if (response.status === 200) {
+        setValidation({
+          isOpen: true,
+          type: "success",
+          title: "Journal Entry Updated",
+          message: "Journal entry updated successfully!",
+        });
+        setJournalForm({
+          journalId: "",
+          transactions: [{ type: "debit", glAccountId: "", amount: "", accountName: "" }],
+          description: "",
+        });
+        setTotalDebit(0);
+        setTotalCredit(0);
+      } else {
+        setValidation({
+          isOpen: true,
+          type: "error",
+          title: "Server Error",
+          message: "Failed to update journal entry.",
+        });
       }
-
-      const data = await response.json();
-      setValidation({
-        isOpen: true,
-        type: "success",
-        title: "Journal Entry Updated",
-        message: "Journal entry updated successfully!",
-      });
-      setJournalForm({
-        journalId: "",
-        transactions: [{ type: "debit", glAccountId: "", amount: "", accountName: "" }],
-        description: "",
-      });
-      setTotalDebit(0);
-      setTotalCredit(0);
     } catch (error) {
+      console.error("Error updating journal entry:", error.response ? error.response.data : error);
       setValidation({
         isOpen: true,
         type: "error",
-        title: "Error Updating Journal Entry",
-        message: error.message,
+        title: "Check Connection!",
+        message: error.response?.data?.detail || "Failed to connect to the server.",
       });
     }
   };
@@ -207,14 +213,19 @@ const JournalEntry = () => {
   useEffect(() => {
     const fetchJournalIDs = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/journal-entries/");
-        const result = await response.json();
-        const zeroBalanceJournals = result
+        const response = await axios.get(JOURNAL_ENTRIES_ENDPOINT);
+        const zeroBalanceJournals = response.data
           .filter((entry) => parseFloat(entry.total_debit) === 0 && parseFloat(entry.total_credit) === 0)
           .map((entry) => entry.journal_id || entry.id);
         setJournalOptions(zeroBalanceJournals);
       } catch (error) {
-        console.error("Error fetching journal IDs:", error);
+        console.error("Error fetching journal IDs:", error.response ? error.response.data : error);
+        setValidation({
+          isOpen: true,
+          type: "error",
+          title: "Fetch Error",
+          message: "Failed to load journal IDs. Please check your connection.",
+        });
       }
     };
     fetchJournalIDs();

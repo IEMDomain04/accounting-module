@@ -5,6 +5,7 @@ import Search from "../components/Search";
 import Button from "../components/Button";
 import CreateReceiptModal from "../components/CreateReceiptModal";
 import NotifModal from "../components/modalNotif/NotifModal";
+import axios from "axios";
 
 const OfficialReceipts = () => {
   const columns = [
@@ -27,6 +28,11 @@ const OfficialReceipts = () => {
     title: "",
     message: "",
   });
+
+  // API endpoint
+  const API_URL =
+    import.meta.env.VITE_API_URL || "https://vyr3yqctq8.execute-api.ap-southeast-1.amazonaws.com/dev";
+  const OFFICIAL_RECEIPTS_ENDPOINT = `${API_URL}/api/official-receipts/`;
 
   const openModal = () => setModalOpen(true);
 
@@ -65,7 +71,7 @@ const OfficialReceipts = () => {
     }
 
     if (invoiceReceipts.length === 0) {
-      // Fetch initial invoice amount from API or use a default
+      // Ideally, fetch initial invoice amount from API
       const initialRemainingAmount = 10000; // Replace with API call if possible
       const newRemaining = initialRemainingAmount - settledAmount;
       return newRemaining >= 0 ? newRemaining : 0;
@@ -85,38 +91,32 @@ const OfficialReceipts = () => {
     return newRemaining >= 0 ? newRemaining : 0;
   };
 
-  const fetchData = () => {
-    fetch("http://127.0.0.1:8000/api/official-receipts/")
-      .then((response) => {
-        if (!response.ok)
-          throw new Error(`Failed to fetch official receipts: ${response.status}`);
-        return response.json();
-      })
-      .then((result) => {
-        console.log("API Response (fetchData):", result);
-        setData(
-          result.map((entry) => [
-            entry.or_id || "-",
-            entry.invoice_id || "-",
-            entry.customer_id || "-",
-            entry.or_date ? new Date(entry.or_date).toLocaleString() : "-",
-            entry.settled_amount || "-",
-            entry.remaining_amount || "-",
-            entry.payment_method || "-",
-            entry.reference_number || "-",
-            entry.created_by || "-",
-          ])
-        );
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-        setValidation({
-          isOpen: true,
-          type: "error",
-          title: "Fetch Error",
-          message: `Unable to load receipts: ${error.message}. Please try again.`,
-        });
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(OFFICIAL_RECEIPTS_ENDPOINT);
+      console.log("API Response (fetchData):", response.data);
+      setData(
+        response.data.map((entry) => [
+          entry.or_id || "-",
+          entry.invoice_id || "-",
+          entry.customer_id || "-",
+          entry.or_date ? new Date(entry.or_date).toLocaleString() : "-",
+          entry.settled_amount || "-",
+          entry.remaining_amount || "-",
+          entry.payment_method || "-",
+          entry.reference_number || "-",
+          entry.created_by || "-",
+        ])
+      );
+    } catch (error) {
+      console.error("Error fetching data:", error.response ? error.response.data : error);
+      setValidation({
+        isOpen: true,
+        type: "error",
+        title: "Fetch Error",
+        message: "Failed to load official receipts. Please check your connection.",
       });
+    }
   };
 
   useEffect(() => {
@@ -251,24 +251,9 @@ const OfficialReceipts = () => {
 
       console.log("Submitting receipt:", newReceipt);
 
-      const response = await fetch(
-        "http://127.0.0.1:8000/api/official-receipts/",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            // Add authentication header if required
-            // 'Authorization': 'Bearer <token>',
-          },
-          body: JSON.stringify(newReceipt),
-        }
-      );
-
-      console.log("Response status:", response.status);
-
-      if (response.ok) {
-        const createdReceipt = await response.json();
-        console.log("Created receipt:", createdReceipt);
+      const response = await axios.post(OFFICIAL_RECEIPTS_ENDPOINT, newReceipt);
+      if (response.status === 201) {
+        console.log("Created receipt:", response.data);
         fetchData();
         closeModal();
         setValidation({
@@ -278,25 +263,20 @@ const OfficialReceipts = () => {
           message: "The receipt has been successfully created.",
         });
       } else {
-        const errorData = await response.json();
-        console.error("Error response from server:", errorData);
         setValidation({
           isOpen: true,
           type: "error",
-          title: "Failed to Create Receipt",
-          message:
-            errorData.detail ||
-            JSON.stringify(errorData) ||
-            "An error occurred while creating the receipt. Please try again.",
+          title: "Server Error",
+          message: "Failed to create receipt.",
         });
       }
     } catch (error) {
-      console.error("Error creating receipt:", error);
+      console.error("Error creating receipt:", error.response ? error.response.data : error);
       setValidation({
         isOpen: true,
         type: "error",
-        title: "Connection Error",
-        message: `Unable to connect to the server: ${error.message}. Please check your connection.`,
+        title: "Check Connection!",
+        message: error.response?.data?.detail || "Failed to connect to the server.",
       });
     }
   };
