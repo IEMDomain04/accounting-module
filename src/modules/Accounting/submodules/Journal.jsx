@@ -14,10 +14,19 @@ const Journal = () => {
     return today.toISOString().split("T")[0]; // returns 'YYYY-MM-DD'
   };
 
-  const columns = ["Journal Id", "Journal Date", "Description", "Debit", "Credit", "Invoice Id", "Currency Id"];
+  const columns = [
+    "Journal Id",
+    "Journal Date",
+    "Description",
+    "Debit",
+    "Credit",
+    "Invoice Id",
+    "Currency Id",
+  ];
   const [latestJournalId, setLatestJournalId] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [sortOrder, setSortOrder] = useState("asc");
+  const [currencies, setCurrencies] = useState([]);
   const [searching, setSearching] = useState("");
   const [sortBy, setSortBy] = useState("Debit");
   const [data, setData] = useState([]);
@@ -36,7 +45,8 @@ const Journal = () => {
 
   // API endpoint
   const API_URL =
-    import.meta.env.VITE_API_URL || "https://vyr3yqctq8.execute-api.ap-southeast-1.amazonaws.com/dev";
+    import.meta.env.VITE_API_URL ||
+    "https://vyr3yqctq8.execute-api.ap-southeast-1.amazonaws.com/dev";
   const JOURNAL_ENTRIES_ENDPOINT = `${API_URL}/api/journal-entries/`;
 
   // Open modal function
@@ -54,7 +64,9 @@ const Journal = () => {
 
         // Sort result by journal_date descending (latest first)
         const sortedResult = response.data.sort(
-          (a, b) => new Date(b.journal_date || b.date) - new Date(a.journal_date || a.date)
+          (a, b) =>
+            new Date(b.journal_date || b.date) -
+            new Date(a.journal_date || a.date)
         );
 
         setData(
@@ -76,12 +88,16 @@ const Journal = () => {
         }
       })
       .catch((error) => {
-        console.error("Error fetching data:", error.response ? error.response.data : error);
+        console.error(
+          "Error fetching data:",
+          error.response ? error.response.data : error
+        );
         setValidation({
           isOpen: true,
           type: "error",
           title: "Fetch Error",
-          message: "Failed to load journal entries. Please check your connection.",
+          message:
+            "Failed to load journal entries. Please check your connection.",
         });
       });
   };
@@ -89,6 +105,31 @@ const Journal = () => {
   useEffect(() => {
     fetchData();
   }, []);
+
+  const fetchCurrencies = () => {
+    axios
+      .get(`${API_URL}/api/currencies/`)
+      .then((res) => {
+        const activeCurrencies = res.data.filter((c) => c.is_active);
+        setCurrencies(activeCurrencies);
+      })
+      .catch((err) => {
+        console.error("Error fetching currencies:", err);
+        setValidation({
+          isOpen: true,
+          type: "error",
+          title: "Currency Fetch Failed",
+          message: "Could not load currency list. Please try again.",
+        });
+      });
+  };
+
+  useEffect(() => {
+    fetchData();
+    fetchCurrencies(); // 👈 AWS API call
+  }, []);
+
+  const currencyOptions = currencies.map((c) => c.currency_name);
 
   // Generate the next Journal ID
   const generateNextJournalId = () => {
@@ -133,7 +174,12 @@ const Journal = () => {
 
   // Handle submit with user validations
   const handleSubmit = async () => {
-    if (!journalForm.journalDate || !journalForm.description || !journalForm.invoiceId || !journalForm.currencyId) {
+    if (
+      !journalForm.journalDate ||
+      !journalForm.description ||
+      !journalForm.invoiceId ||
+      !journalForm.currencyId
+    ) {
       setValidation({
         isOpen: true,
         type: "warning",
@@ -146,6 +192,11 @@ const Journal = () => {
     // Generate the next journal ID automatically
     const nextJournalId = generateNextJournalId();
 
+    // Generate the next Journal ID
+    const selectedCurrency = currencies.find(
+      (c) => c.currency_name === journalForm.currencyId
+    );
+
     const payload = {
       journal_id: nextJournalId,
       journal_date: journalForm.journalDate,
@@ -153,8 +204,9 @@ const Journal = () => {
       total_debit: "0.00",
       total_credit: "0.00",
       invoice_id: journalForm.invoiceId || null,
-      currency_id: journalForm.currencyId,
+      currency_id: selectedCurrency?.currency_id || "", // send actual ID
     };
+
     console.log("Submitting payload:", payload);
 
     try {
@@ -162,7 +214,12 @@ const Journal = () => {
 
       if (response.status === 201) {
         fetchData();
-        setJournalForm({ journalDate: "", description: "", currencyId: "", invoiceId: "" });
+        setJournalForm({
+          journalDate: "",
+          description: "",
+          currencyId: "",
+          invoiceId: "",
+        });
         closeModal();
         setValidation({
           isOpen: true,
@@ -179,12 +236,16 @@ const Journal = () => {
         });
       }
     } catch (error) {
-      console.error("Error submitting data:", error.response ? error.response.data : error);
+      console.error(
+        "Error submitting data:",
+        error.response ? error.response.data : error
+      );
       setValidation({
         isOpen: true,
         type: "error",
         title: "Check Connection!",
-        message: error.response?.data?.detail || "Failed to connect to the server.",
+        message:
+          error.response?.data?.detail || "Failed to connect to the server.",
       });
     }
   };
@@ -240,7 +301,11 @@ const Journal = () => {
             />
           </div>
           <div className="component-container">
-            <Button name="Create Journal Entry" variant="standard2" onclick={openModal} />
+            <Button
+              name="Create Journal Entry"
+              variant="standard2"
+              onclick={openModal}
+            />
           </div>
         </div>
         <Table data={filteredData} columns={columns} enableCheckbox={false} />
@@ -251,6 +316,7 @@ const Journal = () => {
         journalForm={journalForm}
         handleInputChange={handleInputChange}
         handleSubmit={handleSubmit}
+        currencyOptions={currencyOptions}
       />
       {validation.isOpen && (
         <NotifModal
