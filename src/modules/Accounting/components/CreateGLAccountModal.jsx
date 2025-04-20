@@ -112,16 +112,6 @@ const CreateGLAccountModal = ({ isModalOpen, closeModal, handleSubmit }) => {
 
     console.log("Form Data on Submit:", requiredFields);
 
-    if (Object.values(requiredFields).some((value) => !value)) {
-      alert("Please fill in all required fields.");
-      return;
-    }
-
-    if (!isValidAccountAndSubAccount(formData.account, formData.subAccount)) {
-      alert("Selected Sub-Account does not match the chosen Account.");
-      return;
-    }
-
     const newGLAccountID = generateGLAccountID();
     const submissionData = {
       glAccountID: newGLAccountID,

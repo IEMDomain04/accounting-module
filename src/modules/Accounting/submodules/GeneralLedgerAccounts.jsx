@@ -82,6 +82,47 @@ const GeneralLedgerAccounts = () => {
   };
 
   const handleCreateAccount = async (newAccount) => {
+    if (!newAccount.createdAt) {
+      setValidation({
+        isOpen: true,
+        type: "warning",
+        title: "Missing Required Fields",
+        message: "Select start and End date.",
+      });
+      return;
+    }
+
+    if(!newAccount.accountName) {
+      setValidation({
+        isOpen: true,
+        type: "warning",
+        title: "Missing Required Fields",
+        message: "Input Account Name.",
+      });
+      return;
+    }
+
+    if(!newAccount.accountID) {
+      setValidation({
+        isOpen: true,
+        type: "warning",
+        title: "Missing Required Fields",
+        message: "Input Account ID.",
+      });
+      return;
+    }
+
+    if(!newAccount.status) {
+      setValidation({
+        isOpen: true,
+        type: "warning",
+        title: "Missing Required Fields",
+        message: "Set Status.",
+      });
+      return;
+    }
+    
+
     const requiredFields = [
       newAccount.createdAt,
       newAccount.glAccountID,
