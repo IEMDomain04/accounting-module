@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./styles/accounting-styling.css";
+import NotifModal from "./components/modalNotif/NotifModal";
 import axios from "axios";
 import {
   BarChart,
@@ -38,7 +39,6 @@ const AccountingDashboard = () => {
     receivable: 0,
     balance: 0,
   });
-  const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const [validation, setValidation] = useState({
     isOpen: false,
@@ -55,7 +55,6 @@ const AccountingDashboard = () => {
   const CHART_OF_ACCOUNTS_ENDPOINT = `${API_URL}/api/chart-of-accounts/`;
 
   const fetchData = async () => {
-    setLoading(true);
     try {
       // Fetch General Ledger data
       const glResponse = await axios.get(GENERAL_LEDGER_ENDPOINT);
@@ -84,12 +83,18 @@ const AccountingDashboard = () => {
         totalCredit += credit;
 
         // Accounts Payable Summary
-        if (accountName === "Accounts Payable" || accountName === "Cash in Bank") {
+        if (
+          accountName === "Accounts Payable" ||
+          accountName === "Cash in Bank"
+        ) {
           accountsPayableTotal += credit - debit; // Net Payable
         }
 
         // Accounts Receivable Summary
-        if (accountName === "Accounts Receivable" || accountName === "Sales Revenue") {
+        if (
+          accountName === "Accounts Receivable" ||
+          accountName === "Sales Revenue"
+        ) {
           accountsReceivableTotal += debit - credit; // Net Receivable
         }
       });
@@ -147,16 +152,17 @@ const AccountingDashboard = () => {
       ];
 
       setTrendData(mockTrendData);
-      setLoading(false);
     } catch (error) {
-      console.error("Error fetching data:", error.response ? error.response.data : error);
+      console.error(
+        "Error fetching data:",
+        error.response ? error.response.data : error
+      );
       setValidation({
-        isOpen: true,
+        isOpen: true, // Ensure this is set to true
         type: "error",
         title: "Fetch Error",
         message: "Failed to load dashboard data. Please check your connection.",
       });
-      setLoading(false);
     }
   };
 
@@ -171,17 +177,6 @@ const AccountingDashboard = () => {
       minimumFractionDigits: 2,
     }).format(value);
   };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading dashboard data...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="accounting">
@@ -493,24 +488,13 @@ const AccountingDashboard = () => {
 
       {/* Validation Modal */}
       {validation.isOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full">
-            <h3 className={`text-lg font-semibold ${
-              validation.type === "error" ? "text-red-600" : "text-gray-800"
-            }`}>
-              {validation.title}
-            </h3>
-            <p className="text-gray-600 mt-2">{validation.message}</p>
-            <div className="mt-4 flex justify-end">
-              <button
-                onClick={() => setValidation({ ...validation, isOpen: false })}
-                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
+        <NotifModal
+          isOpen={validation.isOpen}
+          onClose={() => setValidation({ ...validation, isOpen: false })}
+          type={validation.type}
+          title={validation.title}
+          message={validation.message}
+        />
       )}
     </div>
   );
