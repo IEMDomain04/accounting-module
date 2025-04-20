@@ -14,26 +14,15 @@ const JournalEntry = () => {
   const [journalOptions, setJournalOptions] = useState([]);
   const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(null);
-  const getInitialJournalForm = () => {
-    const saved = localStorage.getItem("savedJournalForm");
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        return parsed;
-      } catch (e) {
-        console.error("Failed to parse saved journal form:", e);
-      }
-    }
-    return {
-      journalId: "",
-      transactions: [
-        { type: "debit", glAccountId: "", amount: "", accountName: "" },
-      ],
-      description: "",
-    };
-  };
 
-  const [journalForm, setJournalForm] = useState(getInitialJournalForm);
+  // Initialize journalForm without localStorage
+  const [journalForm, setJournalForm] = useState({
+    journalId: "",
+    transactions: [
+      { type: "debit", glAccountId: "", amount: "", accountName: "" },
+    ],
+    description: "",
+  });
 
   const [validation, setValidation] = useState({
     isOpen: false,
@@ -151,13 +140,13 @@ const JournalEntry = () => {
   };
 
   const handleSubmit = async () => {
+    // Validation checks
     if (!journalForm.journalId || !journalForm.description) {
       setValidation({
         isOpen: true,
         type: "warning",
         title: "Missing Required Fields",
-        message:
-          "Please fill in all required fields: Journal ID and Description.",
+        message: "Please fill in all required fields: Journal ID and Description.",
       });
       return;
     }
@@ -169,8 +158,7 @@ const JournalEntry = () => {
         isOpen: true,
         type: "warning",
         title: "Missing Account Details",
-        message:
-          "All transactions must have a GL Account ID, Account Name, and a positive amount.",
+        message: "All transactions must have a GL Account ID, Account Name, and a positive amount.",
       });
       return;
     }
@@ -179,8 +167,7 @@ const JournalEntry = () => {
         isOpen: true,
         type: "warning",
         title: "Insufficient Transactions",
-        message:
-          "A journal entry requires at least one debit and one credit transaction.",
+        message: "A journal entry requires at least one debit and one credit transaction.",
       });
       return;
     }
@@ -204,40 +191,35 @@ const JournalEntry = () => {
       transactions: journalForm.transactions.map((t, index) => ({
         entry_line_id: `ACC-JEL-${currentYear}-${baseIdentifier}-${index}`,
         gl_account_id: t.glAccountId,
-        debit_amount:
-          t.type === "debit" ? parseFloat(t.amount).toFixed(2) : "0.00",
-        credit_amount:
-          t.type === "credit" ? parseFloat(t.amount).toFixed(2) : "0.00",
+        debit_amount: t.type === "debit" ? parseFloat(t.amount).toFixed(2) : "0.00",
+        credit_amount: t.type === "credit" ? parseFloat(t.amount).toFixed(2) : "0.00",
         description: journalForm.description || null,
       })),
     };
 
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/journal-entries/${journalForm.journalId}/`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      const response = await axios.patch(
+        `${JOURNAL_ENTRIES_ENDPOINT}${journalForm.journalId}/`,
+        payload
+      );
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Failed to update journal: ${response.status} - ${errorText}`);
+      if (response.status === 200 || response.status === 201) {
+        setValidation({
+          isOpen: true,
+          type: "success",
+          title: "Journal Entry Updated",
+          message: "Journal entry updated successfully!",
+        });
+        setJournalForm({
+          journalId: "",
+          transactions: [{ type: "debit", glAccountId: "", amount: "", accountName: "" }],
+          description: "",
+        });
+        setTotalDebit(0);
+        setTotalCredit(0);
+      } else {
+        throw new Error("Unexpected response status");
       }
-
-      const data = await response.json();
-      setValidation({
-        isOpen: true,
-        type: "success",
-        title: "Journal Entry Updated",
-        message: "Journal entry updated successfully!",
-      });
-      setJournalForm({
-        journalId: "",
-        transactions: [{ type: "debit", glAccountId: "", amount: "", accountName: "" }],
-        description: "",
-      });
-      setTotalDebit(0);
-      setTotalCredit(0);
     } catch (error) {
       console.error("Error updating journal entry:", error.response ? error.response.data : error);
       setValidation({
@@ -252,9 +234,8 @@ const JournalEntry = () => {
   useEffect(() => {
     const fetchJournalIDs = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/journal-entries/");
-        const result = await response.json();
-        const zeroBalanceJournals = result
+        const response = await axios.get(JOURNAL_ENTRIES_ENDPOINT);
+        const zeroBalanceJournals = response.data
           .filter((entry) => parseFloat(entry.total_debit) === 0 && parseFloat(entry.total_credit) === 0)
           .map((entry) => entry.journal_id || entry.id);
         setJournalOptions(zeroBalanceJournals);
@@ -270,21 +251,6 @@ const JournalEntry = () => {
     };
     fetchJournalIDs();
   }, []);
-
-  useEffect(() => {
-    const savedForm = localStorage.getItem("savedJournalForm");
-    if (savedForm) {
-      const parsedForm = JSON.parse(savedForm);
-      setJournalForm(parsedForm);
-
-      // Optional: recalculate totals after loading
-      updateTotals(parsedForm.transactions);
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("savedJournalForm", JSON.stringify(journalForm));
-  }, [journalForm]);
 
   return (
     <div className="JournalEntry">
