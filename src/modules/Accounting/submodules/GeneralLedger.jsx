@@ -174,15 +174,21 @@ const BodyContent = () => {
     }
   };
 
-  const filteredData = data.filter((item) =>
-    item.row
-      .slice(0, 4)
-      .concat(item.row[6])
+  const filteredData = data.filter((item) => {
+    const searchContent = [
+      item.row[0], // Entry Line ID
+      item.row[1], // GL Account ID
+      item.row[2], // Account Name
+      item.row[3], // Journal ID
+      item.row[6], // Description
+    ]
       .filter(Boolean)
       .join(" ")
-      .toLowerCase()
-      .includes(searching.toLowerCase())
-  );
+      .toLowerCase();
+  
+    return searchContent.includes(searching.toLowerCase());
+  });
+  
 
   const dataToCalculate = scopedData || filteredData;
   const totalDebit = dataToCalculate.reduce((sum, item) => sum + (parseFloat(item.row[4]) || 0), 0);
