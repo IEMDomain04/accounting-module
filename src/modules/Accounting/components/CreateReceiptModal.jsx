@@ -193,7 +193,7 @@ const CreateReceiptModal = ({
                   defaultOption="Select payment method..."
                   options={[
                     "Cash",
-                    "Credit Card",
+                 // "Credit Card",
                     "Bank Transfer",
                  // "Check",
                  // "Mobile Payment",
