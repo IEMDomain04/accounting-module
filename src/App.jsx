@@ -87,16 +87,18 @@ function App() {
       "Company Policies": "CompanyPolicies",
       "User Accounts": "UserAccounts",
     },
-    Accounting: {
+    "Accounting": {
       "Chart of Accounts": "ChartOfAccounts",
       "Journal": "Journal",
       "Journal Entry": "JournalEntry",
       "General Ledger": "GeneralLedger",
       "General Ledger Accounts": "GeneralLedgerAccounts",
-      "Accounts Receivable": "AccountsReceivable",
-      "Accounts Payable": "AccountsPayable",
+      // "Accounts Payable": "AccountsPayable",
+      // "Accounts Receivable": "AccountsReceivable",
       "Official Receipts": "OfficialReceipts",
-      "Financial Report": "FinancialReport",
+      "Payroll Accounting": "PayrollAccounting",
+      "Tax and Remittance": "TaxAndRemittance",
+      "Accounts Payable Receipts": "AccountsPayableReceipts",
     },
     Financials: {
       Budgeting: "Budgeting",
