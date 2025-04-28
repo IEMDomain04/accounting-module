@@ -17,7 +17,7 @@ import {
   Line,
   CartesianGrid,
 } from "recharts";
-import Button from "./components/Button";
+import Button from "./components/button/Button";
 
 // Professional color palette
 const COLORS = [
@@ -85,9 +85,9 @@ const AccountingDashboard = () => {
 
         // Accounts Payable Summary
         if (
-          accountName === "Accounts Payable" || accountName === "Cash in Bank"
+          accountName === "Accounts Payable"
         ) {
-          accountsPayableTotal += debit - credit; // Net Payable
+          accountsPayableTotal += debit; // Net Payable
         }
 
         // Accounts Receivable Summary
