@@ -1,5 +1,31 @@
-# Accounting module
-This is the accounting module for the Kinetiq ERP system. [In progress..]
+# 📘 Kinetiq ERP System - Accounting Module
+
+This repository contains the **Accounting Module** of the Kinetiq ERP System.
+
+### 👥 Team Members
+- **Jason William Almendra** – Project Manager  
+- **Jericho Ambrocio** – Back-end Developer  
+- **Edrill Bilan** – Business Analyst  
+- **Fredrick Habla** – Database Specialist  
+- **Kryztine Igaya** – Quality Assurance  
+- **Emman Manduriaga** – Front-end Developer  
+
+---
+
+### 📦 Features — 9 Submodules
+- Chart of Accounts  
+- Journal  
+- Journal Entry  
+- General Ledger  
+- General Ledger Accounts  
+- Official Receipts  
+- Payroll Accounting  
+- Tax and Remittance  
+- Accounts Payable Receipts  
+
+---
+
+## 🚀 Getting Started
 
 ## Clone repository
 ```bash
