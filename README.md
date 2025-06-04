@@ -3,12 +3,15 @@
 This repository contains the **Accounting Module** of the Kinetiq ERP System.
 
 ### 👥 Team Members
-- **Jason William Almendra** – Project Manager  
-- **Jericho Ambrocio** – Back-end Developer  
-- **Edrill Bilan** – Business Analyst  
-- **Fredrick Habla** – Database Specialist  
-- **Kryztine Igaya** – Quality Assurance  
-- **Emman Manduriaga** – Front-end Developer  
+
+| Name                    | Role                 |
+|-------------------------|----------------------|
+| **Jason William Almendra** | Project Manager      |
+| **Jericho Ambrocio**       | Back-end Developer   |
+| **Edrill Bilan**           | Business Analyst     |
+| **Fredrick Habla**         | Database Specialist  |
+| **Kryztine Igaya**         | Quality Assurance    |
+| **Emman Manduriaga**       | Front-end Developer  |
 
 ---
 
